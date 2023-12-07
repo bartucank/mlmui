@@ -16,18 +16,22 @@ class VerifyScreen extends StatefulWidget {
 class _VerifyScreenState extends State<VerifyScreen> {
 
   final ApiService apiService = ApiService();
+  void ok(){
+    showTopSnackBar(
+      Overlay.of(context),
+      CustomSnackBar.success(
+        message: "Your account verified!",
+        textAlign: TextAlign.left,
+      ),
+    );
+    Navigator.pushReplacementNamed(context, "/userHome");
+  }
   Future<void> _verify(String code) async {
 
     apiService.verifyRequest(code).then((value) => {
       if (value['message'] == "Success")
         {
-          showTopSnackBar(
-            Overlay.of(context),
-            CustomSnackBar.success(
-              message: "Your account verified!",
-              textAlign: TextAlign.left,
-            ),
-          )
+          ok()
         }
       else if (value['error'] == "Unauthorized")
         {

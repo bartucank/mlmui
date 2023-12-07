@@ -1,4 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:mlmui/models/BookDTO.dart';
+import 'package:mlmui/models/UserDTO.dart';
+import 'package:mlmui/models/UserDTOListResponse.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
+import 'package:mlmui/components/BookCard.dart';
+import '../../components/MenuDrawerLibrarian.dart';
+import '../../components/UserCard.dart';
+import '../../models/BookDTOListResponse.dart';
+import '../../service/ApiService.dart';
+import 'package:we_slide/we_slide.dart';
+import 'package:flutter/material.dart';
 import 'package:mlmui/models/UserDTO.dart';
 import 'package:mlmui/models/UserDTOListResponse.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
@@ -9,14 +22,14 @@ import '../../components/UserCard.dart';
 import '../../service/ApiService.dart';
 import 'package:we_slide/we_slide.dart';
 
-class LibListScreen extends StatefulWidget {
-  const LibListScreen({Key? key}) : super(key: key);
+class BookListScreen extends StatefulWidget {
+  const BookListScreen({Key? key}) : super(key: key);
 
   @override
-  State<LibListScreen> createState() => _LibListScreenState();
+  State<BookListScreen> createState() => _BookListScreenState();
 }
 
-class _LibListScreenState extends State<LibListScreen> {
+class _BookListScreenState extends State<BookListScreen> {
   final listcontroller = ScrollController();
   TextEditingController _nameSurnameController = TextEditingController();
   TextEditingController _usernameController = TextEditingController();
@@ -28,52 +41,52 @@ class _LibListScreenState extends State<LibListScreen> {
   int page = -1;
   int size = 7;
   int totalPage = 1000;
-  late Future<UserDTOListResponse> userDTOListResponseFuture;
-  List<UserDTO> userDTOList = [];
-  List<UserDTO> lastList = [];
+  late Future<BookDTOListResponse> bookDTOListResponseFuture;
+  List<BookDTO> bookDTOList = [];
+  List<BookDTO> lastList = [];
 
   @override
   void initState() {
     super.initState();
-    fetchMoreUsers();
+    fetchMoreBook();
     listcontroller.addListener(() {
-      if(listcontroller.position.maxScrollExtent == listcontroller.offset){
-        fetchMoreUsers();
+      if (listcontroller.position.maxScrollExtent == listcontroller.offset) {
+        fetchMoreBook();
       }
     });
   }
+
   @override
-  void dispose(){
+  void dispose() {
     listcontroller.dispose();
     super.dispose();
   }
 
   Future refresh() async {
     setState(() {
-      userDTOList.clear();
+      bookDTOList.clear();
     });
     page = -1;
     size = 7;
-    fetchMoreUsers();
+    fetchMoreBook();
   }
 
-  void fetchMoreUsers() async {
-    if(page-1 > totalPage){
+  void fetchMoreBook() async {
+    if (page - 1 > totalPage) {
       return;
     }
     Map<String, dynamic> request = {
-      "role": "LIB",
       "page": page + 1,
       "size": size,
     };
 
     try {
       lastList.clear();
-      UserDTOListResponse response =
-      await apiService.getUsersBySpecifications(request);
+      BookDTOListResponse response =
+          await apiService.getBooksBySpecification(request);
       setState(() {
-        userDTOList.addAll(response.userDTOList);
-        lastList.addAll(response.userDTOList);
+        bookDTOList.addAll(response.bookDTOList);
+        lastList.addAll(response.bookDTOList);
         totalPage = response.totalPage;
         page++;
       });
@@ -88,25 +101,23 @@ class _LibListScreenState extends State<LibListScreen> {
     _usernameController.text = "";
     setState(() {
       lastList.clear();
-      userDTOList.clear();
+      bookDTOList.clear();
       page = -1;
       size = 7;
       weSlideController.hide();
       FocusScope.of(context).unfocus();
     });
 
-    Map<String, dynamic> request = {"role": "LIB", "page": page+1, "size": size};
+    Map<String, dynamic> request = {"page": page + 1, "size": size};
 
-
-    UserDTOListResponse response = await apiService.getUsersBySpecifications(request);
+    BookDTOListResponse response =
+        await apiService.getBooksBySpecification(request);
     setState(() {
-
-      userDTOList.addAll(response.userDTOList);
-      lastList.addAll(response.userDTOList);
+      bookDTOList.addAll(response.bookDTOList);
+      lastList.addAll(response.bookDTOList);
       totalPage = response.totalPage;
       page++;
     });
-
   }
 
   void filter() async {
@@ -127,33 +138,30 @@ class _LibListScreenState extends State<LibListScreen> {
     }
     setState(() {
       lastList.clear();
-      userDTOList.clear();
+      bookDTOList.clear();
       page = -1;
       size = 7;
       weSlideController.hide();
       FocusScope.of(context).unfocus();
     });
 
-
     Map<String, dynamic> request = {
-      "role": "LIB",
+      "role": "USER",
       "fullName": namesurname,
       "username": username,
       "email": email,
-      "page": page+1,
+      "page": page + 1,
       "size": size
     };
 
-    UserDTOListResponse response = await apiService.getUsersBySpecifications(request);
+    BookDTOListResponse response =
+        await apiService.getBooksBySpecification(request);
     setState(() {
-
-      userDTOList.addAll(response.userDTOList);
-      lastList.addAll(response.userDTOList);
+      bookDTOList.addAll(response.bookDTOList);
+      lastList.addAll(response.bookDTOList);
       totalPage = response.totalPage;
       page++;
     });
-
-
   }
 
   final double _panelMinSize = 70.0;
@@ -166,7 +174,7 @@ class _LibListScreenState extends State<LibListScreen> {
         drawer: const MenuDrawerLibrarian(),
         appBar: AppBar(
           backgroundColor: Color(0xffd2232a),
-          title: Text('Librarian List'),
+          title: Text('Book List'),
           centerTitle: false,
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
@@ -236,9 +244,9 @@ class _LibListScreenState extends State<LibListScreen> {
                         fillColor: Color(0x00ffffff),
                         isDense: false,
                         contentPadding:
-                        EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                            EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                         prefixIcon:
-                        Icon(Icons.person, color: Colors.black, size: 18),
+                            Icon(Icons.person, color: Colors.black, size: 18),
                       ),
                     ),
                   ),
@@ -279,9 +287,9 @@ class _LibListScreenState extends State<LibListScreen> {
                         fillColor: Color(0x00ffffff),
                         isDense: false,
                         contentPadding:
-                        EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                            EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                         prefixIcon:
-                        Icon(Icons.abc, color: Colors.black, size: 18),
+                            Icon(Icons.abc, color: Colors.black, size: 18),
                       ),
                     ),
                   ),
@@ -322,7 +330,7 @@ class _LibListScreenState extends State<LibListScreen> {
                         fillColor: Color(0x00ffffff),
                         isDense: false,
                         contentPadding:
-                        EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                            EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                         prefixIcon: Icon(Icons.alternate_email,
                             color: Colors.black, size: 18),
                       ),
@@ -390,59 +398,86 @@ class _LibListScreenState extends State<LibListScreen> {
               )),
           footer: BottomNavigationBar(
             items: [
-              BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Filter'),
-              BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Invite Metuian'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.search), label: 'Filter'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.add), label: 'Add New Book'),
             ],
             elevation: 0,
             backgroundColor: Color(0xffd2232a),
             type: BottomNavigationBarType.fixed,
             selectedItemColor: Colors.white,
-            unselectedItemColor: Colors.white.withOpacity(0.5), //Colors.grey,
+            unselectedItemColor: Colors.white.withOpacity(0.5),
+            //Colors.grey,
             onTap: (index) {
-              if(index == 0){
+              if (index == 0) {
                 weSlideController.show();
               }
             },
           ),
           body: Padding(
             padding: EdgeInsets.fromLTRB(0, 0, 0, 80),
-            child: userDTOList.isEmpty
+            child: bookDTOList.isEmpty
                 ? const Center(
-              child: CircularProgressIndicator(),
-            )
+                    child: CircularProgressIndicator(),
+                  )
                 : RefreshIndicator(
-              onRefresh: refresh,
-              child: ListView.builder(
-                controller: listcontroller,
-                itemCount: userDTOList.length + 1,
-                itemBuilder: (context2, index) {
-                  if (index < userDTOList.length) {
-                    UserDTO currentuser = userDTOList[index];
-                    return Container(
-                      decoration: BoxDecoration(
-                        border: Border(bottom: BorderSide()),
-                      ),
-                      child: ListTile(
-                        title: UserCard(user: currentuser),
-                      ),
-                    );
-                  } else {
-                    if (!lastList.isEmpty && userDTOList.length > 7) {
-                      return Padding(
-                        padding: EdgeInsets.symmetric(vertical: 32),
-                        child: Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                      );
-                    } else {
-                      return SizedBox();
-
-                    }
-                  }
-                },
-              ),
-            ),
+                    onRefresh: refresh,
+                    child: ListView.builder(
+                      controller: listcontroller,
+                      itemCount: bookDTOList.length + 1,
+                      itemBuilder: (context2, index) {
+                        if (index < bookDTOList.length) {
+                          BookDTO currentbook = bookDTOList[index];
+                          return Slidable(
+                              startActionPane: ActionPane(
+                                motion: const StretchMotion(),
+                                children: [
+                                  SlidableAction(
+                                    backgroundColor: Colors.blue,
+                                    icon: Icons.edit,
+                                    label: 'Update',
+                                    onPressed: (context) => dissmissed(),
+                                  )
+                                ],
+                              ),
+                              endActionPane: ActionPane(
+                                motion: const StretchMotion(),
+                                children: [
+                                  SlidableAction(
+                                    backgroundColor: Colors.green,
+                                    icon: Icons.send,
+                                    label: 'Borrow',
+                                    onPressed: (context) => dissmissed(),
+                                  )
+                                ],
+                              ),
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  border: Border(bottom: BorderSide()),
+                                ),
+                                child: ListTile(
+                                  title: BookCard(book: currentbook),
+                                ),
+                              ));
+                        } else {
+                          if (!lastList.isEmpty && bookDTOList.length > 7) {
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 32),
+                              child: Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            );
+                          } else {
+                            return SizedBox();
+                          }
+                        }
+                      },
+                    ),
+                  ),
           ),
         ));
   }
 }
+
+void dissmissed() {}

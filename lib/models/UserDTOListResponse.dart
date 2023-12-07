@@ -4,9 +4,10 @@ part 'UserDTOListResponse.g.dart';
 @JsonSerializable(explicitToJson: true)
 class UserDTOListResponse {
   List<UserDTO> userDTOList;
+  int totalPage;
 
-
-  UserDTOListResponse(this.userDTOList);
+  UserDTOListResponse(this.userDTOList,
+      this.totalPage);
 
   factory UserDTOListResponse.fromJson(Map<String,dynamic> data) => _$UserDTOListResponseFromJson(data);
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mlmui/pages/LibrarianScreens/BookListScreen.dart';
 import 'package:mlmui/pages/LibrarianScreens/LibListScreen.dart';
 import 'package:mlmui/pages/LibrarianScreens/LibrarianHome.dart';
 import 'package:mlmui/pages/Onboarding/LoginScreen.dart';
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
         '/userHome': (context) =>  UserHome(),
         '/userlist': (context) =>  UserListScreen(),
         '/liblist': (context) =>  LibListScreen(),
+        '/booklist': (context) =>  BookListScreen(),
       },
     );
 

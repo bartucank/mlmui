@@ -11,10 +11,12 @@ UserDTOListResponse _$UserDTOListResponseFromJson(Map<String, dynamic> json) =>
       (json['userDTOList'] as List<dynamic>)
           .map((e) => UserDTO.fromJson(e as Map<String, dynamic>))
           .toList(),
+      json['totalPage'] as int,
     );
 
 Map<String, dynamic> _$UserDTOListResponseToJson(
         UserDTOListResponse instance) =>
     <String, dynamic>{
       'userDTOList': instance.userDTOList.map((e) => e.toJson()).toList(),
+      'totalPage': instance.totalPage,
     };

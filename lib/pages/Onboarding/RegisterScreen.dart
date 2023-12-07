@@ -16,9 +16,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController _nameSurnameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+  bool _loading = false;
 
   final ApiService apiService = ApiService();
   Future<void> _register() async {
+    FocusScope.of(context).unfocus();
+    setState(() {
+      _loading = true;
+    });
+
     final username = _usernameController.text;
     final nameSurname = _nameSurnameController.text;
     final email = _emailController.text;
@@ -63,6 +69,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           )
         }
+    }).whenComplete(() {
+      setState(() {
+        _loading = false; // Servis çağrısı tamamlandığında _loading değerini false yap
+      });
     });
   }
 
@@ -373,6 +383,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
             ),
+            if (_loading)
+              Container(
+                color: Colors.black.withOpacity(0.5),
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
           ],
         ),
       ),

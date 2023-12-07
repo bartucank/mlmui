@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:mlmui/models/UserDTO.dart';
 import 'package:mlmui/models/UserDTOListResponse.dart';
+import '../models/BookDTOListResponse.dart';
 import 'CacheManager.dart';
 import 'constants.dart';
 class ApiService {
@@ -37,6 +38,7 @@ class ApiService {
       saveJwtToken(jsonResponse['data']['jwt']);
 
     }
+    print(jsonResponse);
     return jsonResponse;
   }
 
@@ -101,6 +103,26 @@ class ApiService {
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
     print(response.body);
     return UserDTOListResponse.fromJson(jsonResponse['data']);
+  }
+
+  Future<BookDTOListResponse> getBooksBySpecification(dynamic body) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.post(
+      Uri.parse('${Constants.apiBaseUrl}/api/user/book/getBooksBySpecification'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(body),
+    );
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+    print("ok:");
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+    print(response.body);
+    return BookDTOListResponse.fromJson(jsonResponse['data']);
   }
 }
 

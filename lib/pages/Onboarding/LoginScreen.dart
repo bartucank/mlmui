@@ -18,6 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final ApiService apiService = ApiService();
   Future<void> _login() async {
+    FocusScope.of(context).unfocus();
     final username = _usernameController.text;
     final password = _passwordController.text;
     Map<String, dynamic> body = {

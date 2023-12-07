@@ -8,25 +8,16 @@ class UserCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.all(8.0),
-      child: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '${user.fullName} [ ${user.username} ]',
-              style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8.0),
-            Text(
-              '${user.email}',
-              style: TextStyle(fontSize: 14.0),
-            ),
-          ],
-        ),
+
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(vertical: 1, horizontal: 16),
+      title: Text(user.fullName),
+      subtitle: Text(user.email),
+      leading: CircleAvatar(
+        radius: 15,
+        backgroundImage: AssetImage('assets/images/default.png'),
       ),
     );
+
   }
 }

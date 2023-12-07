@@ -42,7 +42,7 @@ class BookCard extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
         } else if (snapshot.hasError) {
-          return Text('Error! ${snapshot.error}');
+          return Text('');
         } else {
           String base64Image = snapshot.data!;
           return ListTile(

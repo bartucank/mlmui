@@ -413,6 +413,9 @@ class _BookListScreenState extends State<BookListScreen> {
               if (index == 0) {
                 weSlideController.show();
               }
+              if(index == 1){
+                //todo: navigate add book page
+              }
             },
           ),
           body: Padding(
@@ -476,7 +479,8 @@ class _BookListScreenState extends State<BookListScreen> {
                     ),
                   ),
           ),
-        ));
+        )
+    );
   }
 }
 

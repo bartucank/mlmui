@@ -101,7 +101,6 @@ class ApiService {
       throw CustomException("NEED_LOGIN");
     }
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-    print(response.body);
     return UserDTOListResponse.fromJson(jsonResponse['data']);
   }
 
@@ -118,7 +117,6 @@ class ApiService {
     if(response.statusCode == 401){
       throw CustomException("NEED_LOGIN");
     }
-    print("ok:");
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
 
     print(response.body);

@@ -414,16 +414,14 @@ class _BookListScreenState extends State<BookListScreen> {
                 weSlideController.show();
               }
               if(index == 1){
-                //todo: navigate add book page
+                Navigator.pushNamed(context, "/bookcreate");
               }
             },
           ),
           body: Padding(
             padding: EdgeInsets.fromLTRB(0, 0, 0, 80),
             child: bookDTOList.isEmpty
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
+                ? Text("")
                 : RefreshIndicator(
                     onRefresh: refresh,
                     child: ListView.builder(

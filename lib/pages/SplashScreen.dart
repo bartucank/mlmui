@@ -91,7 +91,7 @@ class _SplashScreenState extends State<SplashScreen> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.fromLTRB(0, 0, 0, 19),
+                        padding: EdgeInsets.fromLTRB(0, 0, 0, 50),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.center,

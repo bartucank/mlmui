@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mlmui/pages/LibrarianScreens/BookCreatePage.dart';
 import 'package:mlmui/pages/LibrarianScreens/BookListScreen.dart';
 import 'package:mlmui/pages/LibrarianScreens/LibListScreen.dart';
 import 'package:mlmui/pages/LibrarianScreens/LibrarianHome.dart';
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
         '/userlist': (context) =>  UserListScreen(),
         '/liblist': (context) =>  LibListScreen(),
         '/booklist': (context) =>  BookListScreen(),
+        '/bookcreate': (context) =>  BookCreatePage(),
       },
     );
 

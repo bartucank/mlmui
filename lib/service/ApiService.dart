@@ -1,13 +1,21 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:mlmui/models/ShelfDTOListResponse.dart';
 import 'package:mlmui/models/UserDTO.dart';
 import 'package:mlmui/models/UserDTOListResponse.dart';
+import '../models/BookCategoryEnumDTO.dart';
+import '../models/BookCategoryEnumDTOListResponse.dart';
 import '../models/BookDTOListResponse.dart';
+import '../models/OpenLibraryBookDetails.dart';
 import 'CacheManager.dart';
 import 'constants.dart';
+
+import 'package:dio/dio.dart';
+import 'package:multi_image_picker_view/multi_image_picker_view.dart';
 class ApiService {
   final FlutterSecureStorage storage = FlutterSecureStorage();
 
@@ -122,6 +130,139 @@ class ApiService {
     print(response.body);
     return BookDTOListResponse.fromJson(jsonResponse['data']);
   }
+
+
+  Future<OpenLibraryBookDetails> getOpenLibraryBookDetails(String isbn) async {
+    final jwtToken = await getJwtToken();
+    print("test");
+    final response = await http.get(
+      Uri.parse('${Constants.apiBaseUrl}/api/admin/book/getByISBN?isbn=$isbn'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+    );
+    print(response);
+
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+    print(response.body);
+    return OpenLibraryBookDetails.fromJson(jsonResponse['data']);
+  }
+
+
+  Future<ShelfDTOListResponse> getShelfDTOListResponse() async {
+    final jwtToken = await getJwtToken();
+    final response = await http.get(
+      Uri.parse('${Constants.apiBaseUrl}/api/user/shelf/getAll'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+    );
+    print(response);
+
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+    print(response.body);
+    return ShelfDTOListResponse.fromJson(jsonResponse['data']);
+  }
+  Future<BookCategoryEnumDTOListResponse> getBookCategoryEnumDTOListResponse() async {
+    final jwtToken = await getJwtToken();
+    final response = await http.get(
+      Uri.parse('${Constants.apiBaseUrl}/api/user/book/getAllCategories'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+    );
+    print(response);
+
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+    print(response.body);
+    return BookCategoryEnumDTOListResponse.fromJson(jsonResponse['data']);
+  }
+
+  Future<String> createBook(dynamic body) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.post(
+      Uri.parse('${Constants.apiBaseUrl}/api/admin/book/create'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(body),
+    );
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+    return jsonResponse['data']['statusCode'];
+  }
+
+  Future<int> uploadImage(ImageFile imageFile) async {
+    try {
+      final jwtToken = await getJwtToken();
+      var request = http.MultipartRequest(
+        'POST', Uri.parse('${Constants.apiBaseUrl}/api/admin/uploadImage'),
+      );
+      Map<String,String> headers={
+        "Authorization":"Bearer $jwtToken",
+        "Content-type": "multipart/form-data"
+      };
+      if (imageFile.bytes != null) {
+        request.files.add(
+          http.MultipartFile.fromBytes(
+            'image',
+            imageFile.bytes!, // Image bytes
+            filename: '${imageFile.name}.${imageFile.extension}',
+          ),
+        );
+      } else if (imageFile.readStream != null) {
+        request.files.add(
+          http.MultipartFile(
+            'image',
+            imageFile.readStream!,
+            (await imageFile.readStream!.toList()).length,
+            filename: '${imageFile.name}.${imageFile.extension}',
+          ),
+        );
+      } else if (imageFile.path != null) {
+        File file = File(imageFile.path!);
+        List<int> imageBytes = await file.readAsBytes();
+        request.files.add(
+          http.MultipartFile.fromBytes(
+            'image',
+            imageBytes, // Image bytes
+            filename: '${imageFile.name}.${imageFile.extension}',
+          ),
+        );
+      }
+      request.headers.addAll(headers);
+      var res = await request.send();
+      if (res.statusCode == 200) {
+        var responseString = await res.stream.bytesToString();
+        var jsonResponse = json.decode(responseString);
+        var msgValue = int.parse(jsonResponse['data']['msg']);
+        return msgValue;
+      }
+      return -1;
+    } catch (e) {
+      return -1;
+      print('Error uploading image: $e');
+    }
+  }
+
 }
 
 class CustomException implements Exception {

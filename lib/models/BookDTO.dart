@@ -1,21 +1,21 @@
 import 'package:json_annotation/json_annotation.dart';
 part 'BookDTO.g.dart';
-@JsonSerializable()
+@JsonSerializable(includeIfNull: false)
 class BookDTO {
-  int id;
-  int shelfId;
-  int imageId;
-  String isbn;
-  String publisher;
-  String name;
-  String description;
-  String author;
-  String publicationDateStr;
-  String edition;
-  String category;
-  String categoryStr;
-  String status;
-  String statusStr;
+  int? id;
+  int? shelfId;
+  int? imageId;
+  String? isbn;
+  String? publisher;
+  String? name;
+  String? description;
+  String? author;
+  String? publicationDateStr;
+  String? edition;
+  String? category;
+  String? categoryStr;
+  String? status;
+  String? statusStr;
 
   BookDTO(
       this.id,

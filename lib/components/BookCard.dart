@@ -37,7 +37,7 @@ class BookCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<String>(
-      future: _getImageBase64(book.imageId),
+      future: _getImageBase64(book.imageId!),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
@@ -47,8 +47,8 @@ class BookCard extends StatelessWidget {
           String base64Image = snapshot.data!;
           return ListTile(
             contentPadding: const EdgeInsets.symmetric(vertical: 1, horizontal: 16),
-            title: Text(book.name),
-            subtitle: Text(book.category),
+            title: Text(book.name!),
+            subtitle: Text(book.category!),
             leading: CircleAvatar(
               radius: 15,
               backgroundColor: Colors.white,

@@ -5,6 +5,7 @@ import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 import '../../models/UserDTO.dart';
 import '../../service/ApiService.dart';
+import '../../components/LibrarianInfoCard.dart';
 
 class LibrarianHome extends StatefulWidget {
   const LibrarianHome({Key? key}) : super(key: key);
@@ -71,7 +72,47 @@ class _LibrarianHomeState extends State<LibrarianHome> {
               }
             } else {
               final user = snapshot.data;
-              return Text('User lıb: ${user?.username}');
+              //return Text('User lıb: ${user?.username}');
+              // Return the Information Cards for the Librarian
+              // Titles, Values, and the TopColor can be changed
+              // ,and the data of them can be taken from somewhere else
+              return Column(
+                children: [
+                  Row(
+                    children: <Widget>[
+                      InfoCard(
+                        title: "Total Users:",
+                        value: 54,
+                        onTap: () {},
+                        topColor: Colors.orange,
+                      ),
+                      const SizedBox( width: 10,), // Space b/w Cards
+                      InfoCard(
+                        title: "Total Books:",
+                        value: 1024,
+                        topColor: Colors.lightGreen,
+                        onTap: () {},
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      InfoCard(
+                        title: "Total Librarians:",
+                        value: 3,
+                        topColor: Colors.redAccent,
+                        onTap: () {},
+                      ),
+                      const SizedBox( width: 10,), // Space b/w Cards
+                      InfoCard(
+                        title: "Total :",
+                        value: 0,
+                        onTap: () {},
+                      ),
+                    ],
+                  )
+                ],
+              );
             }
           },
         ),

@@ -15,7 +15,7 @@ class BookCard extends StatelessWidget {
 
   BookCard({required this.book});
 
-  Future<String> _getImageBase64(int imageId) async {
+  static Future<String> getImageBase64(int imageId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? base64Image = prefs.getString(imageId.toString());
 
@@ -37,7 +37,7 @@ class BookCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<String>(
-      future: _getImageBase64(book.imageId!),
+      future: getImageBase64(book.imageId!),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();

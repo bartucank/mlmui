@@ -31,7 +31,18 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
-
+/.dart_tool/
+/.dart_tool
+.dart_tool
+.idea
+/.idea
+/.idea/
+/build
+build
+pubspec.lock
+/linux
+linux
+/linux/
 # Symbolication related
 app.*.symbols
 

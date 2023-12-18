@@ -43,11 +43,27 @@ class MenuDrawer extends StatelessWidget {
                           snapshot.data!.fullName != ""
                       ? "Welcome ${snapshot.data!.fullName}"
                       : "Welcome ${snapshot.data!.username}"),
-                  children: [],
+                  children: [
+                    ListTile(
+                      leading: const Icon(Icons.person),
+                      title: const Text("Profile"),
+                      onTap: () {
+                        CacheManager.logout();
+                        Navigator.pushNamed(context, '/booklistforuser');
+                      },
+                    ),
+                  ],
                 );
               } else {
                 return Text("");
               }
+            },
+          ),ListTile(
+            leading: const Icon(Icons.library_books),
+            title: const Text("Book List"),
+            onTap: () {
+              CacheManager.logout();
+              Navigator.pushNamed(context, '/booklistforuser');
             },
           ),ListTile(
             leading: const Icon(Icons.logout_outlined),

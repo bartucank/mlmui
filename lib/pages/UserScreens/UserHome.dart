@@ -253,7 +253,7 @@ class _UserHomeState extends State<UserHome> {
                       ),
                     ),
                     onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/booklist');
+                      Navigator.pushNamed(context, '/booklist');
                     },
                     child: Text(
                       'MORE',
@@ -269,7 +269,7 @@ class _UserHomeState extends State<UserHome> {
               padding: const EdgeInsets.fromLTRB(3.0, 3.0, 0, 0),
               child: Container(
                 margin: const EdgeInsets.symmetric(vertical: 2),
-                height: 100,
+                height: 140,
                 child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: bookDTOList.length,
@@ -310,28 +310,31 @@ class _UserHomeState extends State<UserHome> {
                                           ),
                                           Align(
                                             alignment: Alignment.bottomLeft,
-                                            child: Stack(
-                                              children: <Widget>[
-                                                Text(
-                                                  currentbook.name!,
-                                                  style: TextStyle(
-                                                    fontSize: 25,
-                                                    fontWeight: FontWeight.bold,
-                                                    foreground: Paint()
-                                                      ..style = PaintingStyle.stroke
-                                                      ..strokeWidth = 3
-                                                      ..color = Colors.black
+                                            child: Padding(
+                                              padding: EdgeInsets.fromLTRB(5, 0, 0, 5),
+                                              child: Stack(
+                                                children: <Widget>[
+                                                  Text(
+                                                    currentbook.name!.length<10?currentbook.name!:currentbook.name!.substring(0,10)+"...",
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight: FontWeight.bold,
+                                                        foreground: Paint()
+                                                          ..style = PaintingStyle.stroke
+                                                          ..strokeWidth = 3
+                                                          ..color = Colors.black
+                                                    ),
                                                   ),
-                                                ),
-                                                Text(
-                                                  currentbook.name!,
-                                                  style: TextStyle(
-                                                    fontSize: 25,
-                                                    color:Colors.white
+                                                  Text(
+                                                    currentbook.name!.length<10?currentbook.name!:currentbook.name!.substring(0,10)+"...",
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        color:Colors.white
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
+                                                ],
+                                              ),
+                                            )
                                           ),
                                         ],
                                       ),

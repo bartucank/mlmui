@@ -35,7 +35,7 @@ class MenuDrawer extends StatelessWidget {
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting ||
                   snapshot.hasError) {
-                return Text("");
+                return Text("aaa");
               } else if (snapshot.hasData && snapshot.data != null) {
                 return ExpansionTile(
                   leading: const Icon(Icons.person),
@@ -58,7 +58,8 @@ class MenuDrawer extends StatelessWidget {
                 return Text("");
               }
             },
-          ),ListTile(
+          ),
+          ListTile(
             leading: const Icon(Icons.library_books),
             title: const Text("Book List"),
             onTap: () {

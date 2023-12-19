@@ -76,7 +76,8 @@ class _LibrarianHomeState extends State<LibrarianHome> {
               // Return the Information Cards for the Librarian
               // Titles, Values, and the TopColor can be changed
               // ,and the data of them can be taken from somewhere else
-              return Column(
+              return Padding(padding: EdgeInsets.all(16),
+              child: Column(
                 children: [
                   Row(
                     children: <Widget>[
@@ -112,6 +113,7 @@ class _LibrarianHomeState extends State<LibrarianHome> {
                     ],
                   )
                 ],
+              ),
               );
             }
           },

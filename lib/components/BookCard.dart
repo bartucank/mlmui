@@ -29,7 +29,7 @@ class BookCard extends StatelessWidget {
         prefs.setString(imageId.toString(), base64);
         return base64;
       } else {
-        throw Exception('Resim alınamadı: HTTP ${response.statusCode}');
+        return"1";
       }
     }
   }
@@ -47,7 +47,7 @@ class BookCard extends StatelessWidget {
           String base64Image = snapshot.data!;
           return ListTile(
             contentPadding: const EdgeInsets.symmetric(vertical: 1, horizontal: 16),
-            title: Text(book.name!),
+            title: Text(book.id.toString() + "-"+book.name!),
             subtitle: Text(book.category!),
             leading: CircleAvatar(
               radius: 15,

@@ -8,6 +8,8 @@ import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:mlmui/components/BookCard.dart';
 import '../../components/MenuDrawerLibrarian.dart';
 import '../../components/UserCard.dart';
+import '../../models/BookCategoryEnumDTO.dart';
+import '../../models/BookCategoryEnumDTOListResponse.dart';
 import '../../models/BookDTOListResponse.dart';
 import '../../service/ApiService.dart';
 import 'package:we_slide/we_slide.dart';
@@ -31,9 +33,9 @@ class BookListScreen extends StatefulWidget {
 
 class _BookListScreenState extends State<BookListScreen> {
   final listcontroller = ScrollController();
-  TextEditingController _nameSurnameController = TextEditingController();
-  TextEditingController _usernameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
+  TextEditingController _titleController = TextEditingController();
+  TextEditingController _authorController = TextEditingController();
+  TextEditingController _categoryController = TextEditingController();
   WeSlideController weSlideController = WeSlideController();
   final ApiService apiService = ApiService();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -44,18 +46,34 @@ class _BookListScreenState extends State<BookListScreen> {
   late Future<BookDTOListResponse> bookDTOListResponseFuture;
   List<BookDTO> bookDTOList = [];
   List<BookDTO> lastList = [];
+  List<BookCategoryEnumDTO> _dropdownItems = [];
+  BookCategoryEnumDTO? _selectedValue;
 
+  Map<String, dynamic> globalFilterRequest = {};
+
+  void fetchCategories() async {
+    try {
+      BookCategoryEnumDTOListResponse response =
+      await apiService.getBookCategoryEnumDTOListResponse();
+      setState(() {
+        _dropdownItems.addAll(response.list);
+      });
+    } catch (e) {
+      print("Error! $e");
+    }
+  }
   @override
   void initState() {
     super.initState();
-    fetchMoreBook();
+    fetchFirstBooks();
+    _dropdownItems.insert(0, BookCategoryEnumDTO("ANY", 'ANY'));
+    fetchCategories();
     listcontroller.addListener(() {
       if (listcontroller.position.maxScrollExtent == listcontroller.offset) {
         fetchMoreBook();
       }
     });
   }
-
   @override
   void dispose() {
     listcontroller.dispose();
@@ -68,22 +86,19 @@ class _BookListScreenState extends State<BookListScreen> {
     });
     page = -1;
     size = 7;
-    fetchMoreBook();
+    fetchFirstBooks();
   }
 
   void fetchMoreBook() async {
     if (page - 1 > totalPage) {
       return;
     }
-    Map<String, dynamic> request = {
-      "page": page + 1,
-      "size": size,
-    };
+    globalFilterRequest['page'] = globalFilterRequest['page'] +1;
 
     try {
       lastList.clear();
       BookDTOListResponse response =
-          await apiService.getBooksBySpecification(request);
+      await apiService.getBooksBySpecification(globalFilterRequest);
       setState(() {
         bookDTOList.addAll(response.bookDTOList);
         lastList.addAll(response.bookDTOList);
@@ -95,10 +110,39 @@ class _BookListScreenState extends State<BookListScreen> {
     }
   }
 
+
+  void fetchFirstBooks() async {
+    if (page - 1 > totalPage) {
+      return;
+    }
+    Map<String, dynamic> request = {
+      "page": page + 1,
+      "size": size,
+    };
+    setState(() {
+      globalFilterRequest = request;
+    });
+
+    try {
+      lastList.clear();
+      BookDTOListResponse response =
+      await apiService.getBooksBySpecification(request);
+      setState(() {
+        bookDTOList.addAll(response.bookDTOList);
+        lastList.addAll(response.bookDTOList);
+        totalPage = response.totalPage;
+        page++;
+      });
+    } catch (e) {
+      print("Error! $e");
+    }
+  }
+
+
   void clear() async {
-    _nameSurnameController.text = "";
-    _emailController.text = "";
-    _usernameController.text = "";
+    _titleController.text = "";
+    _categoryController.text = "";
+    _authorController.text = "";
     setState(() {
       lastList.clear();
       bookDTOList.clear();
@@ -110,8 +154,11 @@ class _BookListScreenState extends State<BookListScreen> {
 
     Map<String, dynamic> request = {"page": page + 1, "size": size};
 
+    setState(() {
+      globalFilterRequest = request;
+    });
     BookDTOListResponse response =
-        await apiService.getBooksBySpecification(request);
+    await apiService.getBooksBySpecification(request);
     setState(() {
       bookDTOList.addAll(response.bookDTOList);
       lastList.addAll(response.bookDTOList);
@@ -121,21 +168,9 @@ class _BookListScreenState extends State<BookListScreen> {
   }
 
   void filter() async {
-    String namesurname = "";
-    String username = "";
-    String email = "";
+    String name = _titleController.text ?? "";
+    String author = _authorController.text ?? "";
 
-    if (_nameSurnameController.text != null) {
-      namesurname = _nameSurnameController.text;
-    }
-
-    if (_usernameController.text != null) {
-      username = _usernameController.text;
-    }
-
-    if (_emailController.text != null) {
-      email = _emailController.text;
-    }
     setState(() {
       lastList.clear();
       bookDTOList.clear();
@@ -146,22 +181,33 @@ class _BookListScreenState extends State<BookListScreen> {
     });
 
     Map<String, dynamic> request = {
-      "role": "USER",
-      "fullName": namesurname,
-      "username": username,
-      "email": email,
-      "page": page + 1,
-      "size": size
+      'name': name,
+      'author': author,
+      'page': page + 1,
+      'size': size,
     };
 
-    BookDTOListResponse response =
-        await apiService.getBooksBySpecification(request);
     setState(() {
-      bookDTOList.addAll(response.bookDTOList);
-      lastList.addAll(response.bookDTOList);
-      totalPage = response.totalPage;
-      page++;
+      globalFilterRequest = request;
     });
+    if (_selectedValue != null && _selectedValue?.enumValue != "ANY") {
+      // Include category parameter only if a specific category is chosen
+      request['category'] = _selectedValue?.enumValue;
+    }
+
+    try {
+      BookDTOListResponse response =
+      await apiService.getBooksBySpecification(request);
+
+      setState(() {
+        bookDTOList.addAll(response.bookDTOList);
+        lastList.addAll(response.bookDTOList);
+        totalPage = response.totalPage;
+        page++;
+      });
+    } catch (e) {
+      print("Error! $e");
+    }
   }
 
   final double _panelMinSize = 70.0;
@@ -210,7 +256,7 @@ class _BookListScreenState extends State<BookListScreen> {
                   Padding(
                     padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
                     child: TextField(
-                      controller: _nameSurnameController,
+                      controller: _titleController,
                       obscureText: false,
                       textAlign: TextAlign.start,
                       maxLines: 1,
@@ -233,7 +279,7 @@ class _BookListScreenState extends State<BookListScreen> {
                           borderRadius: BorderRadius.circular(4.0),
                           borderSide: BorderSide(color: Colors.black, width: 1),
                         ),
-                        labelText: "Search by Name Surname",
+                        labelText: "Search by Title",
                         labelStyle: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontStyle: FontStyle.normal,
@@ -244,16 +290,16 @@ class _BookListScreenState extends State<BookListScreen> {
                         fillColor: Color(0x00ffffff),
                         isDense: false,
                         contentPadding:
-                            EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                        EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                         prefixIcon:
-                            Icon(Icons.person, color: Colors.black, size: 18),
+                        Icon(Icons.person, color: Colors.black, size: 18),
                       ),
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
                     child: TextField(
-                      controller: _usernameController,
+                      controller: _authorController,
                       obscureText: false,
                       textAlign: TextAlign.start,
                       maxLines: 1,
@@ -276,7 +322,7 @@ class _BookListScreenState extends State<BookListScreen> {
                           borderRadius: BorderRadius.circular(4.0),
                           borderSide: BorderSide(color: Colors.black, width: 1),
                         ),
-                        labelText: "Search by Username",
+                        labelText: "Search by Author",
                         labelStyle: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontStyle: FontStyle.normal,
@@ -287,39 +333,23 @@ class _BookListScreenState extends State<BookListScreen> {
                         fillColor: Color(0x00ffffff),
                         isDense: false,
                         contentPadding:
-                            EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                        EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                         prefixIcon:
-                            Icon(Icons.abc, color: Colors.black, size: 18),
+                        Icon(Icons.abc, color: Colors.black, size: 18),
                       ),
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
-                    child: TextField(
-                      controller: _emailController,
-                      obscureText: false,
-                      textAlign: TextAlign.start,
-                      maxLines: 1,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w400,
-                        fontStyle: FontStyle.normal,
-                        fontSize: 14,
-                        color: Colors.black,
-                      ),
+                    child: DropdownButtonFormField<BookCategoryEnumDTO>(
+                      value: _selectedValue,
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedValue = value;
+                        });
+                      },
                       decoration: InputDecoration(
-                        disabledBorder: UnderlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                          borderSide: BorderSide(color: Colors.black, width: 1),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                          borderSide: BorderSide(color: Colors.black, width: 1),
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                          borderSide: BorderSide(color: Colors.black, width: 1),
-                        ),
-                        labelText: "Search by Email",
+                        labelText: "Search by Category",
                         labelStyle: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontStyle: FontStyle.normal,
@@ -329,15 +359,31 @@ class _BookListScreenState extends State<BookListScreen> {
                         filled: true,
                         fillColor: Color(0x00ffffff),
                         isDense: false,
-                        contentPadding:
-                            EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                        prefixIcon: Icon(Icons.alternate_email,
-                            color: Colors.black, size: 18),
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: 8,
+                          horizontal: 12,
+                        ),
+                        prefixIcon: Icon(Icons.alternate_email, color: Colors.black, size: 18),
+                        border: OutlineInputBorder(  // Add this line to define a border
+                          borderRadius: BorderRadius.circular(4.0),
+                          borderSide: BorderSide(color: Colors.black, width: 1),
+                        ),
                       ),
+                      items: _dropdownItems.map((category) {
+                        return DropdownMenuItem<BookCategoryEnumDTO>(
+                          value: category,
+                          child: Row(
+                            children: [
+                              SizedBox(width: 8),
+                              Text(category.enumValue),
+                            ],
+                          ),
+                        );
+                      }).toList(),
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.fromLTRB(0, 25, 0, 0),
+                    padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -407,7 +453,7 @@ class _BookListScreenState extends State<BookListScreen> {
             backgroundColor: Color(0xffd2232a),
             type: BottomNavigationBarType.fixed,
             selectedItemColor: Colors.white,
-            unselectedItemColor: Colors.white.withOpacity(0.5),
+            unselectedItemColor: Colors.white,
             //Colors.grey,
             onTap: (index) {
               if (index == 0) {

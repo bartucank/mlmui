@@ -80,6 +80,8 @@ class ApiService {
   }
   Future<UserDTO> getUserDetails() async {
     final jwtToken = await getJwtToken();
+    print("burada jwt gelecek mii: "+jwtToken!);
+    print("burada jwt gelecek mii: ");
     final response = await http.get(
       Uri.parse('${Constants.apiBaseUrl}/api/user/getUserDetails'),
       headers: {

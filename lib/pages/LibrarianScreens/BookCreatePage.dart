@@ -77,9 +77,14 @@ class _BookCreatePageState extends State<BookCreatePage> {
 
 
       };
+      Map<String, dynamic> request2 = {
+
+
+
+      };
       try{
 
-        String result = await apiService.createBook(request);
+        String result = await apiService.createBook(request2);
         setState(() {
           isLoading = false;
         });
@@ -88,11 +93,11 @@ class _BookCreatePageState extends State<BookCreatePage> {
             Overlay.of(context),
             const CustomSnackBar.success(
               message:
-              "Nice",
+              "Success!",
               textAlign: TextAlign.left,
             ),
           );
-          Navigator.pop(context);
+          Navigator.pop(context,"s");
         }else{
           showTopSnackBar(
             Overlay.of(context),

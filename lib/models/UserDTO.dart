@@ -1,6 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
+
+import 'CopyCardDTO.dart';
 part 'UserDTO.g.dart';
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class UserDTO {
   String role;
   String roleStr;
@@ -9,6 +11,9 @@ class UserDTO {
 
   bool verified;
   String email;
+  double? debt;
+  CopyCardDTO? copyCardDTO;
+
 
   UserDTO(this.role, this.roleStr, this.fullName, this.username,
       this.verified, this.email);

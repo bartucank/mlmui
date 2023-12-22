@@ -6,6 +6,7 @@ import 'package:mlmui/pages/LibrarianScreens/LibrarianHome.dart';
 import 'package:mlmui/pages/Onboarding/LoginScreen.dart';
 import 'package:mlmui/pages/SplashScreen.dart';
 import 'package:mlmui/pages/UserScreens/BookListForUserScreen.dart';
+import 'package:mlmui/pages/UserScreens/CopyCard.dart';
 import 'package:mlmui/pages/UserScreens/UserHome.dart';
 import 'package:mlmui/pages/LibrarianScreens/UserListScreen.dart';
 import 'package:mlmui/pages/Onboarding/VerifyScreen.dart';
@@ -42,6 +43,7 @@ class MyApp extends StatelessWidget {
         '/booklist': (context) =>  BookListScreen(),
         '/bookcreate': (context) =>  BookCreatePage(),
         '/booklistforuser': (context) => BookListForUserScreen(),
+        '/copycard':(context) => CopyCard()
       },
     );
 

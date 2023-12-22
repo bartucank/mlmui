@@ -610,46 +610,7 @@ class _BookCreatePageState extends State<BookCreatePage> {
                       Icon(Icons.person, color: Color(0xff212435), size: 18),
                 ),
               ),
-              TextField(
-                controller: _dateController,
-                obscureText: false,
-                textAlign: TextAlign.start,
-                maxLines: 1,
-                style: TextStyle(
-                  fontWeight: FontWeight.w400,
-                  fontStyle: FontStyle.normal,
-                  fontSize: 14,
-                  color: Color(0xff000000),
-                ),
-                decoration: InputDecoration(
-                  disabledBorder: UnderlineInputBorder(
-                    borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
-                  ),
-                  enabledBorder: UnderlineInputBorder(
-                    borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
-                  ),
-                  labelText: "Publish Date",
-                  labelStyle: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontStyle: FontStyle.normal,
-                    fontSize: 16,
-                    color: Color(0xff000000),
-                  ),
-                  filled: true,
-                  fillColor: Color(0x00ffffff),
-                  isDense: false,
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                  prefixIcon: Icon(Icons.date_range,
-                      color: Color(0xff212435), size: 18),
-                ),
-              )
+
             ])), // Name, Desc, Publisher, Author, Publish Date
 
         Step(

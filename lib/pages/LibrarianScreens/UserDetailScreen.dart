@@ -121,10 +121,10 @@ class _UserListScreenState extends State<UserListScreen> {
                   });
                   return Text('');
                 } else {
-                  return Text('Error: ${customException.message}');
+                  return Text('');
                 }
               } else {
-                return Text('Error: ${snapshot.error}');
+                return Text('');
               }
             } else {
               List<UserDTO> users = snapshot.data!.userDTOList;

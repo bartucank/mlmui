@@ -146,10 +146,10 @@ class _UserHomeState extends State<UserHome> {
                       });
                       return Text('');
                     } else {
-                      return Text('Error: ${customException.message}');
+                      return Text('');
                     }
                   } else {
-                    return Text('Error: ${snapshot.error}');
+                    return Text('');
                   }
                 } else {
                   final user = snapshot.data;
@@ -191,10 +191,10 @@ class _UserHomeState extends State<UserHome> {
                       });
                       return Text('');
                     } else {
-                      return Text('Error: ${customException.message}');
+                      return Text('');
                     }
                   } else {
-                    return Text('Error: ${snapshot.error}');
+                    return Text('');
                   }
                 } else {
                   final user = snapshot.data;

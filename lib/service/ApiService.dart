@@ -264,7 +264,21 @@ class ApiService {
       print('Error uploading image: $e');
     }
   }
-
+  Future<Map<String, dynamic>> createReceipt(int id) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.post(
+      Uri.parse('${Constants.apiBaseUrl}/api/user/createReceipt?imageId=$id'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+    );
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+    return jsonResponse['data'];
+  }
 }
 
 class CustomException implements Exception {

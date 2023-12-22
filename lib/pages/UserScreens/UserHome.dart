@@ -204,7 +204,7 @@ class _UserHomeState extends State<UserHome> {
                         padding: const EdgeInsets.fromLTRB(30.0,0,0,0),
                         child: Row(
                           children: <Widget>[
-                            if(user!.debt != null)
+                            if(user!.debt != null && user!.debt! > 0)
                               Text(
                                 'Debt:',
                                 style: TextStyle(
@@ -213,7 +213,7 @@ class _UserHomeState extends State<UserHome> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            if(user!.debt != null)
+                            if(user!.debt != null && user!.debt! > 0)
                               Text(
                                 '${user?.debt} ₺',//${user?.dept}
                                 style: TextStyle(
@@ -238,8 +238,9 @@ class _UserHomeState extends State<UserHome> {
                   OutlinedButtons(
                     buttonLabel: 'Copy Card',
                     buttonIcon: Icons.credit_card,
-                    onPressed: (){
-                      Navigator.pushNamed(context, '/copycard');
+                    onPressed: () async {
+                     Object? status = await Navigator.pushNamed(context, '/copycard');
+
                     },
                     color: Colors.black,
                   ),

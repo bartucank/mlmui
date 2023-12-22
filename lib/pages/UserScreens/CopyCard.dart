@@ -1,11 +1,14 @@
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
+import 'package:lazy_data_table_plus/lazy_data_table_plus.dart';
 import 'package:multi_image_picker_view/multi_image_picker_view.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:mlmui/models/BookDTO.dart';
 import '../../components/MenuDrawer.dart';
 import '../../components/OutlinedButtonsCopyCardPage.dart';
+import '../../models/ReceiptHistoryDTO.dart';
+import '../../models/ReceiptHistoryDTOListResponse.dart';
 import '../../models/UserDTO.dart';
 import '../../service/ApiService.dart';
 import '../../components/OutlinedButtons.dart';
@@ -27,6 +30,7 @@ class _CopyCardState extends State<CopyCard> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final _textController = TextEditingController();
   GlobalKey<ArtDialogState> _artDialogKey = GlobalKey<ArtDialogState>();
+  List<ReceiptHistoryDTO> history = [];
    var imgController = MultiImagePickerController(
       maxImages: 1,
       allowedImageTypes: ['png', 'jpg', 'jpeg'],
@@ -42,6 +46,12 @@ class _CopyCardState extends State<CopyCard> {
     userFuture = apiService.getUserDetails();
   }
 
+  void fetchHistory() async {
+    ReceiptHistoryDTOListResponse response = await apiService.getReceiptsofUser();
+    setState(() {
+      history.addAll(response.receiptHistoryDTOList);
+    });
+  }
   Future<void> copyCardShowDialog(BuildContext context) async {
     ArtDialogResponse response = await ArtSweetAlert.show(
         artDialogKey: _artDialogKey,
@@ -144,6 +154,42 @@ class _CopyCardState extends State<CopyCard> {
     }
   }
 
+  Future<void> showReceiptHistoryPopup(BuildContext context) async {
+    ArtDialogResponse response = await ArtSweetAlert.show(
+        artDialogKey: _artDialogKey,
+        context: context,
+        artDialogArgs: ArtDialogArgs(
+          title: "Receipt History",
+          customColumns: [
+            Container(child: Text('sdf'),)
+          ],
+          confirmButtonText: "Close",
+          confirmButtonColor: Color(0xFFD2232A),
+          onConfirm: () async {
+
+          },
+          onDispose: () {
+            _artDialogKey = GlobalKey<ArtDialogState>();
+          },
+        ));
+
+    if (response == null) {
+      return;
+    }
+
+    if (response.isTapConfirmButton) {
+      ArtSweetAlert.show(
+          context: context,
+          artDialogArgs: ArtDialogArgs(customColumns: [
+            Container(
+              margin: EdgeInsets.only(bottom: 12.0),
+              child: Image.network(response.data["image"]),
+            )
+          ]));
+      return;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -204,6 +250,20 @@ class _CopyCardState extends State<CopyCard> {
                     }
                   } else {
                     final user = snapshot.data;
+                    if(user!.copyCardDTO!.nfcCode == null || user!.copyCardDTO!.nfcCode == ""){
+                      WidgetsBinding.instance!.addPostFrameCallback((_) {
+                        showTopSnackBar(
+                          Overlay.of(context),
+                          CustomSnackBar.error(
+                            maxLines:3,
+                            message: "You have not yet obtained a physical card. To use copy card privileges, please contact the library and obtain a physical card.",
+                            textAlign: TextAlign.left,
+                          ),
+                        );
+                        
+                      });
+
+                      }
                     return Container(
                       width: 300,
                       height: 180,
@@ -241,6 +301,13 @@ class _CopyCardState extends State<CopyCard> {
                               fontSize: 16,
                             ),
                           ),
+                          SizedBox(height: 5),
+                          Text(
+                            "Balance: "+user!.copyCardDTO!.balance.toString()+" ₺",
+                            style: TextStyle(
+                              fontSize: 13,
+                            ),
+                          ),
                         ],
                       ),
                     );
@@ -275,7 +342,9 @@ class _CopyCardState extends State<CopyCard> {
                 OutlinedButtonsCopyCardPage(
                   buttonLabel: 'Transaction History',
                   buttonIcon: Icons.timeline,
-                  onPressed: () {},
+                  onPressed: () {
+                    showReceiptHistoryPopup(context);
+                  },
                   color: Colors.black,
                   textColor: Color(0xffd2232a),
                 ),

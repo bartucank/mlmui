@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:mlmui/models/ReceiptHistoryDTOListResponse.dart';
 import 'package:mlmui/models/ShelfDTOListResponse.dart';
 import 'package:mlmui/models/UserDTO.dart';
 import 'package:mlmui/models/UserDTOListResponse.dart';
@@ -34,6 +35,7 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> loginRequest(dynamic body) async {
+    print('${Constants.apiBaseUrl}/api/auth/login');
     final response = await http.post(
         Uri.parse('${Constants.apiBaseUrl}/api/auth/login'),
         headers: {
@@ -191,7 +193,6 @@ class ApiService {
     }
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
 
-    print(response.body);
     return BookCategoryEnumDTOListResponse.fromJson(jsonResponse['data']);
   }
 
@@ -264,6 +265,7 @@ class ApiService {
       print('Error uploading image: $e');
     }
   }
+
   Future<Map<String, dynamic>> createReceipt(int id) async {
     final jwtToken = await getJwtToken();
     final response = await http.post(
@@ -278,6 +280,25 @@ class ApiService {
     }
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
     return jsonResponse['data'];
+  }
+
+
+  Future<ReceiptHistoryDTOListResponse> getReceiptsofUser() async {
+    final jwtToken = await getJwtToken();
+    final response = await http.post(
+      Uri.parse('${Constants.apiBaseUrl}/api/user/getReceiptsofUser'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+    );
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+    return ReceiptHistoryDTOListResponse.fromJson(jsonResponse['data']);
+
   }
 }
 

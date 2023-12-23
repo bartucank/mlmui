@@ -42,12 +42,20 @@ class _BookCreatePageState extends State<BookCreatePage> {
   late Future<OpenLibraryBookDetails> openLibrary;
   List<ShelfDTO> _dropdownItems = [];
   List<BookCategoryEnumDTO> _dropdownItems2 = [];
+  bool isLoading = false;
+
 
   ShelfDTO _selectedValue = new ShelfDTO(-1, "-1");
   BookCategoryEnumDTO _selectedValue2 = new BookCategoryEnumDTO("-1", "-1");
   void saveBook() async {
+    setState(() {
+      isLoading = true;
+    });
     int value = await apiService.uploadImage(controller.images.first);
     if(value == -1){
+      setState(() {
+        isLoading = false;
+      });
       showTopSnackBar(
         Overlay.of(context),
         const CustomSnackBar.info(
@@ -69,31 +77,42 @@ class _BookCreatePageState extends State<BookCreatePage> {
 
 
       };
+      Map<String, dynamic> request2 = {
+
+
+
+      };
       try{
 
-        String result = await apiService.createBook(request);
+        String result = await apiService.createBook(request2);
+        setState(() {
+          isLoading = false;
+        });
         if(result == "S"){
           showTopSnackBar(
             Overlay.of(context),
             const CustomSnackBar.success(
               message:
-              "Nice",
+              "Success!",
               textAlign: TextAlign.left,
             ),
           );
+          Navigator.pop(context,"s");
         }else{
           showTopSnackBar(
             Overlay.of(context),
             const CustomSnackBar.error(
               message:
-              ":((((",
+              "Unexpected error.",
               textAlign: TextAlign.left,
             ),
           );
         }
 
       }catch (e){
-
+        setState(() {
+          isLoading = false;
+        });
         showTopSnackBar(
           Overlay.of(context),
           const CustomSnackBar.error(
@@ -108,7 +127,12 @@ class _BookCreatePageState extends State<BookCreatePage> {
 
   }
   void fetchByIsbn() async {
+
+    FocusScope.of(context).unfocus();
     try {
+      setState(() {
+        isLoading = true;
+      });
       OpenLibraryBookDetails response =
           await apiService.getOpenLibraryBookDetails(_isbnController.text);
       setState(() {
@@ -125,6 +149,8 @@ class _BookCreatePageState extends State<BookCreatePage> {
             ? response.authors!.first.key!
             : "";
         currentStep++;
+
+        isLoading = false;
       });
       showTopSnackBar(
         Overlay.of(context),
@@ -134,8 +160,19 @@ class _BookCreatePageState extends State<BookCreatePage> {
           textAlign: TextAlign.left,
         ),
       );
-      FocusScope.of(context).unfocus();
+
     } catch (e) {
+      showTopSnackBar(
+        Overlay.of(context),
+        const CustomSnackBar.error(
+          message:
+          "Book Details could not fetched. Please enter informations manually.",
+          textAlign: TextAlign.left,
+        ),
+      );
+      setState(() {
+        isLoading = false;
+      });
       print("Error! $e");
     }
   }
@@ -199,78 +236,89 @@ class _BookCreatePageState extends State<BookCreatePage> {
             },
           ),
         ),
-        body: Theme(
-          data: Theme.of(context).copyWith(
-              colorScheme: ColorScheme.light(primary: Color(0xffd2232a))),
-          child: Stepper(
-            physics: ClampingScrollPhysics(),
-            onStepTapped: (step) => setState(() => currentStep = step),
-            type: StepperType.vertical,
-            steps: getsteps(),
-            currentStep: currentStep,
-            onStepContinue: () {
-              final isLastStep = currentStep == getsteps().length - 1;
-              if (isLastStep) {
-                saveBook();
-              } else {
-                setState(() {
-                  currentStep++;
-                });
-              }
-            },
-            onStepCancel: () {
-              final isFirstStep = currentStep == 0;
-              if (isFirstStep) {
-                showAlertDialog(context);
-              } else {
-                setState(() {
-                  currentStep -= 1;
-                });
-              }
-            },
-            controlsBuilder: (BuildContext context, ControlsDetails controls) {
-              return Container(
-                  margin: EdgeInsets.only(top: 1),
-                  child: Row(
-                    children: [
-                      if (currentStep == 0)
-                        Expanded(
-                          child: ElevatedButton(
-                            child: Text("Cancel"),
-                            onPressed: controls.onStepCancel,
+        body: Stack(
+          children: [
+            Theme(
+              data: Theme.of(context).copyWith(
+                  colorScheme: ColorScheme.light(primary: Color(0xffd2232a))),
+              child: Stepper(
+                physics: ClampingScrollPhysics(),
+                onStepTapped: (step) => setState(() => currentStep = step),
+                type: StepperType.vertical,
+                steps: getsteps(),
+                currentStep: currentStep,
+                onStepContinue: () {
+                  final isLastStep = currentStep == getsteps().length - 1;
+                  if (isLastStep) {
+                    saveBook();
+                  } else {
+                    setState(() {
+                      currentStep++;
+                    });
+                  }
+                },
+                onStepCancel: () {
+                  final isFirstStep = currentStep == 0;
+                  if (isFirstStep) {
+                    showAlertDialog(context);
+                  } else {
+                    setState(() {
+                      currentStep -= 1;
+                    });
+                  }
+                },
+                controlsBuilder: (BuildContext context, ControlsDetails controls) {
+                  return Container(
+                      margin: EdgeInsets.only(top: 1),
+                      child: Row(
+                        children: [
+                          if (currentStep == 0)
+                            Expanded(
+                              child: ElevatedButton(
+                                child: Text("Cancel"),
+                                onPressed: controls.onStepCancel,
+                              ),
+                            )
+                          else
+                            Expanded(
+                              child: ElevatedButton(
+                                child: Text("Back"),
+                                onPressed: controls.onStepCancel,
+                              ),
+                            ),
+                          const SizedBox(
+                            width: 12,
                           ),
-                        )
-                      else
-                        Expanded(
-                          child: ElevatedButton(
-                            child: Text("Back"),
-                            onPressed: controls.onStepCancel,
+                          if (currentStep != getsteps().length - 1)
+                            Expanded(
+                              child: ElevatedButton(
+                                child: Text("Continue"),
+                                onPressed: controls.onStepContinue,
+                              ),
+                            )
+                          else
+                            Expanded(
+                              child: ElevatedButton(
+                                child: Text("Save"),
+                                onPressed: controls.onStepContinue,
+                              ),
+                            ),
+                          const SizedBox(
+                            width: 12,
                           ),
-                        ),
-                      const SizedBox(
-                        width: 12,
-                      ),
-                      if (currentStep != getsteps().length - 1)
-                        Expanded(
-                          child: ElevatedButton(
-                            child: Text("Continue"),
-                            onPressed: controls.onStepContinue,
-                          ),
-                        )
-                      else
-                        Expanded(
-                          child: ElevatedButton(
-                            child: Text("Save"),
-                            onPressed: controls.onStepContinue,
-                          ),
-                        ),
-                      const SizedBox(
-                        width: 12,
-                      ),
-                    ],
-                  ));
-            },
-          ),
+                        ],
+                      ));
+                },
+              ),
+            ),
+            if (isLoading)
+              Container(
+                color: Colors.black.withOpacity(0.5),
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+          ],
         ));
   }
 
@@ -562,46 +610,7 @@ class _BookCreatePageState extends State<BookCreatePage> {
                       Icon(Icons.person, color: Color(0xff212435), size: 18),
                 ),
               ),
-              TextField(
-                controller: _dateController,
-                obscureText: false,
-                textAlign: TextAlign.start,
-                maxLines: 1,
-                style: TextStyle(
-                  fontWeight: FontWeight.w400,
-                  fontStyle: FontStyle.normal,
-                  fontSize: 14,
-                  color: Color(0xff000000),
-                ),
-                decoration: InputDecoration(
-                  disabledBorder: UnderlineInputBorder(
-                    borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
-                  ),
-                  enabledBorder: UnderlineInputBorder(
-                    borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
-                  ),
-                  labelText: "Publish Date",
-                  labelStyle: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontStyle: FontStyle.normal,
-                    fontSize: 16,
-                    color: Color(0xff000000),
-                  ),
-                  filled: true,
-                  fillColor: Color(0x00ffffff),
-                  isDense: false,
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                  prefixIcon: Icon(Icons.date_range,
-                      color: Color(0xff212435), size: 18),
-                ),
-              )
+
             ])), // Name, Desc, Publisher, Author, Publish Date
 
         Step(

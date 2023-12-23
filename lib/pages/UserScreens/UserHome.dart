@@ -146,46 +146,91 @@ class _UserHomeState extends State<UserHome> {
                       });
                       return Text('');
                     } else {
-                      return Text('Error: ${customException.message}');
+                      return Text('');
                     }
                   } else {
-                    return Text('Error: ${snapshot.error}');
+                    return Text('');
                   }
                 } else {
                   final user = snapshot.data;
-                  return Text(
-                      'Welcome, ${user?.username}!',
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
+                  return Row(
+                    children: [
+                      Text(
+                          'Welcome, ${user?.username}!',
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                          ),
                       ),
+
+
+
+                    ],
                   );
                 }
               },
             ),
-            Padding(
-                padding: const EdgeInsets.fromLTRB(30.0,0,0,0),
-                child: Row(
-                  children: <Widget>[
-                  Text(
-                    'Debt:',
-                    style: TextStyle(
-                      color: Color(0xffd2232a),
-                      fontSize: 15.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    '-5.25 ₺',//${user?.dept}
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 15.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )
-                ],
-              ),
+            FutureBuilder<UserDTO>(
+              future: userFuture,
+              builder: (context2, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  if (snapshot.error is CustomException) {
+                    CustomException customException = snapshot.error as CustomException;
+                    if (customException.message == 'NEED_LOGIN') {
+                      WidgetsBinding.instance!.addPostFrameCallback((_) {
+                        showTopSnackBar(
+                          Overlay.of(context),
+                          CustomSnackBar.error(
+                            message: "Session experied.",
+                            textAlign: TextAlign.center,
+                          ),
+                        );
+                        Navigator.pushReplacementNamed(context2, '/login');
+                      });
+                      return Text('');
+                    } else {
+                      return Text('');
+                    }
+                  } else {
+                    return Text('');
+                  }
+                } else {
+                  final user = snapshot.data;
+                  return Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(30.0,0,0,0),
+                        child: Row(
+                          children: <Widget>[
+                            if(user!.debt != null && user!.debt! > 0)
+                              Text(
+                                'Debt:',
+                                style: TextStyle(
+                                  color: Color(0xffd2232a),
+                                  fontSize: 15.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            if(user!.debt != null && user!.debt! > 0)
+                              Text(
+                                '${user?.debt} ₺',//${user?.dept}
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 15.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                }
+              },
             ),
+
             Padding(
               padding: const EdgeInsets.fromLTRB(8.0, 8.0, 0, 0),
               child: Row(
@@ -193,8 +238,9 @@ class _UserHomeState extends State<UserHome> {
                   OutlinedButtons(
                     buttonLabel: 'Copy Card',
                     buttonIcon: Icons.credit_card,
-                    onPressed: (){
-                      print('copy card pressed');
+                    onPressed: () async {
+                     Object? status = await Navigator.pushNamed(context, '/copycard');
+
                     },
                     color: Colors.black,
                   ),

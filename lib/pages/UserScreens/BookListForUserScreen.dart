@@ -33,7 +33,7 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
   List<BookDTO> lastList = [];
   List<BookCategoryEnumDTO> _dropdownItems = [];
   BookCategoryEnumDTO? _selectedValue;
-
+  Map<String, dynamic> globalFilterRequest = {};
   void fetchCategories() async {
     try {
       BookCategoryEnumDTOListResponse response =
@@ -48,7 +48,7 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
   @override
   void initState() {
     super.initState();
-    fetchMoreBook();
+    fetchFirstBooks();
     _dropdownItems.insert(0, BookCategoryEnumDTO("ANY", 'ANY'));
     fetchCategories();
     listcontroller.addListener(() {
@@ -56,6 +56,33 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
         fetchMoreBook();
       }
     });
+  }
+  void fetchFirstBooks() async {
+    if (page - 1 > totalPage) {
+      return;
+    }
+    Map<String, dynamic> request = {
+      "page": page + 1,
+      "size": size,
+    };
+      setState(() {
+      globalFilterRequest = request;
+    });
+
+
+    try {
+      lastList.clear();
+      BookDTOListResponse response =
+      await apiService.getBooksBySpecification(request);
+      setState(() {
+        bookDTOList.addAll(response.bookDTOList);
+        lastList.addAll(response.bookDTOList);
+        totalPage = response.totalPage;
+        page++;
+      });
+    } catch (e) {
+      print("Error! $e");
+    }
   }
 
   @override
@@ -77,15 +104,12 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
     if (page - 1 > totalPage) {
       return;
     }
-    Map<String, dynamic> request = {
-      "page": page + 1,
-      "size": size,
-    };
+    globalFilterRequest['page'] = globalFilterRequest['page'] +1;
 
     try {
       lastList.clear();
       BookDTOListResponse response =
-          await apiService.getBooksBySpecification(request);
+      await apiService.getBooksBySpecification(globalFilterRequest);
       setState(() {
         bookDTOList.addAll(response.bookDTOList);
         lastList.addAll(response.bookDTOList);
@@ -111,6 +135,10 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
     });
 
     Map<String, dynamic> request = {"page": page + 1, "size": size};
+
+      setState(() {
+      globalFilterRequest = request;
+    });
 
     BookDTOListResponse response =
         await apiService.getBooksBySpecification(request);
@@ -141,6 +169,10 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
       'page': page + 1,
       'size': size,
     };
+
+      setState(() {
+      globalFilterRequest = request;
+    });
 
     if (_selectedValue != null && _selectedValue?.enumValue != "ANY") {
       // Include category parameter only if a specific category is chosen
@@ -409,7 +441,7 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
             backgroundColor: Color(0xffd2232a),
             type: BottomNavigationBarType.fixed,
             selectedItemColor: Colors.white,
-            unselectedItemColor: Colors.white.withOpacity(0.5),
+            unselectedItemColor: Colors.white,
             //Colors.grey,
             onTap: (index) {
               if (index == 0) {

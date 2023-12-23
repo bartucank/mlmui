@@ -64,97 +64,95 @@ class _SplashScreenState extends State<SplashScreen> {
               alignment: Alignment.bottomCenter,
               child: Padding(
                 padding: EdgeInsets.all(16),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(0, 0, 0, 300),
-                        child: Image.asset(
-                          'assets/images/logo.png',
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0, 0, 0, 300),
+                      child: Image.asset(
+                        'assets/images/logo.png',
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0, 8, 0, 20),
+                      child: Text(
+                        "Welcome to MLM",
+                        textAlign: TextAlign.start,
+                        overflow: TextOverflow.clip,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontStyle: FontStyle.normal,
+                          fontSize: 30,
+                          color: Color(0xffffffff),
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(0, 8, 0, 20),
-                        child: Text(
-                          "Welcome to MLM",
-                          textAlign: TextAlign.start,
-                          overflow: TextOverflow.clip,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontStyle: FontStyle.normal,
-                            fontSize: 30,
-                            color: Color(0xffffffff),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: MaterialButton(
+                              onPressed: () {
+                                Navigator.pushReplacementNamed(
+                                    context, '/register');
+                              },
+                              color: Color(0xffd2232a),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(22.0),
+                              ),
+                              padding: EdgeInsets.all(16),
+                              child: Text(
+                                "Sign Up",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  fontStyle: FontStyle.normal,
+                                ),
+                              ),
+                              textColor: Color(0xffffffff),
+                              height: 50,
+                            ),
                           ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(0, 0, 0, 50),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Expanded(
-                              flex: 1,
-                              child: MaterialButton(
-                                onPressed: () {
-                                  Navigator.pushReplacementNamed(
-                                      context, '/register');
-                                },
-                                color: Color(0xffd2232a),
-                                elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(22.0),
-                                ),
-                                padding: EdgeInsets.all(16),
-                                child: Text(
-                                  "Sign Up",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    fontStyle: FontStyle.normal,
-                                  ),
-                                ),
-                                textColor: Color(0xffffffff),
-                                height: 50,
+                          SizedBox(
+                            width: 16,
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: MaterialButton(
+                              onPressed: () {
+                                Navigator.pushReplacementNamed(
+                                    context, '/login');
+                              },
+                              color: Color(0xffffffff),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(22.0),
                               ),
-                            ),
-                            SizedBox(
-                              width: 16,
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: MaterialButton(
-                                onPressed: () {
-                                  Navigator.pushReplacementNamed(
-                                      context, '/login');
-                                },
-                                color: Color(0xffffffff),
-                                elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(22.0),
+                              padding: EdgeInsets.all(16),
+                              child: Text(
+                                "Sign In",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  fontStyle: FontStyle.normal,
                                 ),
-                                padding: EdgeInsets.all(16),
-                                child: Text(
-                                  "Sign In",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    fontStyle: FontStyle.normal,
-                                  ),
-                                ),
-                                textColor: Color(0xff3a57e8),
-                                height: 50,
                               ),
+                              textColor: Color(0xff3a57e8),
+                              height: 50,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),

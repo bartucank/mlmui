@@ -9,7 +9,9 @@ import 'package:mlmui/pages/UserScreens/BookListForUserScreen.dart';
 import 'package:mlmui/pages/UserScreens/UserHome.dart';
 import 'package:mlmui/pages/LibrarianScreens/UserListScreen.dart';
 import 'package:mlmui/pages/Onboarding/VerifyScreen.dart';
+import 'package:mlmui/pages/UserScreens/BookDetailsPage.dart';
 
+import 'models/BookDTO.dart';
 import 'pages/Onboarding/RegisterScreen.dart';
 
 
@@ -42,6 +44,7 @@ class MyApp extends StatelessWidget {
         '/booklist': (context) =>  BookListScreen(),
         '/bookcreate': (context) =>  BookCreatePage(),
         '/booklistforuser': (context) => BookListForUserScreen(),
+        '/bookdetails': (context) => BookDetailsPage(book: ModalRoute.of(context)?.settings.arguments as BookDTO),
       },
     );
 

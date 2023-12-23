@@ -8,6 +8,7 @@ import '../../service/ApiService.dart';
 import 'package:we_slide/we_slide.dart';
 import 'package:mlmui/models/BookCategoryEnumDTO.dart';
 import 'package:mlmui/models/BookCategoryEnumDTOListResponse.dart';
+import 'BookDetailsPage.dart';
 
 class BookListForUserScreen extends StatefulWidget {
   const BookListForUserScreen({Key? key}) : super(key: key);
@@ -472,7 +473,15 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
                                     backgroundColor: Colors.green,
                                     icon: Icons.format_list_bulleted,
                                     label: 'Details',
-                                    onPressed: (context) => dissmissed(),
+                                    onPressed: (context) {
+                                      dissmissed();
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => BookDetailsPage(book: currentbook),
+                                        ),
+                                      );
+                                    },
                                   )
                                 ],
                               ),

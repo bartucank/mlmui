@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:mlmui/models/ReceiptHistoryDTOListResponse.dart';
 import 'package:mlmui/models/ShelfDTOListResponse.dart';
 import 'package:mlmui/models/UserDTO.dart';
 import 'package:mlmui/models/UserDTOListResponse.dart';
@@ -34,6 +35,7 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> loginRequest(dynamic body) async {
+    print('${Constants.apiBaseUrl}/api/auth/login');
     final response = await http.post(
         Uri.parse('${Constants.apiBaseUrl}/api/auth/login'),
         headers: {
@@ -80,6 +82,8 @@ class ApiService {
   }
   Future<UserDTO> getUserDetails() async {
     final jwtToken = await getJwtToken();
+    print("burada jwt gelecek mii: "+jwtToken!);
+    print("burada jwt gelecek mii: ");
     final response = await http.get(
       Uri.parse('${Constants.apiBaseUrl}/api/user/getUserDetails'),
       headers: {
@@ -189,7 +193,6 @@ class ApiService {
     }
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
 
-    print(response.body);
     return BookCategoryEnumDTOListResponse.fromJson(jsonResponse['data']);
   }
 
@@ -197,6 +200,23 @@ class ApiService {
     final jwtToken = await getJwtToken();
     final response = await http.post(
       Uri.parse('${Constants.apiBaseUrl}/api/admin/book/create'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(body),
+    );
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+    return jsonResponse['data']['statusCode'];
+  }
+
+  Future<String> updateBook(dynamic body) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.put(
+      Uri.parse('${Constants.apiBaseUrl}/api/admin/book/update'),
       headers: {
         'Authorization': 'Bearer $jwtToken',
         'Content-Type': 'application/json',
@@ -263,6 +283,40 @@ class ApiService {
     }
   }
 
+  Future<Map<String, dynamic>> createReceipt(int id) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.post(
+      Uri.parse('${Constants.apiBaseUrl}/api/user/createReceipt?imageId=$id'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+    );
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+    return jsonResponse['data'];
+  }
+
+
+  Future<ReceiptHistoryDTOListResponse> getReceiptsofUser() async {
+    final jwtToken = await getJwtToken();
+    final response = await http.post(
+      Uri.parse('${Constants.apiBaseUrl}/api/user/getReceiptsofUser'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+    );
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+    return ReceiptHistoryDTOListResponse.fromJson(jsonResponse['data']);
+
+  }
 }
 
 class CustomException implements Exception {

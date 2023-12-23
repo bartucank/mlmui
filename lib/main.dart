@@ -6,11 +6,12 @@ import 'package:mlmui/pages/LibrarianScreens/LibrarianHome.dart';
 import 'package:mlmui/pages/Onboarding/LoginScreen.dart';
 import 'package:mlmui/pages/SplashScreen.dart';
 import 'package:mlmui/pages/UserScreens/BookListForUserScreen.dart';
+import 'package:mlmui/pages/UserScreens/CopyCard.dart';
 import 'package:mlmui/pages/UserScreens/UserHome.dart';
 import 'package:mlmui/pages/LibrarianScreens/UserListScreen.dart';
 import 'package:mlmui/pages/Onboarding/VerifyScreen.dart';
 import 'package:mlmui/pages/UserScreens/BookDetailsPage.dart';
-
+import 'package:mlmui/pages/LibrarianScreens/UpdateBookPage.dart';
 import 'models/BookDTO.dart';
 import 'pages/Onboarding/RegisterScreen.dart';
 
@@ -45,6 +46,9 @@ class MyApp extends StatelessWidget {
         '/bookcreate': (context) =>  BookCreatePage(),
         '/booklistforuser': (context) => BookListForUserScreen(),
         '/bookdetails': (context) => BookDetailsPage(book: ModalRoute.of(context)?.settings.arguments as BookDTO),
+        '/updatebookpage' : (context) => UpdateBookPage(),
+        '/copycard':(context) => CopyCard()
+
       },
     );
 

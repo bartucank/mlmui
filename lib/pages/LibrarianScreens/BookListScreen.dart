@@ -455,12 +455,15 @@ class _BookListScreenState extends State<BookListScreen> {
             selectedItemColor: Colors.white,
             unselectedItemColor: Colors.white,
             //Colors.grey,
-            onTap: (index) {
+            onTap: (index) async {
               if (index == 0) {
                 weSlideController.show();
               }
               if(index == 1){
-                Navigator.pushNamed(context, "/bookcreate");
+                Object? a = await Navigator.pushNamed(context, "/bookcreate");
+                if(a == "a"){
+                  refresh();
+                }
               }
             },
           ),

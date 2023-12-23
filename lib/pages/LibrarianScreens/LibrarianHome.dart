@@ -65,10 +65,10 @@ class _LibrarianHomeState extends State<LibrarianHome> {
                   });
                   return Text('');
                 } else {
-                  return Text('Error: ${customException.message}');
+                  return Text('');
                 }
               } else {
-                return Text('Error: ${snapshot.error}');
+                return Text('');
               }
             } else {
               final user = snapshot.data;

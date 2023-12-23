@@ -13,7 +13,11 @@ UserDTO _$UserDTOFromJson(Map<String, dynamic> json) => UserDTO(
       json['username'] as String,
       json['verified'] as bool,
       json['email'] as String,
-    );
+    )
+      ..debt = (json['debt'] as num?)?.toDouble()
+      ..copyCardDTO = json['copyCardDTO'] == null
+          ? null
+          : CopyCardDTO.fromJson(json['copyCardDTO'] as Map<String, dynamic>);
 
 Map<String, dynamic> _$UserDTOToJson(UserDTO instance) => <String, dynamic>{
       'role': instance.role,
@@ -22,4 +26,6 @@ Map<String, dynamic> _$UserDTOToJson(UserDTO instance) => <String, dynamic>{
       'username': instance.username,
       'verified': instance.verified,
       'email': instance.email,
+      'debt': instance.debt,
+      'copyCardDTO': instance.copyCardDTO?.toJson(),
     };

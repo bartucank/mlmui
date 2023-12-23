@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "434942466701",
+    "project_id": "mlm-metu-ncc-app",
+    "storage_bucket": "mlm-metu-ncc-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:434942466701:android:f4bc533b80bb17ead7e0c4",
+        "android_client_info": {
+          "package_name": "com.metuncc.mlmuii"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVnSiZipBvOWTZyL3UQfkcb5M6zFugcgU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

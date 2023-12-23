@@ -210,6 +210,23 @@ class ApiService {
     return jsonResponse['data']['statusCode'];
   }
 
+  Future<String> updateBook(dynamic body) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.put(
+      Uri.parse('${Constants.apiBaseUrl}/api/admin/book/update'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(body),
+    );
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+    return jsonResponse['data']['statusCode'];
+  }
+
   Future<int> uploadImage(ImageFile imageFile) async {
     try {
       final jwtToken = await getJwtToken();

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mlmui/models/BookDTO.dart';
 import 'package:mlmui/models/BookCategoryEnumDTO.dart';
 import 'package:mlmui/models/BookCategoryEnumDTOListResponse.dart';
 import 'package:mlmui/models/ShelfDTO.dart';
@@ -13,11 +14,12 @@ import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import '../../components/MenuDrawerLibrarian.dart';
 import '../../models/OpenLibraryBookDetails.dart';
 import '../../service/ApiService.dart';
+import 'package:mlmui/components/BookCard.dart';
+import 'dart:convert';
+import 'package:mlmui/service/constants.dart';
 
 
-//BookDetailPage lazim ama direkt current book yollayip update etmeye calisilabilir.
-//ama current bookun bilgileri ekranda kalacak sekilde yapman gerekiyor.
-//Bu yüzden bu kodu yeniden organize etmen gerek.
+
 
 class UpdateBookPage extends StatefulWidget {
   const UpdateBookPage({Key? key}) : super(key: key);
@@ -32,24 +34,27 @@ class _UpdateBookPage extends State<UpdateBookPage> {
       allowedImageTypes: ['png', 'jpg', 'jpeg'],
       withData: true,
       withReadStream: true,
-      images: <ImageFile>[] // array of pre/default selected images
+      images: <ImageFile>[], // array of pre/default selected images
   );
   late File selectedImage;
 
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _descController = TextEditingController();
-  TextEditingController _publisherController = TextEditingController();
-  TextEditingController _authorController = TextEditingController();
-  TextEditingController _dateController = TextEditingController();
+  late Uint8List? image;
+
+
+  late TextEditingController _nameController;
+  late TextEditingController _descController;
+  late TextEditingController _publisherController;
+  late TextEditingController _authorController;
+  late TextEditingController _dateController;
   final ApiService apiService = ApiService();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  late Future<OpenLibraryBookDetails> openLibrary;
   List<ShelfDTO> _dropdownItems = [];
   List<BookCategoryEnumDTO> _dropdownItems2 = [];
 
   ShelfDTO _selectedValue = new ShelfDTO(-1, "-1");
   BookCategoryEnumDTO _selectedValue2 = new BookCategoryEnumDTO("-1", "-1");
-  void saveBook() async {
+
+  void updateBook() async {
     int value = await apiService.uploadImage(controller.images.first);
     if(value == -1){
       showTopSnackBar(
@@ -74,7 +79,7 @@ class _UpdateBookPage extends State<UpdateBookPage> {
       };
       try{
 
-        String result = await apiService.createBook(request);
+        String result = await apiService.updateBook(request);
         if(result == "S"){
           showTopSnackBar(
             Overlay.of(context),
@@ -106,9 +111,7 @@ class _UpdateBookPage extends State<UpdateBookPage> {
           ),
         );
       }
-
     }
-
   }
 
   void fetchShelfs() async {
@@ -137,6 +140,9 @@ class _UpdateBookPage extends State<UpdateBookPage> {
     }
   }
 
+  //todo catchSelfbyId() curretn book geldi buldu selectvalueya atandi.
+  //todo catchCategory()
+
   @override
   void initState() {
     super.initState();
@@ -145,23 +151,58 @@ class _UpdateBookPage extends State<UpdateBookPage> {
     fetchCategories();
   }
 
+  Future<String> fetchImageBase64(int imageId) async {
+    return BookCard.getImageBase64(imageId);
+  }
+
+  Future<Uint8List?> fetchImageData(int imageId) async {
+    String base64String = await fetchImageBase64(imageId);
+    return base64Decode(base64String);
+  }
+
+
+
+
+
+
   @override
   void dispose() {
     super.dispose();
   }
 
-  final double _panelMinSize = 70.0;
-  final double _panelMaxSize = 200;
   int currentStep = 0;
 
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)!.settings.arguments as Map;
+    final currentbook = args['currentbook'] as BookDTO;
+
+    _nameController = TextEditingController(text: currentbook.name);
+    _descController = TextEditingController(text: currentbook.description);
+    _publisherController = TextEditingController(text: currentbook.publisher);
+    _authorController = TextEditingController(text: currentbook.author);
+    _dateController = TextEditingController(text: currentbook.publicationDateStr);
+    _selectedValue.id = currentbook.shelfId!;
+    //We can create a function that catch the current information for dropdown items
+    //with using currentbook.shelfId and others but right now this is enough.
+    _selectedValue2.str = currentbook.categoryStr!;
+    //print(_selectedValue.id);
+    //print(_selectedValue2.str);
+
+    image = fetchImageData(currentbook.imageId!) as Uint8List?;
+    final ImageFile imageData = ImageFile(
+      'image',
+      name: 'image',
+      extension: 'png',
+      bytes: image,
+    );
+
     return Scaffold(
         key: _scaffoldKey,
         drawer: const MenuDrawerLibrarian(),
         appBar: AppBar(
           backgroundColor: Color(0xffd2232a),
-          title: Text('Create a book'),
+          title: Text('Update Book Page'),
           centerTitle: false,
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
@@ -182,7 +223,7 @@ class _UpdateBookPage extends State<UpdateBookPage> {
             onStepContinue: () {
               final isLastStep = currentStep == getsteps().length - 1;
               if (isLastStep) {
-                saveBook();
+                updateBook();
               } else {
                 setState(() {
                   currentStep++;
@@ -231,7 +272,7 @@ class _UpdateBookPage extends State<UpdateBookPage> {
                       else
                         Expanded(
                           child: ElevatedButton(
-                            child: Text("Save"),
+                            child: Text("Update"),
                             onPressed: controls.onStepContinue,
                           ),
                         ),
@@ -242,9 +283,9 @@ class _UpdateBookPage extends State<UpdateBookPage> {
                   ));
             },
           ),
-        ));
+        )
+    );
   }
-
   showAlertDialog(BuildContext context) {
     // set up the buttons
     Widget cancelButton = TextButton(
@@ -279,11 +320,10 @@ class _UpdateBookPage extends State<UpdateBookPage> {
       },
     );
   }
-
   List<Step> getsteps() => [
     Step(
-        state: currentStep > 1 ? StepState.complete : StepState.indexed,
-        isActive: currentStep >= 1,
+        state: currentStep > 0 ? StepState.complete : StepState.indexed,
+        isActive: currentStep >= 0,
         title: Text("General Informations"),
         content: Column(children: <Widget>[
           TextField(
@@ -489,8 +529,8 @@ class _UpdateBookPage extends State<UpdateBookPage> {
         ])), // Name, Desc, Publisher, Author, Publish Date
 
     Step(
-        state: currentStep > 2 ? StepState.complete : StepState.indexed,
-        isActive: currentStep >= 2,
+        state: currentStep > 1 ? StepState.complete : StepState.indexed,
+        isActive: currentStep >= 1,
         title: Text("Shelf and Image"),
         content: Column(children: <Widget>[
           DropdownButtonFormField<ShelfDTO>(
@@ -511,7 +551,7 @@ class _UpdateBookPage extends State<UpdateBookPage> {
             }).toList(),
             onChanged: (ShelfDTO? newValue) {
               setState(() {
-                _selectedValue = newValue!;
+                _selectedValue = newValue ?? _selectedValue;
               });
             },
             decoration: InputDecoration(
@@ -624,8 +664,10 @@ class _UpdateBookPage extends State<UpdateBookPage> {
           MultiImagePickerView(
             controller: controller,
             padding: const EdgeInsets.all(10),
-          )
-        ])), // Shelf, Image
+          ),
+        ]
+      )
+    ),
   ];
 }
 

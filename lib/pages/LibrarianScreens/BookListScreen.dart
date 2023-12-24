@@ -65,7 +65,7 @@ class _BookListScreenState extends State<BookListScreen> {
   GlobalKey<ArtDialogState> _artDialogKey = GlobalKey<ArtDialogState>();
   bool isLoading = true;
 
-  Future<String> borrowPopup(BuildContext context,BookDTO book) async {
+  Future<String> borrowPopup(BuildContext context, BookDTO book) async {
     Completer<String> completer = Completer<String>();
     ArtDialogResponse response = await ArtSweetAlert.show(
         artDialogKey: _artDialogKey,
@@ -74,10 +74,11 @@ class _BookListScreenState extends State<BookListScreen> {
           title: "Borrow",
           customColumns: [
             Container(
-              child: Text('Please select a user to borrow "'+book.name!+'"'),
+              child: Text(
+                  'Please select a user to borrow "' + book.name! + '"'),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(0,8,0,8),
+              padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
               child: DropdownButtonFormField<UserNamesDTO>(
                 value: _selectedValueForUsers,
                 onChanged: (value) {
@@ -126,24 +127,25 @@ class _BookListScreenState extends State<BookListScreen> {
           confirmButtonText: "Borrow!",
           confirmButtonColor: Color(0xFFD2232A),
           onConfirm: () async {
-            if(_selectedValueForUsers == null){
-              completer.completeError('error_message');
+            if (_selectedValueForUsers == null) {
+              completer.completeError('Please select a user.');
             }
 
             _artDialogKey.currentState?.showLoader();
-            Map<String, dynamic> result = await apiService.borrowBook(book.id!,_selectedValueForUsers!.id!);
+            Map<String, dynamic> result = await apiService.borrowBook(
+                book.id!, _selectedValueForUsers!.id!);
             _artDialogKey.currentState?.hideLoader();
-            try{
-              if(result['statusCode'].toString().toUpperCase() == "S"){
+            try {
+              if (result['statusCode'].toString().toUpperCase() == "S") {
                 _artDialogKey.currentState?.closeDialog();
                 completer.complete('success');
-              }else {
+              } else {
                 String msg = result['message'].toString();
                 print(msg);
                 completer.completeError(msg);
                 _artDialogKey.currentState?.closeDialog();
               }
-            }catch (e){
+            } catch (e) {
               String msg = result['message'].toString();
               print(msg);
               completer.completeError(msg);
@@ -157,6 +159,51 @@ class _BookListScreenState extends State<BookListScreen> {
 
 
     return completer.future;
+  }
+
+  Future<String> takeBack(BuildContext context, BookDTO book) async {
+
+    Completer<String> completer2 = Completer<String>();
+    ArtDialogResponse response = await ArtSweetAlert.show(
+        barrierDismissible: false,
+        context: context,
+        artDialogArgs: ArtDialogArgs(
+            denyButtonText: "Cancel",
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            confirmButtonText: "Take Back",
+            type: ArtSweetAlertType.warning,
+            onConfirm: () async {
+
+
+              _artDialogKey.currentState?.showLoader();
+              Map<String, dynamic> result = await apiService.takeBackBook(
+                  book.id!);
+              _artDialogKey.currentState?.hideLoader();
+              try {
+                if (result['statusCode'].toString().toUpperCase() == "S") {
+                  _artDialogKey.currentState?.closeDialog();
+                  completer2.complete('success');
+                } else {
+                  String msg = result['message'].toString();
+                  print(msg);
+                  completer2.completeError(msg);
+                  _artDialogKey.currentState?.closeDialog();
+                }
+              } catch (e) {
+                String msg = result['message'].toString();
+                print(msg);
+                completer2.completeError(msg);
+                _artDialogKey.currentState?.closeDialog();
+              }
+            }
+        )
+    );
+
+    return completer2.future;
+
+
+
 
 
   }
@@ -607,7 +654,7 @@ class _BookListScreenState extends State<BookListScreen> {
                 }
                 if (index == 1) {
                   Object? a = await Navigator.pushNamed(context, "/bookcreate");
-                  if (a == "a") {
+                  if (a == "s") {
                     refresh();
                   }
                 }
@@ -633,6 +680,8 @@ class _BookListScreenState extends State<BookListScreen> {
                     itemBuilder: (context2, index) {
                       if (index < bookDTOList.length) {
                         BookDTO currentbook = bookDTOList[index];
+
+                        print("ok:"+currentbook.status!);
                         return Slidable(
                             startActionPane: ActionPane(
                               motion: const StretchMotion(),
@@ -664,45 +713,90 @@ class _BookListScreenState extends State<BookListScreen> {
                             endActionPane: ActionPane(
                               motion: const StretchMotion(),
                               children: [
-                                SlidableAction(
-                                  backgroundColor: Colors.green,
-                                  icon: Icons.send,
-                                  label: 'Borrow',
-                                  onPressed: (context) async {
-                                      borrowPopup(context,currentbook).then((s) {
-                                        print(s);
-                                      if (s != null) {
-                                        if (s == 'success') {
-                                          showTopSnackBar(
-                                            Overlay.of(context2),
-                                            const CustomSnackBar.success(
-                                              message: "Success!",
-                                              textAlign: TextAlign.left,
-                                            ),
-                                          );
-                                        } else {
+                                if(currentbook.status == 'AVAILABLE')
+                                  SlidableAction(
+                                    backgroundColor: Colors.green,
+                                    icon: Icons.send,
+                                    label: 'Borrow',
+                                    onPressed: (context) async {
+                                        borrowPopup(context,currentbook).then((s) {
+                                          print(s);
+                                        if (s != null) {
+                                          if (s == 'success') {
+                                            showTopSnackBar(
+                                              Overlay.of(context2),
+                                              const CustomSnackBar.success(
+                                                message: "Success!",
+                                                textAlign: TextAlign.left,
+                                              ),
+                                            );
+
+                                            refresh();
+                                          } else {
+                                            showTopSnackBar(
+                                              Overlay.of(context2),
+                                              CustomSnackBar.error(
+                                                message: s,
+                                                textAlign: TextAlign.left,
+                                              ),
+                                            );
+                                          }
+                                        }
+                                      }).catchError((e) {
                                           showTopSnackBar(
                                             Overlay.of(context2),
                                             CustomSnackBar.error(
-                                              message: s,
+                                              message: e,
                                               textAlign: TextAlign.left,
                                             ),
                                           );
-                                        }
+                                      });
+
+                                    }
+
+                                  ),
+
+                                if(currentbook.status != 'AVAILABLE')
+                                  SlidableAction(
+                                      backgroundColor: Colors.green,
+                                      icon: Icons.keyboard_return,
+                                      label: 'Take Back',
+                                      onPressed: (context) async {
+                                        takeBack(context,currentbook).then((s) {
+                                          print(s);
+                                          if (s != null) {
+                                            if (s == 'success') {
+                                              showTopSnackBar(
+                                                Overlay.of(context2),
+                                                const CustomSnackBar.success(
+                                                  message: "Success!",
+                                                  textAlign: TextAlign.left,
+                                                ),
+                                              );
+                                              refresh();
+                                            } else {
+                                              showTopSnackBar(
+                                                Overlay.of(context2),
+                                                CustomSnackBar.error(
+                                                  message: s,
+                                                  textAlign: TextAlign.left,
+                                                ),
+                                              );
+                                            }
+                                          }
+                                        }).catchError((e) {
+                                          showTopSnackBar(
+                                            Overlay.of(context2),
+                                            CustomSnackBar.error(
+                                              message: e,
+                                              textAlign: TextAlign.left,
+                                            ),
+                                          );
+                                        });
+
                                       }
-                                    }).catchError((e) {
-                                        showTopSnackBar(
-                                          Overlay.of(context2),
-                                          CustomSnackBar.error(
-                                            message: e,
-                                            textAlign: TextAlign.left,
-                                          ),
-                                        );
-                                    });
 
-                                  }
-
-                                )
+                                  )
                               ],
                             ),
                             child: Container(

@@ -334,6 +334,27 @@ class ApiService {
     }
   }
 
+  Future<Map<String, dynamic>> takeBackBook(int bookid) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.post(
+      Uri.parse(
+          '${Constants.apiBaseUrl}/api/admin/book/takeBackBook?bookId=$bookid'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+    );
+    if (response.statusCode == 401) {
+      throw CustomException("NEED_LOGIN");
+    } else if (response.statusCode == 500) {
+      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      return jsonResponse;
+    } else {
+      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      return jsonResponse['data'];
+    }
+  }
+
   Future<ReceiptHistoryDTOListResponse> getReceiptsofUser() async {
     final jwtToken = await getJwtToken();
     final response = await http.post(

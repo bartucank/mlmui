@@ -9,6 +9,7 @@ import 'package:mlmui/models/BookCategoryEnumDTOListResponse.dart';
 import 'package:mlmui/models/ShelfDTO.dart';
 import 'package:mlmui/models/ShelfDTOListResponse.dart';
 import 'package:multi_image_picker_view/multi_image_picker_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import '../../components/MenuDrawerLibrarian.dart';
@@ -18,9 +19,7 @@ import 'package:mlmui/components/BookCard.dart';
 import 'dart:convert';
 import 'package:mlmui/service/constants.dart';
 
-
-
-
+import 'package:http/http.dart' as http;
 class UpdateBookPage extends StatefulWidget {
   const UpdateBookPage({Key? key}) : super(key: key);
 
@@ -30,83 +29,158 @@ class UpdateBookPage extends StatefulWidget {
 
 class _UpdateBookPage extends State<UpdateBookPage> {
   final controller = MultiImagePickerController(
-      maxImages: 1,
-      allowedImageTypes: ['png', 'jpg', 'jpeg'],
-      withData: true,
-      withReadStream: true,
-      images: <ImageFile>[], // array of pre/default selected images
+    maxImages: 1,
+    allowedImageTypes: ['png', 'jpg', 'jpeg'],
+    withData: true,
+    withReadStream: true,
+    images: <ImageFile>[],
   );
   late File selectedImage;
 
   late Uint8List? image;
 
-
-  late TextEditingController _nameController;
-  late TextEditingController _descController;
-  late TextEditingController _publisherController;
-  late TextEditingController _authorController;
-  late TextEditingController _dateController;
+  late TextEditingController _nameController = TextEditingController();
+  late TextEditingController _descController = TextEditingController();
+  late TextEditingController _publisherController = TextEditingController();
+  late TextEditingController _authorController = TextEditingController();
+  late TextEditingController _dateController = TextEditingController();
   final ApiService apiService = ApiService();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _multiImagePickerKey =
+  GlobalKey<ScaffoldState>();
+
   List<ShelfDTO> _dropdownItems = [];
   List<BookCategoryEnumDTO> _dropdownItems2 = [];
 
   ShelfDTO _selectedValue = new ShelfDTO(-1, "-1");
   BookCategoryEnumDTO _selectedValue2 = new BookCategoryEnumDTO("-1", "-1");
+  late String _base64Image;
+  int defaultImg = 1;
+  int bookId = 1;
+
+  Future<void> _fetchImage(BookDTO currentbook) async {
+    try {
+      String base64Image = await getImageBase64(currentbook.imageId);
+
+      if (base64Image != "1") {
+        setState(() {
+          _base64Image = base64Image;
+        });
+      } else {
+        print("Image not found");
+      }
+    } catch (error) {
+      print("Error fetching image: $error");
+    }
+  }
+  static Future<String> getImageBase64(int? imageId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? base64Image = prefs.getString(imageId.toString());
+
+    if (base64Image != null) {
+      return base64Image;
+    } else {
+      final response = await http.get(Uri.parse('${Constants.apiBaseUrl}/api/user/getImageBase64ById?id=$imageId'));
+
+      if (response.statusCode == 200) {
+        String base64 = base64Encode(response.bodyBytes);
+        prefs.setString(imageId.toString(), base64);
+        return base64;
+      } else {
+        return"1";
+      }
+    }
+  }
 
   void updateBook() async {
-    int value = await apiService.uploadImage(controller.images.first);
-    if(value == -1){
-      showTopSnackBar(
-        Overlay.of(context),
-        const CustomSnackBar.info(
-          message:
-          "Image did not uploaded. Please upload image again. ",
-          textAlign: TextAlign.left,
-        ),
-      );
-    }else{
-      Map<String, dynamic> request = {
-        "shelfId":_selectedValue.id,
-        "imageId":value,
-        "publisher":_publisherController.text,
-        "name":_nameController.text,
-        "description":_descController.text,
-        "author":_authorController.text,
-        "category":_selectedValue2.enumValue
-
-
-      };
-      try{
-
-        String result = await apiService.updateBook(request);
-        if(result == "S"){
-          showTopSnackBar(
-            Overlay.of(context),
-            const CustomSnackBar.success(
-              message:
-              "Nice",
-              textAlign: TextAlign.left,
-            ),
-          );
-        }else{
+    if(controller.images.length>0) {
+      int value = await apiService.uploadImage(controller.images.first);
+      if (value == -1) {
+        showTopSnackBar(
+          Overlay.of(context),
+          const CustomSnackBar.info(
+            message: "Image did not uploaded. Please upload image again. ",
+            textAlign: TextAlign.left,
+          ),
+        );
+      } else {
+        Map<String, dynamic> request = {
+          "id":bookId,
+          "shelfId": _selectedValue.id,
+          "imageId": value,
+          "publisher": _publisherController.text,
+          "name": _nameController.text,
+          "description": _descController.text,
+          "author": _authorController.text,
+          "category": _selectedValue2.enumValue
+        };
+        try {
+          String result = await apiService.updateBook(request);
+          if (result == "S") {
+            showTopSnackBar(
+              Overlay.of(context),
+              const CustomSnackBar.success(
+                message: "Success!",
+                textAlign: TextAlign.left,
+              ),
+            );
+            Navigator.pop(context);
+          } else {
+            showTopSnackBar(
+              Overlay.of(context),
+              const CustomSnackBar.error(
+                message: ":((((",
+                textAlign: TextAlign.left,
+              ),
+            );
+          }
+        } catch (e) {
           showTopSnackBar(
             Overlay.of(context),
             const CustomSnackBar.error(
-              message:
-              ":((((",
+              message: "Unexpected error. Please contact system administrator.",
               textAlign: TextAlign.left,
             ),
           );
         }
+      }
+    }else{
+      Map<String, dynamic> request = {
+        "id":bookId,
+        "shelfId": _selectedValue.id,
+        "imageId": defaultImg,
+        "publisher": _publisherController.text,
+        "name": _nameController.text,
+        "description": _descController.text,
+        "author": _authorController.text,
+        "category": _selectedValue2.enumValue
+      };
+      try {
+        String result = await apiService.updateBook(request);
+        if (result == "S") {
+          showTopSnackBar(
+            Overlay.of(context),
+            const CustomSnackBar.success(
+              message: "Success!",
+              textAlign: TextAlign.left,
+            ),
+          );
 
-      }catch (e){
-
+          Navigator.pop(context);
+        } else {
+          showTopSnackBar(
+            Overlay.of(context),
+            const CustomSnackBar.error(
+              message: ":((((",
+              textAlign: TextAlign.left,
+            ),
+          );
+        }
+      } catch (e) {
         showTopSnackBar(
           Overlay.of(context),
           const CustomSnackBar.error(
-            message:
-            "Unexpected error. Please contact system administrator.",
+            message: "Unexpected error. Please contact system administrator.",
             textAlign: TextAlign.left,
           ),
         );
@@ -117,7 +191,7 @@ class _UpdateBookPage extends State<UpdateBookPage> {
   void fetchShelfs() async {
     try {
       ShelfDTOListResponse response =
-      await apiService.getShelfDTOListResponse();
+          await apiService.getShelfDTOListResponse();
       setState(() {
         _dropdownItems.addAll(response.shelfDTOList);
         _selectedValue = _dropdownItems.first;
@@ -130,7 +204,7 @@ class _UpdateBookPage extends State<UpdateBookPage> {
   void fetchCategories() async {
     try {
       BookCategoryEnumDTOListResponse response =
-      await apiService.getBookCategoryEnumDTOListResponse();
+          await apiService.getBookCategoryEnumDTOListResponse();
       setState(() {
         _dropdownItems2.addAll(response.list);
         _selectedValue2 = _dropdownItems2.first;
@@ -139,7 +213,28 @@ class _UpdateBookPage extends State<UpdateBookPage> {
       print("Error! $e");
     }
   }
+  void setImagePicker(BookDTO currentbook) async{
+    Uint8List? imageData = await fetchImageData(currentbook.imageId!);
+    print("ok1");
+    print(imageData);
+    print("ok2");
+    if (imageData != null) {
+      Stream<List<int>> streamData = Stream.fromIterable([imageData.toList()]);
 
+      final ImageFile imageFile = ImageFile(
+        UniqueKey().toString(),
+        name: 'image',
+        extension: 'png',
+        bytes: imageData,
+        readStream: streamData,
+        path: null
+      );
+      print(imageFile.toString());
+      setState(() {
+        // controller.addImage(imageFile);
+      });
+    }
+  }
   //todo catchSelfbyId() curretn book geldi buldu selectvalueya atandi.
   //todo catchCategory()
 
@@ -150,7 +245,11 @@ class _UpdateBookPage extends State<UpdateBookPage> {
     fetchShelfs();
     fetchCategories();
   }
-
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    fetchBookDetails();
+  }
   Future<String> fetchImageBase64(int imageId) async {
     return BookCard.getImageBase64(imageId);
   }
@@ -160,23 +259,15 @@ class _UpdateBookPage extends State<UpdateBookPage> {
     return base64Decode(base64String);
   }
 
-
-
-
-
-
   @override
   void dispose() {
     super.dispose();
   }
 
   int currentStep = 0;
-
-  @override
-  Widget build(BuildContext context) {
+  void fetchBookDetails() async{
     final args = ModalRoute.of(context)!.settings.arguments as Map;
     final currentbook = args['currentbook'] as BookDTO;
-
     _nameController = TextEditingController(text: currentbook.name);
     _descController = TextEditingController(text: currentbook.description);
     _publisherController = TextEditingController(text: currentbook.publisher);
@@ -189,13 +280,20 @@ class _UpdateBookPage extends State<UpdateBookPage> {
     //print(_selectedValue.id);
     //print(_selectedValue2.str);
 
-    image = fetchImageData(currentbook.imageId!) as Uint8List?;
-    final ImageFile imageData = ImageFile(
-      'image',
-      name: 'image',
-      extension: 'png',
-      bytes: image,
-    );
+
+
+    //  setImagePicker(currentbook); -> plugin bug giderilince yapılacak.
+    setState(() {
+      defaultImg = currentbook.imageId!;
+      bookId = currentbook.id!;
+    });
+    _fetchImage(currentbook);
+  }
+  @override
+  Widget build(BuildContext context) {
+
+
+
 
     return Scaffold(
         key: _scaffoldKey,
@@ -283,9 +381,9 @@ class _UpdateBookPage extends State<UpdateBookPage> {
                   ));
             },
           ),
-        )
-    );
+        ));
   }
+
   showAlertDialog(BuildContext context) {
     // set up the buttons
     Widget cancelButton = TextButton(
@@ -320,355 +418,330 @@ class _UpdateBookPage extends State<UpdateBookPage> {
       },
     );
   }
-  List<Step> getsteps() => [
-    Step(
-        state: currentStep > 0 ? StepState.complete : StepState.indexed,
-        isActive: currentStep >= 0,
-        title: Text("General Informations"),
-        content: Column(children: <Widget>[
-          TextField(
-            controller: _nameController,
-            obscureText: false,
-            textAlign: TextAlign.start,
-            maxLines: 1,
-            style: TextStyle(
-              fontWeight: FontWeight.w400,
-              fontStyle: FontStyle.normal,
-              fontSize: 14,
-              color: Color(0xff000000),
-            ),
-            decoration: InputDecoration(
-              disabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(color: Color(0xff000000), width: 1),
-              ),
-              focusedBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(color: Color(0xff000000), width: 1),
-              ),
-              enabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(color: Color(0xff000000), width: 1),
-              ),
-              labelText: "Name",
-              labelStyle: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontStyle: FontStyle.normal,
-                fontSize: 16,
-                color: Color(0xff000000),
-              ),
-              filled: true,
-              fillColor: Color(0x00ffffff),
-              isDense: false,
-              contentPadding:
-              EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-              prefixIcon:
-              Icon(Icons.book, color: Color(0xff212435), size: 18),
-            ),
-          ),
-          TextField(
-            controller: _descController,
-            obscureText: false,
-            textAlign: TextAlign.start,
-            maxLines: 4,
-            style: TextStyle(
-              fontWeight: FontWeight.w400,
-              fontStyle: FontStyle.normal,
-              fontSize: 14,
-              color: Color(0xff000000),
-            ),
-            decoration: InputDecoration(
-              disabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(color: Color(0xff000000), width: 1),
-              ),
-              focusedBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(color: Color(0xff000000), width: 1),
-              ),
-              enabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(color: Color(0xff000000), width: 1),
-              ),
-              labelText: "Description",
-              labelStyle: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontStyle: FontStyle.normal,
-                fontSize: 16,
-                color: Color(0xff000000),
-              ),
-              filled: true,
-              fillColor: Color(0x00ffffff),
-              isDense: false,
-              contentPadding:
-              EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-              prefixIcon:
-              Icon(Icons.book, color: Color(0xff212435), size: 18),
-            ),
-          ),
-          TextField(
-            controller: _publisherController,
-            obscureText: false,
-            textAlign: TextAlign.start,
-            maxLines: 1,
-            style: TextStyle(
-              fontWeight: FontWeight.w400,
-              fontStyle: FontStyle.normal,
-              fontSize: 14,
-              color: Color(0xff000000),
-            ),
-            decoration: InputDecoration(
-              disabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(color: Color(0xff000000), width: 1),
-              ),
-              focusedBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(color: Color(0xff000000), width: 1),
-              ),
-              enabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(color: Color(0xff000000), width: 1),
-              ),
-              labelText: "Publisher",
-              labelStyle: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontStyle: FontStyle.normal,
-                fontSize: 16,
-                color: Color(0xff000000),
-              ),
-              filled: true,
-              fillColor: Color(0x00ffffff),
-              isDense: false,
-              contentPadding:
-              EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-              prefixIcon:
-              Icon(Icons.publish, color: Color(0xff212435), size: 18),
-            ),
-          ),
-          TextField(
-            controller: _authorController,
-            obscureText: false,
-            textAlign: TextAlign.start,
-            maxLines: 1,
-            style: TextStyle(
-              fontWeight: FontWeight.w400,
-              fontStyle: FontStyle.normal,
-              fontSize: 14,
-              color: Color(0xff000000),
-            ),
-            decoration: InputDecoration(
-              disabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(color: Color(0xff000000), width: 1),
-              ),
-              focusedBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(color: Color(0xff000000), width: 1),
-              ),
-              enabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(color: Color(0xff000000), width: 1),
-              ),
-              labelText: "Author",
-              labelStyle: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontStyle: FontStyle.normal,
-                fontSize: 16,
-                color: Color(0xff000000),
-              ),
-              filled: true,
-              fillColor: Color(0x00ffffff),
-              isDense: false,
-              contentPadding:
-              EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-              prefixIcon:
-              Icon(Icons.person, color: Color(0xff212435), size: 18),
-            ),
-          ),
-          TextField(
-            controller: _dateController,
-            obscureText: false,
-            textAlign: TextAlign.start,
-            maxLines: 1,
-            style: TextStyle(
-              fontWeight: FontWeight.w400,
-              fontStyle: FontStyle.normal,
-              fontSize: 14,
-              color: Color(0xff000000),
-            ),
-            decoration: InputDecoration(
-              disabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(color: Color(0xff000000), width: 1),
-              ),
-              focusedBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(color: Color(0xff000000), width: 1),
-              ),
-              enabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(color: Color(0xff000000), width: 1),
-              ),
-              labelText: "Publish Date",
-              labelStyle: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontStyle: FontStyle.normal,
-                fontSize: 16,
-                color: Color(0xff000000),
-              ),
-              filled: true,
-              fillColor: Color(0x00ffffff),
-              isDense: false,
-              contentPadding:
-              EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-              prefixIcon: Icon(Icons.date_range,
-                  color: Color(0xff212435), size: 18),
-            ),
-          )
-        ])), // Name, Desc, Publisher, Author, Publish Date
 
-    Step(
-        state: currentStep > 1 ? StepState.complete : StepState.indexed,
-        isActive: currentStep >= 1,
-        title: Text("Shelf and Image"),
-        content: Column(children: <Widget>[
-          DropdownButtonFormField<ShelfDTO>(
-            value: _selectedValue,
-            items: _dropdownItems.map((ShelfDTO value) {
-              return DropdownMenuItem<ShelfDTO>(
-                value: value,
-                child: Text(
-                  "ID: ${value.id} -- Floor: ${value.floor} ",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w400,
+  List<Step> getsteps() => [
+        Step(
+            state: currentStep > 0 ? StepState.complete : StepState.indexed,
+            isActive: currentStep >= 0,
+            title: Text("General Informations"),
+            content: Column(children: <Widget>[
+              TextField(
+                controller: _nameController,
+                obscureText: false,
+                textAlign: TextAlign.start,
+                maxLines: 1,
+                style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontStyle: FontStyle.normal,
+                  fontSize: 14,
+                  color: Color(0xff000000),
+                ),
+                decoration: InputDecoration(
+                  disabledBorder: UnderlineInputBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                  ),
+                  enabledBorder: UnderlineInputBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                  ),
+                  labelText: "Name",
+                  labelStyle: TextStyle(
+                    fontWeight: FontWeight.w700,
                     fontStyle: FontStyle.normal,
-                    fontSize: 14,
+                    fontSize: 16,
                     color: Color(0xff000000),
                   ),
+                  filled: true,
+                  fillColor: Color(0x00ffffff),
+                  isDense: false,
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                  prefixIcon:
+                      Icon(Icons.book, color: Color(0xff212435), size: 18),
                 ),
-              );
-            }).toList(),
-            onChanged: (ShelfDTO? newValue) {
-              setState(() {
-                _selectedValue = newValue ?? _selectedValue;
-              });
-            },
-            decoration: InputDecoration(
-              disabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(
+              ),
+              TextField(
+                controller: _descController,
+                obscureText: false,
+                textAlign: TextAlign.start,
+                maxLines: 4,
+                style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontStyle: FontStyle.normal,
+                  fontSize: 14,
                   color: Color(0xff000000),
-                  width: 1,
                 ),
-              ),
-              focusedBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(
-                  color: Color(0xff000000),
-                  width: 1,
-                ),
-              ),
-              enabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(
-                  color: Color(0xff000000),
-                  width: 1,
-                ),
-              ),
-              labelText: "Please select a shelf",
-              labelStyle: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontStyle: FontStyle.normal,
-                fontSize: 16,
-                color: Color(0xff000000),
-              ),
-              filled: true,
-              fillColor: Color(0x00ffffff),
-              isDense: false,
-              contentPadding: EdgeInsets.symmetric(
-                vertical: 8,
-                horizontal: 12,
-              ),
-              prefixIcon: Icon(
-                Icons.arrow_drop_down,
-                color: Color(0xff212435),
-                size: 18,
-              ),
-            ),
-          ),
-          DropdownButtonFormField<BookCategoryEnumDTO>(
-            value: _selectedValue2,
-            items: _dropdownItems2.map((BookCategoryEnumDTO value) {
-              return DropdownMenuItem<BookCategoryEnumDTO>(
-                value: value,
-                child: Text(
-                  "${value.str} ",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w400,
+                decoration: InputDecoration(
+                  disabledBorder: UnderlineInputBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                  ),
+                  enabledBorder: UnderlineInputBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                  ),
+                  labelText: "Description",
+                  labelStyle: TextStyle(
+                    fontWeight: FontWeight.w700,
                     fontStyle: FontStyle.normal,
-                    fontSize: 14,
+                    fontSize: 16,
                     color: Color(0xff000000),
                   ),
+                  filled: true,
+                  fillColor: Color(0x00ffffff),
+                  isDense: false,
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                  prefixIcon:
+                      Icon(Icons.book, color: Color(0xff212435), size: 18),
                 ),
-              );
-            }).toList(),
-            onChanged: (BookCategoryEnumDTO? newValue) {
-              setState(() {
-                _selectedValue2 = newValue!;
-              });
-            },
-            decoration: InputDecoration(
-              disabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(
+              ),
+              TextField(
+                controller: _publisherController,
+                obscureText: false,
+                textAlign: TextAlign.start,
+                maxLines: 1,
+                style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontStyle: FontStyle.normal,
+                  fontSize: 14,
                   color: Color(0xff000000),
-                  width: 1,
+                ),
+                decoration: InputDecoration(
+                  disabledBorder: UnderlineInputBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                  ),
+                  enabledBorder: UnderlineInputBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                  ),
+                  labelText: "Publisher",
+                  labelStyle: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontStyle: FontStyle.normal,
+                    fontSize: 16,
+                    color: Color(0xff000000),
+                  ),
+                  filled: true,
+                  fillColor: Color(0x00ffffff),
+                  isDense: false,
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                  prefixIcon:
+                      Icon(Icons.publish, color: Color(0xff212435), size: 18),
                 ),
               ),
-              focusedBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(
+              TextField(
+                controller: _authorController,
+                obscureText: false,
+                textAlign: TextAlign.start,
+                maxLines: 1,
+                style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontStyle: FontStyle.normal,
+                  fontSize: 14,
                   color: Color(0xff000000),
-                  width: 1,
+                ),
+                decoration: InputDecoration(
+                  disabledBorder: UnderlineInputBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                  ),
+                  enabledBorder: UnderlineInputBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                  ),
+                  labelText: "Author",
+                  labelStyle: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontStyle: FontStyle.normal,
+                    fontSize: 16,
+                    color: Color(0xff000000),
+                  ),
+                  filled: true,
+                  fillColor: Color(0x00ffffff),
+                  isDense: false,
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                  prefixIcon:
+                      Icon(Icons.person, color: Color(0xff212435), size: 18),
                 ),
               ),
-              enabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(
-                  color: Color(0xff000000),
-                  width: 1,
+
+            ])), // Name, Desc, Publisher, Author, Publish Date
+
+        Step(
+            state: currentStep > 2 ? StepState.complete : StepState.indexed,
+            isActive: currentStep >= 2,
+            title: Text("Shelf and Category"),
+            content: Column(children: <Widget>[
+              DropdownButtonFormField<ShelfDTO>(
+                value: _selectedValue,
+                items: _dropdownItems.map((ShelfDTO value) {
+                  return DropdownMenuItem<ShelfDTO>(
+                    value: value,
+                    child: Text(
+                      "ID: ${value.id} -- Floor: ${value.floor} ",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontStyle: FontStyle.normal,
+                        fontSize: 14,
+                        color: Color(0xff000000),
+                      ),
+                    ),
+                  );
+                }).toList(),
+                onChanged: (ShelfDTO? newValue) {
+                  setState(() {
+                    _selectedValue = newValue ?? _selectedValue;
+                  });
+                },
+                decoration: InputDecoration(
+                  disabledBorder: UnderlineInputBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                    borderSide: BorderSide(
+                      color: Color(0xff000000),
+                      width: 1,
+                    ),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                    borderSide: BorderSide(
+                      color: Color(0xff000000),
+                      width: 1,
+                    ),
+                  ),
+                  enabledBorder: UnderlineInputBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                    borderSide: BorderSide(
+                      color: Color(0xff000000),
+                      width: 1,
+                    ),
+                  ),
+                  labelText: "Please select a shelf",
+                  labelStyle: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontStyle: FontStyle.normal,
+                    fontSize: 16,
+                    color: Color(0xff000000),
+                  ),
+                  filled: true,
+                  fillColor: Color(0x00ffffff),
+                  isDense: false,
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 12,
+                  ),
+                  prefixIcon: Icon(
+                    Icons.arrow_drop_down,
+                    color: Color(0xff212435),
+                    size: 18,
+                  ),
                 ),
               ),
-              labelText: "Please select a category",
-              labelStyle: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontStyle: FontStyle.normal,
-                fontSize: 16,
-                color: Color(0xff000000),
+              DropdownButtonFormField<BookCategoryEnumDTO>(
+                value: _selectedValue2,
+                items: _dropdownItems2.map((BookCategoryEnumDTO value) {
+                  return DropdownMenuItem<BookCategoryEnumDTO>(
+                    value: value,
+                    child: Text(
+                      "${value.str} ",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontStyle: FontStyle.normal,
+                        fontSize: 14,
+                        color: Color(0xff000000),
+                      ),
+                    ),
+                  );
+                }).toList(),
+                onChanged: (BookCategoryEnumDTO? newValue) {
+                  setState(() {
+                    _selectedValue2 = newValue!;
+                  });
+                },
+                decoration: InputDecoration(
+                  disabledBorder: UnderlineInputBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                    borderSide: BorderSide(
+                      color: Color(0xff000000),
+                      width: 1,
+                    ),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                    borderSide: BorderSide(
+                      color: Color(0xff000000),
+                      width: 1,
+                    ),
+                  ),
+                  enabledBorder: UnderlineInputBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                    borderSide: BorderSide(
+                      color: Color(0xff000000),
+                      width: 1,
+                    ),
+                  ),
+                  labelText: "Please select a category",
+                  labelStyle: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontStyle: FontStyle.normal,
+                    fontSize: 16,
+                    color: Color(0xff000000),
+                  ),
+                  filled: true,
+                  fillColor: Color(0x00ffffff),
+                  isDense: false,
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 12,
+                  ),
+                  prefixIcon: Icon(
+                    Icons.arrow_drop_down,
+                    color: Color(0xff212435),
+                    size: 18,
+                  ),
+                ),
               ),
-              filled: true,
-              fillColor: Color(0x00ffffff),
-              isDense: false,
-              contentPadding: EdgeInsets.symmetric(
-                vertical: 8,
-                horizontal: 12,
+
+            ])),
+        Step(
+            state: currentStep > 1 ? StepState.complete : StepState.indexed,
+            isActive: currentStep >= 1,
+            title: Text("Image"),
+            content: Column(children: <Widget>[
+              Text("If you want to change image, please add new one. If not, do not upload new image."),
+              Image.memory(
+                base64Decode(_base64Image),
+                width: 150,
+                height: 150,
+                fit: BoxFit.cover,
               ),
-              prefixIcon: Icon(
-                Icons.arrow_drop_down,
-                color: Color(0xff212435),
-                size: 18,
+              MultiImagePickerView(
+                controller: controller,
+                padding: const EdgeInsets.all(10),
               ),
-            ),
-          ),
-          MultiImagePickerView(
-            controller: controller,
-            padding: const EdgeInsets.all(10),
-          ),
-        ]
-      )
-    ),
-  ];
+
+            ])),
+      ];
 }
 
 void dissmissed() {}

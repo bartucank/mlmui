@@ -250,67 +250,86 @@ class _CopyCardState extends State<CopyCard> {
                     }
                   } else {
                     final user = snapshot.data;
-                    if(user!.copyCardDTO!.nfcCode == null || user!.copyCardDTO!.nfcCode == ""){
+                    if(user != null && user!.copyCardDTO != null ){
+                      if(user!.copyCardDTO!.nfcCode == null || user!.copyCardDTO!.nfcCode == ""){
+                        WidgetsBinding.instance!.addPostFrameCallback((_) {
+                          showTopSnackBar(
+                            Overlay.of(context),
+                            CustomSnackBar.error(
+                              maxLines:3,
+                              message: "You have not yet obtained a physical card. To use copy card privileges, please contact the library and obtain a physical card.",
+                              textAlign: TextAlign.left,
+                            ),
+                          );
+
+                        });
+                    }
+
+
+                      }else{
                       WidgetsBinding.instance!.addPostFrameCallback((_) {
                         showTopSnackBar(
                           Overlay.of(context),
                           CustomSnackBar.error(
                             maxLines:3,
-                            message: "You have not yet obtained a physical card. To use copy card privileges, please contact the library and obtain a physical card.",
+                            message: "We cannot fetch your copy card informations. Please contact administrator. ",
                             textAlign: TextAlign.left,
                           ),
                         );
-                        
-                      });
 
-                      }
-                    return Container(
-                      width: 300,
-                      height: 180,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        color: Colors.white,
-                        border: Border.all(
-                          color: Colors.black,
-                          width: 2,
+                      });
+                    }
+                    if(user != null && user!.copyCardDTO != null ){
+                      return Container(
+                        width: 300,
+                        height: 180,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: Colors.white,
+                          border: Border.all(
+                            color: Colors.black,
+                            width: 2,
+                          ),
                         ),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Image.asset('assets/images/loog_large.png',
-                                width: MediaQuery.of(context).size.width,
-                                fit: BoxFit.cover),
-                          ),
-                          SizedBox(height: 10),
-                          Text(
-                            'Copy Card / Kopikart',
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Image.asset('assets/images/loog_large.png',
+                                  width: MediaQuery.of(context).size.width,
+                                  fit: BoxFit.cover),
                             ),
-                          ),
-                          SizedBox(height: 10),
-                          Text(
-                            user!.fullName.toUpperCase() +
-                                " / " +
-                                user!.username,
-                            style: TextStyle(
-                              fontSize: 16,
+                            SizedBox(height: 10),
+                            Text(
+                              'Copy Card / Kopikart',
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          SizedBox(height: 5),
-                          Text(
-                            "Balance: "+user!.copyCardDTO!.balance.toString()+" ₺",
-                            style: TextStyle(
-                              fontSize: 13,
+                            SizedBox(height: 10),
+                            Text(
+                              user!.fullName.toUpperCase() +
+                                  " / " +
+                                  user!.username,
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    );
+                            SizedBox(height: 5),
+                            Text(
+                              "Balance: "+user!.copyCardDTO!.balance.toString()+" ₺",
+                              style: TextStyle(
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                    return Text("");
+
                   }
                 },
               ),

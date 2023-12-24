@@ -36,13 +36,14 @@ class BookCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("ok");
     return FutureBuilder<String>(
       future: getImageBase64(book.imageId!),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
         } else if (snapshot.hasError) {
-          return Text('');
+          return CircularProgressIndicator();
         } else {
           String base64Image = snapshot.data!;
           return ListTile(

@@ -75,8 +75,22 @@ class _SplashScreenState extends State<SplashScreen> {
                         'assets/images/logo.png',
                       ),
                     ),
+
+                  ],
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
                     Padding(
-                      padding: EdgeInsets.fromLTRB(0, 8, 0, 20),
+                      padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.height-170, 0, 20),
                       child: Text(
                         "Welcome to MLM",
                         textAlign: TextAlign.start,
@@ -152,6 +166,7 @@ class _SplashScreenState extends State<SplashScreen> {
                         ],
                       ),
                     ),
+
                   ],
                 ),
               ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
+import '../../models/UserDTO.dart';
 import '../../service/ApiService.dart';
 import '../../service/CacheManager.dart';
 
@@ -15,7 +16,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
-
+  late Future<UserDTO> userFuture;
   final ApiService apiService = ApiService();
   Future<void> _login() async {
     FocusScope.of(context).unfocus();
@@ -35,8 +36,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 }
               else
                 {
-                  Navigator.pushReplacementNamed(
-                      context, '/splash')
+                  // Navigator.pushReplacementNamed(
+                  //     context, '/splash')
+                  fetchDetails()
                 }
             }
           else if (value['error'] == "Unauthorized")
@@ -61,7 +63,19 @@ class _LoginScreenState extends State<LoginScreen> {
             }
         });
   }
+  void fetchDetails() async{
+    userFuture = apiService.getUserDetails();
+    userFuture.then((user) {
+      CacheManager.saveUserDTOToCache(user);
+      if(user.role=='USER'){
+        Navigator.pushReplacementNamed(context, '/userHome');
+      }else{
+        Navigator.pushReplacementNamed(context, '/libHome');
+      }
+    }).catchError((error) {
 
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

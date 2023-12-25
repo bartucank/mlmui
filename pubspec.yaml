@@ -48,6 +48,7 @@ dependencies:
   dio: ^5.4.0
   art_sweetalert: ^0.0.5
   lazy_data_table_plus: ^1.0.0
+  flutter_web_frame: ^1.0.0
 
 dev_dependencies:
   flutter_test:

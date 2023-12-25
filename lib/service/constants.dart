@@ -1,5 +1,5 @@
 class Constants {
-  static const String apiBaseUrl = "http://185.254.238.69";
+  static const String apiBaseUrl = "http://eew.com.tr/srv";
   // static const String apiBaseUrl = "https://2f2b-78-135-49-15.ngrok-free.app";
 
 

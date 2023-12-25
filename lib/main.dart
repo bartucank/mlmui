@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_web_frame/flutter_web_frame.dart';
 import 'package:mlmui/pages/LibrarianScreens/BookCreatePage.dart';
 import 'package:mlmui/pages/LibrarianScreens/BookListScreen.dart';
 import 'package:mlmui/pages/LibrarianScreens/LibListScreen.dart';
@@ -26,30 +28,37 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'MLM',
-      theme: ThemeData(
-        primarySwatch: Colors.red,
-      ),
-      home:  SplashScreen(),
-      routes: {
-        '/splash': (context) => SplashScreen(),
-        '/register': (context) =>  RegisterScreen(),
-        '/login': (context) =>  LoginScreen(),
-        '/verify': (context) =>  VerifyScreen(),
-        '/libHome': (context) =>  LibrarianHome(),
-        '/userHome': (context) =>  UserHome(),
-        '/userlist': (context) =>  UserListScreen(),
-        '/liblist': (context) =>  LibListScreen(),
-        '/booklist': (context) =>  BookListScreen(),
-        '/bookcreate': (context) =>  BookCreatePage(),
-        '/booklistforuser': (context) => BookListForUserScreen(),
-        '/bookdetails': (context) => BookDetailsPage(book: ModalRoute.of(context)?.settings.arguments as BookDTO),
-        '/updatebookpage' : (context) => UpdateBookPage(),
-        '/copycard':(context) => CopyCard()
+    return FlutterWebFrame(
+        builder: (context){
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'MLM',
+            theme: ThemeData(
+              primarySwatch: Colors.red,
+            ),
+            home:  SplashScreen(),
+            routes: {
+              '/splash': (context) => SplashScreen(),
+              '/register': (context) =>  RegisterScreen(),
+              '/login': (context) =>  LoginScreen(),
+              '/verify': (context) =>  VerifyScreen(),
+              '/libHome': (context) =>  LibrarianHome(),
+              '/userHome': (context) =>  UserHome(),
+              '/userlist': (context) =>  UserListScreen(),
+              '/liblist': (context) =>  LibListScreen(),
+              '/booklist': (context) =>  BookListScreen(),
+              '/bookcreate': (context) =>  BookCreatePage(),
+              '/booklistforuser': (context) => BookListForUserScreen(),
+              '/bookdetails': (context) => BookDetailsPage(book: ModalRoute.of(context)?.settings.arguments as BookDTO),
+              '/updatebookpage' : (context) => UpdateBookPage(),
+              '/copycard':(context) => CopyCard()
 
-      },
+            },
+          );
+        },
+      maximumSize: Size(675.0,MediaQuery.of(context).size.height),
+      enabled: kIsWeb,
+      backgroundColor: Colors.grey,
     );
 
   }

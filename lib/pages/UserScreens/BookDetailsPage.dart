@@ -11,6 +11,7 @@ import '../../models/ShelfDTO.dart';
 import 'package:http/http.dart' as http;
 
 import '../../service/constants.dart';
+
 class BookDetailsPage extends StatefulWidget {
   final BookDTO book;
 
@@ -30,6 +31,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
     super.initState();
     _fetchImage();
   }
+
   Future<void> _fetchImage() async {
     try {
       String base64Image = await getImageBase64(widget.book.imageId);
@@ -45,6 +47,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
       print("Error fetching image: $error");
     }
   }
+
   static Future<String> getImageBase64(int? imageId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? base64Image = prefs.getString(imageId.toString());
@@ -52,19 +55,18 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
     if (base64Image != null) {
       return base64Image;
     } else {
-      final response = await http.get(Uri.parse('${Constants.apiBaseUrl}/api/user/getImageBase64ById?id=$imageId'));
+      final response = await http.get(Uri.parse(
+          '${Constants.apiBaseUrl}/api/user/getImageBase64ById?id=$imageId'));
 
       if (response.statusCode == 200) {
         String base64 = base64Encode(response.bodyBytes);
         prefs.setString(imageId.toString(), base64);
         return base64;
       } else {
-        return"1";
+        return "1";
       }
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -84,118 +86,128 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
         padding: const EdgeInsets.all(0),
         child: Stack(
           children: <Widget>[
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                height: MediaQuery.of(context).size.width / 2.5,
-                color: Color(0xffd2232a),
-              ),
+            Container(
+              height: MediaQuery.of(context).size.height / 4.5,
+              color: Color(0xffd2232a),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(10.0),
-                        child: Image.memory(
-                          base64Decode(_base64Image),
-                          width: 150,
-                          height: 200,
-                          fit: BoxFit.fill,
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(10,5,0,0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: Image.memory(
+                            base64Decode(_base64Image),
+                            width: 150,
+                            height: 200,
+                            fit: BoxFit.fill,
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              (widget.book.name!.length<20?widget.book.name:widget.book.name!.substring(0,17)+"...") ?? 'N/A',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            // Author
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(0,6,0,0),
-                              child: Text(
-                                'by ${(widget.book.author!.length<20?widget.book.author:widget.book.author!.substring(0,17)+"...") ?? 'N/A'}',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                            // Publisher
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(0,6,0,0),
-                              child: Text(
-                                (widget.book.publisher!.length<20?widget.book.publisher:widget.book.publisher!.substring(0,17)+"...") ?? 'N/A',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 6, 0, 0),
-                              child: Text(
-                                (widget.book.category!.length<20?widget.book.category:widget.book.category!.substring(0,17)+"...") ?? 'N/A',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(0,6,0,0),
-                              child: ElevatedButton(
-                                onPressed: () {},
-                                child: Text('BAS BANA'),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 16),
-                  Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: 16),
-                            Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                        SizedBox(width: 16),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0,10,0,0),
+                          child: Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  'Description of ${widget.book.name ?? 'N/A'}',
+                                  (widget.book.name!.length < 22
+                                          ? widget.book.name
+                                          : widget.book.name!.substring(0, 22) +
+                                              "...") ??
+                                      'N/A',
                                   style: TextStyle(
                                     fontSize: 20,
+                                    color: Colors.white,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                              ]
+                                // Author
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(0, 6, 0, 0),
+                                  child: Text(
+                                    'by ${(widget.book.author!.length < 20 ? widget.book.author : widget.book.author!.substring(0, 17) + "...") ?? 'N/A'}',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                                // Publisher
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(0, 6, 0, 0),
+                                  child: Text(
+                                    (widget.book.publisher!.length < 20
+                                            ? widget.book.publisher
+                                            : widget.book.publisher!
+                                                    .substring(0, 17) +
+                                                "...") ??
+                                        'N/A',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(0, 6, 0, 0),
+                                  child: Text(
+                                    (widget.book.category!.length < 20
+                                            ? widget.book.category
+                                            : widget.book.category!
+                                                    .substring(0, 17) +
+                                                "...") ??
+                                        'N/A',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {},
+                                  child: Text('BAS BANA'),
+                                )
+                              ],
                             ),
-                            SizedBox(height: 20),
-                            Text(
-                              widget.book.description ?? 'N/A',
-                              style: TextStyle(
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 16),
+                        Text(
+
+                          'Description ' + (widget.book.name! != null ? 'of '+widget.book.name! : '') ,
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        Text(
+                          widget.book.description ?? 'N/A',
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -203,36 +215,6 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
       ),
     );
   }
-
-
-
-
-
-
-
-
-
-
 }
 
-class Book {
-  final String name;
-  final String author;
-  final String description;
-  final String publisher;
-  final String isbn;
-  final String publishDate;
-  final ShelfDTO shelf;
-  final BookCategoryEnumDTO category;
 
-  Book({
-    required this.name,
-    required this.author,
-    required this.description,
-    required this.publisher,
-    required this.isbn,
-    required this.publishDate,
-    required this.shelf,
-    required this.category,
-  });
-}

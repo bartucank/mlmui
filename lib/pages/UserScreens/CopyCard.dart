@@ -256,7 +256,7 @@ class _CopyCardState extends State<CopyCard> {
                           showTopSnackBar(
                             Overlay.of(context),
                             CustomSnackBar.error(
-                              maxLines:3,
+                              maxLines:5,
                               message: "You have not yet obtained a physical card. To use copy card privileges, please contact the library and obtain a physical card.",
                               textAlign: TextAlign.left,
                             ),

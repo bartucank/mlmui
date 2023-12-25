@@ -25,7 +25,7 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
   WeSlideController weSlideController = WeSlideController();
   final ApiService apiService = ApiService();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
+  bool isLoading = false;
   int page = -1;
   int size = 7;
   int totalPage = 1000;
@@ -148,6 +148,7 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
       lastList.addAll(response.bookDTOList);
       totalPage = response.totalPage;
       page++;
+      isLoading = false;
     });
   }
 
@@ -449,7 +450,12 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
                 weSlideController.show();
               }
               if(index == 1){
-                clear();
+                if(!isLoading){
+                  setState(() {
+                    isLoading = true;
+                  });
+                  clear();
+                }
               }
             },
           ),
@@ -475,12 +481,12 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
                                     label: 'Details',
                                     onPressed: (context) {
                                       dissmissed();
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => BookDetailsPage(book: currentbook),
-                                        ),
-                                      );
+                                      // Navigator.push(
+                                      //   context,
+                                      //   MaterialPageRoute(
+                                      //     builder: (context) => BookDetailsPage(book: currentbook),
+                                      //   ),
+                                      // );
                                     },
                                   )
                                 ],

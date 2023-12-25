@@ -81,47 +81,121 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
+        padding: const EdgeInsets.all(0),
+        child: Stack(
           children: <Widget>[
-            Image.memory(
-              base64Decode(_base64Image),
-              width: 150,
-              height: 150,
-              fit: BoxFit.cover,
-            ),
-            SizedBox(height: 16),
-            TextField(
-              controller: TextEditingController(text: widget.book.name),
-              readOnly: true,
-              decoration: InputDecoration(
-                labelText: "Name",
-                prefixIcon: Icon(Icons.book, color: Color(0xff212435), size: 18),
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                height: MediaQuery.of(context).size.width / 2.5,
+                color: Color(0xffd2232a),
               ),
             ),
-            TextField(
-              controller: TextEditingController(text: widget.book.description),
-              readOnly: true,
-              maxLines: 4,
-              decoration: InputDecoration(
-                labelText: "Description",
-                prefixIcon: Icon(Icons.book, color: Color(0xff212435), size: 18),
-              ),
-            ),
-            TextField(
-              controller: TextEditingController(text: widget.book.publisher),
-              readOnly: true,
-              decoration: InputDecoration(
-                labelText: "Publisher",
-                prefixIcon: Icon(Icons.publish, color: Color(0xff212435), size: 18),
-              ),
-            ),
-            TextField(
-              controller: TextEditingController(text: widget.book.author),
-              readOnly: true,
-              decoration: InputDecoration(
-                labelText: "Author",
-                prefixIcon: Icon(Icons.person, color: Color(0xff212435), size: 18),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: Image.memory(
+                          base64Decode(_base64Image),
+                          width: 150,
+                          height: 200,
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                      SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              (widget.book.name!.length<20?widget.book.name:widget.book.name!.substring(0,17)+"...") ?? 'N/A',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            // Author
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(0,6,0,0),
+                              child: Text(
+                                'by ${(widget.book.author!.length<20?widget.book.author:widget.book.author!.substring(0,17)+"...") ?? 'N/A'}',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                            // Publisher
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(0,6,0,0),
+                              child: Text(
+                                (widget.book.publisher!.length<20?widget.book.publisher:widget.book.publisher!.substring(0,17)+"...") ?? 'N/A',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 6, 0, 0),
+                              child: Text(
+                                (widget.book.category!.length<20?widget.book.category:widget.book.category!.substring(0,17)+"...") ?? 'N/A',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(0,6,0,0),
+                              child: ElevatedButton(
+                                onPressed: () {},
+                                child: Text('BAS BANA'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 16),
+                  Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: 16),
+                            Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Description of ${widget.book.name ?? 'N/A'}',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ]
+                            ),
+                            SizedBox(height: 20),
+                            Text(
+                              widget.book.description ?? 'N/A',
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
               ),
             ),
           ],
@@ -129,6 +203,16 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
       ),
     );
   }
+
+
+
+
+
+
+
+
+
+
 }
 
 class Book {

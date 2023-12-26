@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_frame/flutter_web_frame.dart';
@@ -9,6 +11,7 @@ import 'package:mlmui/pages/Onboarding/LoginScreen.dart';
 import 'package:mlmui/pages/SplashScreen.dart';
 import 'package:mlmui/pages/UserScreens/BookListForUserScreen.dart';
 import 'package:mlmui/pages/UserScreens/CopyCard.dart';
+import 'package:mlmui/pages/UserScreens/Queue.dart';
 import 'package:mlmui/pages/UserScreens/UserHome.dart';
 import 'package:mlmui/pages/LibrarianScreens/UserListScreen.dart';
 import 'package:mlmui/pages/Onboarding/VerifyScreen.dart';
@@ -51,7 +54,8 @@ class MyApp extends StatelessWidget {
               '/booklistforuser': (context) => BookListForUserScreen(),
               '/bookdetails': (context) => BookDetailsPage(book: ModalRoute.of(context)?.settings.arguments as BookDTO),
               '/updatebookpage' : (context) => UpdateBookPage(),
-              '/copycard':(context) => CopyCard()
+              '/copycard':(context) => CopyCard(),
+              '/queueuser':(context) => QueueUser(book: ModalRoute.of(context)?.settings.arguments as BookDTO)
 
             },
           );

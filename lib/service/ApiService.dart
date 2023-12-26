@@ -310,7 +310,42 @@ class ApiService {
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
     return jsonResponse['data'];
   }
-
+  Future<Map<String, dynamic>> getStatusOfBook(int bookId) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.get(
+      Uri.parse('${Constants.apiBaseUrl}/api/user/getQueueStatusBasedOnBook?id=$bookId'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+    );
+    if (response.statusCode == 401) {
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+    return jsonResponse['data'];
+  }
+  Future<Map<String, dynamic>> enqueue(int bookId) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.post(
+      Uri.parse('${Constants.apiBaseUrl}/api/user/enqueue?id=$bookId'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+    );
+    if (response.statusCode == 401) {
+      throw CustomException("NEED_LOGIN");
+    } else if (response.statusCode == 500) {
+      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      return jsonResponse;
+    } else {
+      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      print("aaaa");
+      print(jsonResponse);
+      return jsonResponse['data'];
+    }
+  }
   Future<Map<String, dynamic>> borrowBook(int bookid, int userId) async {
     final jwtToken = await getJwtToken();
     final response = await http.post(

@@ -3,8 +3,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:mlmui/models/BookDTO.dart';
+import 'package:mlmui/pages/UserScreens/Queue.dart';
 import 'package:mlmui/service/ApiService.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 import '../../models/BookCategoryEnumDTO.dart';
 import '../../models/ShelfDTO.dart';
@@ -25,7 +28,6 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
   final ApiService apiService = ApiService();
   bool isLoading = false;
   late String _base64Image;
-
   @override
   void initState() {
     super.initState();
@@ -82,128 +84,191 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
           },
         ),
       ),
-      body: Column(
-        children: <Widget>[
-          Stack(children: [
+      body: SafeArea(
+        top: true,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
             Container(
-              height: (MediaQuery.of(context).size.height / 4.5) ,
+              height: 200.0,
               color: Color(0xffd2232a),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(15,15,0,0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10.0),
-                child: Image.memory(
-                  base64Decode(_base64Image),
-                  width: MediaQuery.of(context).size.height / 5,
-                  height: MediaQuery.of(context).size.height / 3.9,
-                  fit: BoxFit.fill,
-                ),
-              ),
-            ),
-            Padding(
-              padding:  EdgeInsets.fromLTRB(MediaQuery.of(context).size.height / 5 + 20,25,0,0),
+            Positioned(
+              bottom: -25.0,
+              left: 15,
+              width: 150,
+              height: 200.0,
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        (widget.book.name!.length < 20
-                            ? widget.book.name
-                            : widget.book.name!.substring(0, 20) +
-                            "...") ??
-                            'N/A',
-                        style: TextStyle(
-                          fontSize: 22,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      // Author
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0,7,0,0),
-                        child: Text(
-                          'by ${(widget.book.author!.length < 20 ? widget.book.author : widget.book.author!.substring(0, 17) + "...") ?? 'N/A'}',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                      // Publisher
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0,7,0,0),
-                        child: Text(
-                          (widget.book.publisher!.length < 20
-                              ? widget.book.publisher
-                              : widget.book.publisher!
-                              .substring(0, 17) +
-                              "...") ??
-                              'N/A',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0,8,0,0),
-                        child: Text(
-                          (widget.book.category!.length < 20
-                              ? widget.book.category
-                              : widget.book.category!
-                              .substring(0, 17) +
-                              "...") ??
-                              'N/A',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-
-                    ],
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16.0),
+                    child: Image.memory(
+                      base64Decode(_base64Image),
+                       fit: BoxFit.cover,
+                    ),
                   ),
+
                 ],
               ),
-            )
-
-          ],),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16,15,0,0),
-            child: Column(
-              children: <Widget>[
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-
-                      'Description ' + (widget.book.name! != null ? 'of '+widget.book.name! : '') ,
+            ),
+            Positioned(
+              top: 55,
+              left: 170,
+              width: MediaQuery.of(context).size.width /2 +10,
+              height: 100.0,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(5,0,0,0),
+                    child: Text(
+                      widget.book.name??'N/A',
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 22,
+                        color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1, // Adjust the number of lines as needed
                     ),
-                    SizedBox(height: 20),
-                    Text(
-                      widget.book.description ?? 'N/A',
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0,0,0,0),
+                    child: Text(
+                      'by ${widget.book.author?.toUpperCase()}'??'',
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2, // Adjust the number of lines as needed
+                    ),
+                  ),
+
+                ],
+              ),
+            ),
+            Positioned(
+              bottom: 0,
+              left: widget.book.status=='AVAILABLE'?(MediaQuery.of(context).size.width/2):(MediaQuery.of(context).size.width/2)-10,
+              width: 200.0,
+              height: 50.0,
+              child: Row(
+                children: [
+                  MaterialButton(
+                    onPressed: () {
+                      if(widget.book.status=='AVAILABLE'){
+                        //popup
+                        showTopSnackBar(
+                          Overlay.of(context),
+                          CustomSnackBar.success(
+                            message: "You can borrow the book by going to the librarian :)",
+                            textAlign: TextAlign.left,
+                          ),
+                        );
+                      }else{
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => QueueUser(
+                                book: widget.book),
+                          ),
+                        );
+                      }
+                    },
+                    color: Color(0xfffafafa),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(22.0)),
+                    ),
+                    padding: EdgeInsets.all(16),
+                    child: Text(
+                      widget.book.status=='AVAILABLE'?'Book is Available!':'Click To View Queue',
                       style: TextStyle(
                         fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        fontStyle: FontStyle.normal,
                       ),
                     ),
-                  ],
-                ),
-              ],
+                    textColor: Color(0xffd2232a),
+                    height: 50,
+                  ),
+
+                ],
+              ),
             ),
-          )
+            Positioned(
+              bottom: -120.0,
+              left: 20,
+              width: 200.0,
+              height: 65,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'Description ' ,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
 
+                ],
+              ),
+            ),
+            Positioned(
+              bottom: -240.0,
+              left: 20,
+              width: MediaQuery.of(context).size.width-40,
+              height: 160,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  TextField(
+                    readOnly: true,
+                    textAlign: TextAlign.start,
+                    maxLines: 9,
+                    controller: TextEditingController(
+                        text:
+                        (widget.book.author!= null &&
+                            widget.book.publisher!=null &&
+                            widget.book.name != null &&
+                            widget.book.description != null)
+                            ?
+                        widget.book.name! + ' is written by '+widget.book.author! + ' and published by '+ widget.book.publisher! + '.\n\n' + widget.book.description!
+                            :''
+                    ),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w400,
+                      fontStyle: FontStyle.normal,
+                      fontSize: 14,
+                      color: Color(0xff000000),
+                    ),
+                    decoration: InputDecoration(
+                      disabledBorder: UnderlineInputBorder(
+                        borderRadius: BorderRadius.circular(4.0),
+                        borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                      ),
+                      labelStyle: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontStyle: FontStyle.normal,
+                        fontSize: 16,
+                        color: Color(0xff000000),
+                      ),
+                      filled: true,
+                      fillColor: Color(0x00ffffff),
+                      isDense: false,
+                      contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                      prefixIcon: Icon(Icons.book, color: Color(0xff212435), size: 12),
+                    ),
+                  ),
 
-        ],
-      ),
+                ],
+              ),
+            ),
+          ],
+        )
+      )
     );
   }
 }

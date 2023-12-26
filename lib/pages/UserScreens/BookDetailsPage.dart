@@ -86,7 +86,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
         children: <Widget>[
           Stack(children: [
             Container(
-              height: MediaQuery.of(context).size.height / 4,
+              height: (MediaQuery.of(context).size.height / 4.5) ,
               color: Color(0xffd2232a),
             ),
             Padding(
@@ -95,14 +95,14 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                 borderRadius: BorderRadius.circular(10.0),
                 child: Image.memory(
                   base64Decode(_base64Image),
-                  width: 150,
-                  height: 200,
+                  width: MediaQuery.of(context).size.height / 5,
+                  height: MediaQuery.of(context).size.height / 3.9,
                   fit: BoxFit.fill,
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(180,25,0,0),
+              padding:  EdgeInsets.fromLTRB(MediaQuery.of(context).size.height / 5 + 20,25,0,0),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -111,9 +111,9 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        (widget.book.name!.length < 22
+                        (widget.book.name!.length < 20
                             ? widget.book.name
-                            : widget.book.name!.substring(0, 22) +
+                            : widget.book.name!.substring(0, 20) +
                             "...") ??
                             'N/A',
                         style: TextStyle(
@@ -151,7 +151,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(0,7,0,0),
+                        padding: const EdgeInsets.fromLTRB(0,8,0,0),
                         child: Text(
                           (widget.book.category!.length < 20
                               ? widget.book.category

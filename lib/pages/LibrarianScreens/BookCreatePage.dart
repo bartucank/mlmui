@@ -52,6 +52,7 @@ class _BookCreatePageState extends State<BookCreatePage> {
       isLoading = true;
     });
     int value = await apiService.uploadImage(controller.images.first);
+    print("myvalue:"+value.toString());
     if(value == -1){
       setState(() {
         isLoading = false;
@@ -84,7 +85,7 @@ class _BookCreatePageState extends State<BookCreatePage> {
       };
       try{
 
-        String result = await apiService.createBook(request2);
+        String result = await apiService.createBook(request);
         setState(() {
           isLoading = false;
         });

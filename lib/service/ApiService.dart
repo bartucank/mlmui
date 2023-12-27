@@ -13,6 +13,8 @@ import 'package:mlmui/models/StatisticsDTO.dart';
 import '../models/BookCategoryEnumDTO.dart';
 import '../models/BookCategoryEnumDTOListResponse.dart';
 import '../models/BookDTOListResponse.dart';
+import '../models/MyBooksDTO.dart';
+import '../models/MyBooksDTOListResponse.dart';
 import '../models/OpenLibraryBookDetails.dart';
 import 'CacheManager.dart';
 import 'constants.dart';
@@ -407,7 +409,27 @@ class ApiService {
 
     return ReceiptHistoryDTOListResponse.fromJson(jsonResponse['data']);
   }
+  
+  Future<MyBooksDTOListResponse> getMyBooks() async {
+    final jwtToken = await getJwtToken();
+    //print("burada gelecek mii: ");
+    final response = await http.get(
+      Uri.parse(
+          '${Constants.apiBaseUrl}/api/user/myBooks'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+    );
 
+    if (response.statusCode == 401) {
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+    print(response.body);
+    return MyBooksDTOListResponse.fromJson(jsonResponse['data']);
+  }
+      
   Future<StatisticsDTO> getStatistics() async {
     final jwtToken = await getJwtToken();
     final response = await http.get(
@@ -422,10 +444,10 @@ class ApiService {
       throw CustomException("NEED_LOGIN");
     }
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-
     print(response.body);
     return StatisticsDTO.fromJson(jsonResponse['data']);
   }
+    
 }
 
 class CustomException implements Exception {

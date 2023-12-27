@@ -19,6 +19,7 @@ import 'package:mlmui/pages/UserScreens/BookDetailsPage.dart';
 import 'package:mlmui/pages/LibrarianScreens/UpdateBookPage.dart';
 import 'models/BookDTO.dart';
 import 'pages/Onboarding/RegisterScreen.dart';
+import 'package:mlmui/pages/UserScreens/MyBooksPage.dart';
 
 
 Future<void> main() async {
@@ -55,7 +56,8 @@ class MyApp extends StatelessWidget {
               '/bookdetails': (context) => BookDetailsPage(book: ModalRoute.of(context)?.settings.arguments as BookDTO),
               '/updatebookpage' : (context) => UpdateBookPage(),
               '/copycard':(context) => CopyCard(),
-              '/queueuser':(context) => QueueUser(book: ModalRoute.of(context)?.settings.arguments as BookDTO)
+              '/queueuser':(context) => QueueUser(book: ModalRoute.of(context)?.settings.arguments as BookDTO),
+              '/mybookspage':(context) => MyBooksPage()
 
             },
           );
@@ -63,6 +65,7 @@ class MyApp extends StatelessWidget {
       maximumSize: Size(675.0,MediaQuery.of(context).size.height),
       enabled: kIsWeb,
       backgroundColor: Colors.grey,
+
     );
 
   }

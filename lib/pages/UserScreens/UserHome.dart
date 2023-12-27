@@ -97,9 +97,7 @@ class _UserHomeState extends State<UserHome> {
                   Icons.favorite,
                   color: Colors.white,
                   size: 34.0),
-              onPressed: (){
-                Navigator.pushNamed(context, '/mybookspage');
-              }
+              onPressed: (){}
           ),
           PopupMenuButton<String>(
             icon: Icon(
@@ -250,7 +248,7 @@ class _UserHomeState extends State<UserHome> {
                       buttonLabel: 'My Books',
                       buttonIcon: Icons.library_books,
                       onPressed: () {
-                        print("My books Pressed");
+                        print('My books pressed');
                       },
                     color: Colors.black,
                   )

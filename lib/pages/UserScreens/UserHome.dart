@@ -99,7 +99,9 @@ class _UserHomeState extends State<UserHome> {
                   Icons.favorite,
                   color: Colors.white,
                   size: 34.0),
-              onPressed: (){}
+              onPressed: (){
+                Navigator.pushNamed(context, '/mybookspage');
+              }
           ),
           PopupMenuButton<String>(
             icon: Icon(

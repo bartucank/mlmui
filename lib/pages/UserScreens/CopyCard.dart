@@ -256,7 +256,12 @@ class _CopyCardState extends State<CopyCard> {
                           showTopSnackBar(
                             Overlay.of(context),
                             CustomSnackBar.error(
-                              maxLines:3,
+                              textStyle:  const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                                color: Colors.white,
+                              ),
+                              maxLines:10,
                               message: "You have not yet obtained a physical card. To use copy card privileges, please contact the library and obtain a physical card.",
                               textAlign: TextAlign.left,
                             ),

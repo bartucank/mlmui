@@ -11,6 +11,8 @@ import 'dart:convert';
 import 'package:mlmui/components/BookCard.dart';
 import 'dart:ui' as ui;
 
+import 'BookDetailsPage.dart';
+
 
 class UserHome extends StatefulWidget {
   const UserHome({Key? key}) : super(key: key);
@@ -331,58 +333,58 @@ class _UserHomeState extends State<UserHome> {
                                 return Text('');
                               } else {
                                 String base64Image = snapshot.data!;
-                                return Container(
-                                  height: 140,
-                                  width: 110,
-                                  margin: EdgeInsets.symmetric(horizontal: 2.0),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: SizedBox.fromSize(
-                                      size: Size.fromRadius(10), // Image radius
-                                      child: Stack(
-                                        alignment: Alignment.bottomCenter,
-                                        children: <Widget>[
-                                          Image.memory(
-                                            base64Decode(base64Image),
-                                            fit: BoxFit.cover,
-                                            width: double.infinity,
-                                            height: double.infinity,// Cover the card's upper part with the image
-                                          ),
-                                          BackdropFilter(
-                                            filter: ui.ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0), // Adjust the blur intensity
-                                            child: Container(
-                                              color: Colors.black.withOpacity(0.1), // You can add a translucent color over the blurred image
+                                return GestureDetector(
+                                  onTap: (){
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => BookDetailsPage(
+                                            book: currentbook),
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    height: 140,
+                                    width: 110,
+                                    margin: EdgeInsets.symmetric(horizontal: 2.0),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: SizedBox.fromSize(
+                                        size: Size.fromRadius(10), // Image radius
+                                        child: Stack(
+                                          alignment: Alignment.bottomCenter,
+                                          children: <Widget>[
+                                            Image.memory(
+                                              base64Decode(base64Image),
+                                              fit: BoxFit.cover,
+                                              width: double.infinity,
+                                              height: double.infinity,// Cover the card's upper part with the image
                                             ),
-                                          ),
-                                          Align(
-                                            alignment: Alignment.bottomLeft,
-                                            child: Padding(
-                                              padding: EdgeInsets.fromLTRB(5, 0, 0, 5),
-                                              child: Stack(
-                                                children: <Widget>[
-                                                  Text(
-                                                    currentbook.name!.length<10?currentbook.name!:currentbook.name!.substring(0,10)+"...",
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight: FontWeight.bold,
-                                                        foreground: Paint()
-                                                          ..style = PaintingStyle.stroke
-                                                          ..strokeWidth = 3
-                                                          ..color = Colors.black
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    currentbook.name!.length<10?currentbook.name!:currentbook.name!.substring(0,10)+"...",
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        color:Colors.white
-                                                    ),
-                                                  ),
-                                                ],
+                                            BackdropFilter(
+                                              filter: ui.ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0),
+                                              child: Container(
+                                                color: Colors.black.withOpacity(0.4),
                                               ),
-                                            )
-                                          ),
-                                        ],
+                                            ),
+                                            Align(
+                                                alignment: Alignment.bottomLeft,
+                                                child: Padding(
+                                                  padding: EdgeInsets.fromLTRB(5, 0, 0, 5),
+                                                  child: Stack(
+                                                    children: <Widget>[
+                                                      Text(
+                                                        currentbook.name!.length<10?currentbook.name!:currentbook.name!.substring(0,10)+"...",
+                                                        style: TextStyle(
+                                                            fontSize: 16,
+                                                            color:Colors.white
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),

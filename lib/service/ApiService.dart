@@ -9,9 +9,12 @@ import 'package:mlmui/models/ShelfDTOListResponse.dart';
 import 'package:mlmui/models/UserDTO.dart';
 import 'package:mlmui/models/UserDTOListResponse.dart';
 import 'package:mlmui/models/UserNamesDTOListResponse.dart';
+import 'package:mlmui/models/StatisticsDTO.dart';
 import '../models/BookCategoryEnumDTO.dart';
 import '../models/BookCategoryEnumDTOListResponse.dart';
 import '../models/BookDTOListResponse.dart';
+import '../models/MyBooksDTO.dart';
+import '../models/MyBooksDTOListResponse.dart';
 import '../models/OpenLibraryBookDetails.dart';
 import 'CacheManager.dart';
 import 'constants.dart';
@@ -310,7 +313,42 @@ class ApiService {
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
     return jsonResponse['data'];
   }
-
+  Future<Map<String, dynamic>> getStatusOfBook(int bookId) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.get(
+      Uri.parse('${Constants.apiBaseUrl}/api/user/getQueueStatusBasedOnBook?id=$bookId'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+    );
+    if (response.statusCode == 401) {
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+    return jsonResponse['data'];
+  }
+  Future<Map<String, dynamic>> enqueue(int bookId) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.post(
+      Uri.parse('${Constants.apiBaseUrl}/api/user/enqueue?id=$bookId'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+    );
+    if (response.statusCode == 401) {
+      throw CustomException("NEED_LOGIN");
+    } else if (response.statusCode == 500) {
+      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      return jsonResponse;
+    } else {
+      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      print("aaaa");
+      print(jsonResponse);
+      return jsonResponse['data'];
+    }
+  }
   Future<Map<String, dynamic>> borrowBook(int bookid, int userId) async {
     final jwtToken = await getJwtToken();
     final response = await http.post(
@@ -371,6 +409,45 @@ class ApiService {
 
     return ReceiptHistoryDTOListResponse.fromJson(jsonResponse['data']);
   }
+  
+  Future<MyBooksDTOListResponse> getMyBooks() async {
+    final jwtToken = await getJwtToken();
+    //print("burada gelecek mii: ");
+    final response = await http.get(
+      Uri.parse(
+          '${Constants.apiBaseUrl}/api/user/myBooks'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 401) {
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+    print(response.body);
+    return MyBooksDTOListResponse.fromJson(jsonResponse['data']);
+  }
+      
+  Future<StatisticsDTO> getStatistics() async {
+    final jwtToken = await getJwtToken();
+    final response = await http.get(
+      Uri.parse('${Constants.apiBaseUrl}/api/admin/getStatistics'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 401) {
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+    print(response.body);
+    return StatisticsDTO.fromJson(jsonResponse['data']);
+  }
+    
 }
 
 class CustomException implements Exception {

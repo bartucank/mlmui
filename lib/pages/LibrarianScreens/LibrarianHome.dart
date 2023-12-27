@@ -158,7 +158,7 @@ class _LibrarianHomeState extends State<LibrarianHome> {
                                   ),
                                   const SizedBox( width: 10,), // Space b/w Cards
                                   InfoCard(
-                                    title: "Total Dept:",
+                                    title: "Total Debt:",
                                     value: statistics.sumOfDebt,
                                     topColor: Colors.blue,
                                     onTap: () {},

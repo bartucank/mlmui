@@ -9,6 +9,7 @@ import 'package:mlmui/models/ShelfDTOListResponse.dart';
 import 'package:mlmui/models/UserDTO.dart';
 import 'package:mlmui/models/UserDTOListResponse.dart';
 import 'package:mlmui/models/UserNamesDTOListResponse.dart';
+import 'package:mlmui/models/StatisticsDTO.dart';
 import '../models/BookCategoryEnumDTO.dart';
 import '../models/BookCategoryEnumDTOListResponse.dart';
 import '../models/BookDTOListResponse.dart';
@@ -405,6 +406,25 @@ class ApiService {
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
 
     return ReceiptHistoryDTOListResponse.fromJson(jsonResponse['data']);
+  }
+
+  Future<StatisticsDTO> getStatistics() async {
+    final jwtToken = await getJwtToken();
+    final response = await http.get(
+      Uri.parse('${Constants.apiBaseUrl}/api/admin/getStatistics'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 401) {
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+    print(response.body);
+    return StatisticsDTO.fromJson(jsonResponse['data']);
   }
 }
 

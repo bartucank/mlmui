@@ -19,7 +19,7 @@ class InfoCard extends StatefulWidget {
       : super(key: key);
 
   final String title;
-  final int value;
+  final num value;
   final Color? topColor;
   final bool isActive;
   final VoidCallback onTap;

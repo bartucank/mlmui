@@ -109,140 +109,135 @@ class _MyBooksPage extends State<MyBooksPage> {
                 ),
               ),
           ),
-          body: Padding(
-            padding: EdgeInsets.fromLTRB(0, 0, 0, 80),
-            child: mybooksDTOList.isEmpty ? Text(""):
-                RefreshIndicator(
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  "Books", // Replace with the text you want to display
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(0, 0, 0, 400),
+                  child: mybooksDTOList.isEmpty ? Text("") :
+                  RefreshIndicator(
                     onRefresh: refresh,
-                  child: ListView.builder(
-                      scrollDirection: Axis.vertical,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
                       itemCount: mybooksDTOList.length,
-                      itemBuilder: (context, index){
-                        if(index < mybooksDTOList.length){
-                          print('Geldi mi ?');
-                          MyBooksDTO currentbook = mybooksDTOList[index];
-                          return Row(
-                            children: [
-                              Expanded(
-                                flex: 2,
-                                child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
-                                  child: FutureBuilder<String>(
-                                      future: BookCard.getImageBase64(currentbook.book.imageId!),
-                                      builder: (context, snapshot){
-                                        if (snapshot.connectionState == ConnectionState.waiting) {
-                                          print('Geldi mi ?2');
-                                          return CircularProgressIndicator();
-                                        } else if (snapshot.hasError) {
-                                          print('Geldi mi ?3');
-                                          return Text('');
-                                        } else {
-                                          print('Geldi mi ?4');
-                                          String base64Image = snapshot.data!;
-                                          return Container(
+                      itemBuilder: (context, index) {
+                        MyBooksDTO currentbook = mybooksDTOList[index];
+                        return Column(
+                          children: [
+                            Container(
+                              height: 110,
+                              width: 100,
+                              margin: EdgeInsets.all(5),
+                              child: FutureBuilder<String>(
+                                future: BookCard.getImageBase64(currentbook.book.imageId!),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                    return CircularProgressIndicator();
+                                  } else if (snapshot.hasError) {
+                                    return Text('Error');
+                                  } else {
+                                    String base64Image = snapshot.data!;
+                                    return Stack(
+                                      alignment: Alignment.bottomLeft,
+                                      children: <Widget>[
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(10),
+                                          child: Image.memory(
+                                            base64Decode(base64Image),
+                                            fit: BoxFit.cover,
                                             height: 150,
                                             width: 100,
-                                            margin: EdgeInsets.fromLTRB(0, 0, 70, 10),
-                                            child: ClipRRect(
-                                              borderRadius: BorderRadius.circular(10),
-                                              child: SizedBox.fromSize(
-                                                size: Size.fromRadius(10), // Image radius
-                                                child: Stack(
-                                                  alignment: Alignment.center,
-                                                  children: <Widget>[
-                                                    Image.memory(
-                                                      base64Decode(base64Image),
-                                                      fit: BoxFit.cover,
-                                                    ),
-                                                    BackdropFilter(
-                                                      filter: ui.ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0), // Adjust the blur intensity
-                                                      child: Container(
-                                                        color: Colors.black.withOpacity(0.1), // You can add a translucent color over the blurred image
-                                                      ),
-                                                    ),
-                                                    Align(
-                                                        alignment: Alignment.bottomLeft,
-                                                        child: Padding(
-                                                          padding: EdgeInsets.fromLTRB(5, 0, 0, 5),
-                                                          child: Stack(
-                                                            children: <Widget>[
-                                                              Text(
-                                                                currentbook.book.name!.length<10?currentbook.book.name!:currentbook.book.name!.substring(0,10)+"...",
-                                                                style: TextStyle(
-                                                                    fontSize: 30,
-                                                                    fontWeight: FontWeight.bold,
-                                                                    foreground: Paint()
-                                                                      ..style = PaintingStyle.stroke
-                                                                      ..strokeWidth = 3
-                                                                      ..color = Colors.black
-                                                                ),
-                                                              ),
-                                                              Text(
-                                                                currentbook.book.name!.length<10?currentbook.book.name!:currentbook.book.name!.substring(0,10)+"...",
-                                                                style: TextStyle(
-                                                                    fontSize: 30,
-                                                                    color:Colors.white
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        )
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        }
-                                      }
-                                  ),
-                                ),
+                                          ),
+                                        ),
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(10),
+                                            color: Colors.black.withOpacity(0.3), // Semi-transparent black overlay
+                                          ),
+                                          height: 150,
+                                          width: 100,
+                                          alignment: Alignment.center,
+                                        ),
+                                        Text(
+                                          currentbook.book.name!,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            // The paint property here creates the stroke effect.
+                                            foreground: Paint()
+                                              ..style = PaintingStyle.stroke
+                                              ..strokeWidth = 4
+                                              ..color = Colors.black,
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        Text(
+                                          currentbook.book.name!,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    );
+                                  }
+                                },
                               ),
-                              Expanded(
-                                flex: 1,
-                                child: Container(
-                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  color: Colors.white,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Container(
-                                        padding: EdgeInsets.all(10),
-                                        margin: EdgeInsets.only(bottom: 5),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(color: Colors.black),
-                                        ),
-                                        child: Stack(
-                                          children: <Widget>[
-                                            if(currentbook!.isLate == false)
-                                              Text(
-                                                '${currentbook.days} Days Left!',
-                                                style: TextStyle(
-                                                    fontSize: 18,
-                                                    color:Colors.red
-                                                ),
-                                            ),
-                                            if(currentbook!.isLate == true)
-                                              Text(
-                                                '-${currentbook.days} Days Left!',
-                                                style: TextStyle(
-                                                    fontSize: 18,
-                                                    color:Colors.red
-                                                ),
-                                              ),
-                                          ],
-                                        ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: 4, vertical: 0), // Add padding inside the container
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.red, width: 2), // Border color and width
+                                borderRadius: BorderRadius.circular(4), // Adjust radius to match your design
+                              ),
+                              child: Row(
+                                children: <Widget>[
+                                  if(currentbook!.isLate == false)
+                                  Text(
+                                    '${currentbook.days} Days Left!',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.black,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  if(currentbook!.isLate == true)
+                                    Text(
+                                      '${currentbook.days} Days Late!',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.black,
                                       ),
-                                    ],
-                                  ),
-                                ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                ],
                               ),
-                            ],
-                          );
-                        }
-                      }
+                            )
+                          ],
+                        );
+                      },
+                    )
                   ),
-                )
+                ),
+              ),
+            ],
           ),
         )
     );

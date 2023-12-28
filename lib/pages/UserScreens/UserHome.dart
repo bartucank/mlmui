@@ -101,7 +101,6 @@ class _UserHomeState extends State<UserHome> {
                   size: 34.0),
               onPressed: (){
                 Navigator.pushNamed(context, '/mybookspage');
-
               }
           ),
           PopupMenuButton<String>(
@@ -253,7 +252,7 @@ class _UserHomeState extends State<UserHome> {
                       buttonLabel: 'My Books',
                       buttonIcon: Icons.library_books,
                       onPressed: () {
-                        print("My books Pressed");
+                        print('My books pressed');
                       },
                     color: Colors.black,
                   )

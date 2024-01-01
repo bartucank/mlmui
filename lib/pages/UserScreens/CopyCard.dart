@@ -33,7 +33,7 @@ class _CopyCardState extends State<CopyCard> {
   List<ReceiptHistoryDTO> history = [];
    var imgController = MultiImagePickerController(
       maxImages: 1,
-      allowedImageTypes: ['png', 'jpg', 'jpeg'],
+      allowedImageTypes: ['png', 'jpg', 'jpeg','heic','HEIC'],
       withData: true,
       withReadStream: true,
       images: <ImageFile>[] // array of pre/default selected images
@@ -115,7 +115,7 @@ class _CopyCardState extends State<CopyCard> {
               _artDialogKey.currentState?.closeDialog();
               imgController = MultiImagePickerController(
                   maxImages: 1,
-                  allowedImageTypes: ['png', 'jpg', 'jpeg'],
+                  allowedImageTypes: ['png', 'jpg', 'jpeg','heic','HEIC'],
                   withData: true,
                   withReadStream: true,
                   images: <ImageFile>[] // array of pre/default selected images

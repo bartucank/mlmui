@@ -7,6 +7,7 @@ part of 'UserDTO.dart';
 // **************************************************************************
 
 UserDTO _$UserDTOFromJson(Map<String, dynamic> json) => UserDTO(
+      json['id'] as int,
       json['role'] as String,
       json['roleStr'] as String,
       json['fullName'] as String,
@@ -20,6 +21,7 @@ UserDTO _$UserDTOFromJson(Map<String, dynamic> json) => UserDTO(
           : CopyCardDTO.fromJson(json['copyCardDTO'] as Map<String, dynamic>);
 
 Map<String, dynamic> _$UserDTOToJson(UserDTO instance) => <String, dynamic>{
+      'id': instance.id,
       'role': instance.role,
       'roleStr': instance.roleStr,
       'fullName': instance.fullName,

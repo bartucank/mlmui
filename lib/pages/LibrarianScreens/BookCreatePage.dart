@@ -24,7 +24,7 @@ class BookCreatePage extends StatefulWidget {
 class _BookCreatePageState extends State<BookCreatePage> {
   final controller = MultiImagePickerController(
       maxImages: 1,
-      allowedImageTypes: ['png', 'jpg', 'jpeg'],
+      allowedImageTypes: ['png', 'jpg', 'jpeg','heic','HEIC'],
       withData: true,
       withReadStream: true,
       images: <ImageFile>[] // array of pre/default selected images

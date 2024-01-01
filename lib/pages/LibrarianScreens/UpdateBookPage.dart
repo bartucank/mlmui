@@ -30,7 +30,7 @@ class UpdateBookPage extends StatefulWidget {
 class _UpdateBookPage extends State<UpdateBookPage> {
   final controller = MultiImagePickerController(
     maxImages: 1,
-    allowedImageTypes: ['png', 'jpg', 'jpeg'],
+    allowedImageTypes: ['png', 'jpg', 'jpeg','heic','HEIC'],
     withData: true,
     withReadStream: true,
     images: <ImageFile>[],

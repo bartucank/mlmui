@@ -4,6 +4,7 @@ import 'CopyCardDTO.dart';
 part 'UserDTO.g.dart';
 @JsonSerializable(explicitToJson: true)
 class UserDTO {
+  int id;
   String role;
   String roleStr;
   String fullName;
@@ -15,7 +16,7 @@ class UserDTO {
   CopyCardDTO? copyCardDTO;
 
 
-  UserDTO(this.role, this.roleStr, this.fullName, this.username,
+  UserDTO(this.id,this.role, this.roleStr, this.fullName, this.username,
       this.verified, this.email);
 
   factory UserDTO.fromJson(Map<String,dynamic> data) => _$UserDTOFromJson(data);

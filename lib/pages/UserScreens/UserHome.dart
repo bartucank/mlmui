@@ -236,52 +236,48 @@ class _UserHomeState extends State<UserHome> {
               },
             ),
 
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8.0, 8.0, 0, 0),
-              child: Row(
-                children: <Widget>[
-                  OutlinedButtons(
-                    buttonLabel: 'Copy Card',
-                    buttonIcon: Icons.credit_card,
-                    onPressed: () async {
-                     Object? status = await Navigator.pushNamed(context, '/copycard');
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                OutlinedButtons(
+                  buttonLabel: 'Copy Card',
+                  buttonIcon: Icons.credit_card,
+                  onPressed: () async {
+                   Object? status = await Navigator.pushNamed(context, '/copycard');
 
+                  },
+                  color: Colors.black,
+                ),
+                OutlinedButtons(
+                    buttonLabel: 'My Books',
+                    buttonIcon: Icons.library_books,
+                    onPressed: () {
+                      print('My books pressed');
                     },
-                    color: Colors.black,
-                  ),
-                  OutlinedButtons(
-                      buttonLabel: 'My Books',
-                      buttonIcon: Icons.library_books,
-                      onPressed: () {
-                        print("My books Pressed");
-                      },
-                    color: Colors.black,
-                  )
-                ],
-              ),
+                  color: Colors.black,
+                )
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8.0, 8.0, 0, 0),
-              child: Row(
-                children: <Widget>[
-                  OutlinedButtons(
-                    buttonLabel: 'Room Res.',
-                    buttonIcon: Icons.schedule,
-                    onPressed: (){
-                      print('Room Res. pressed');
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                OutlinedButtons(
+                  buttonLabel: 'Room Res.',
+                  buttonIcon: Icons.schedule,
+                  onPressed: (){
+                    print('Room Res. pressed');
+                  },
+                  color: Colors.black,
+                ),
+                OutlinedButtons(
+                    buttonLabel: 'Room Con.',
+                    buttonIcon: Icons.check_circle,
+                    onPressed: () {
+                      print('Room Con. pressed');
                     },
-                    color: Colors.black,
-                  ),
-                  OutlinedButtons(
-                      buttonLabel: 'Room Con.',
-                      buttonIcon: Icons.check_circle,
-                      onPressed: () {
-                        print('Room Con. pressed');
-                      },
-                      color: Colors.green,
-                  )
-                ],
-              ),
+                    color: Colors.green,
+                )
+              ],
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(8.0, 8.0, 0, 0),
@@ -315,7 +311,7 @@ class _UserHomeState extends State<UserHome> {
                   ),
                 ],
               ),
-            ),
+            ),//Books
             Padding(
               padding: const EdgeInsets.fromLTRB(3.0, 3.0, 0, 0),
               child: Container(
@@ -399,7 +395,7 @@ class _UserHomeState extends State<UserHome> {
                     }
                 ),
               ),
-            ),
+            ),//List of books
             Padding(
               padding: const EdgeInsets.fromLTRB(3.0, 3.0, 0, 0),
               child: Row(

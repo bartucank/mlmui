@@ -13,6 +13,8 @@ import '../../models/BookCategoryEnumDTO.dart';
 import '../../models/ShelfDTO.dart';
 import 'package:http/http.dart' as http;
 
+import '../../models/UserDTO.dart';
+import '../../service/CacheManager.dart';
 import '../../service/constants.dart';
 
 class BookDetailsPage extends StatefulWidget {
@@ -25,6 +27,7 @@ class BookDetailsPage extends StatefulWidget {
 }
 
 class _BookDetailsPageState extends State<BookDetailsPage> {
+
   final ApiService apiService = ApiService();
   bool isLoading = false;
   late String _base64Image;
@@ -148,55 +151,68 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                 ],
               ),
             ),
-            Positioned(
-              bottom: 0,
-              left: widget.book.status=='AVAILABLE'?(MediaQuery.of(context).size.width/2):(MediaQuery.of(context).size.width/2)-10,
-              width: 200.0,
-              height: 50.0,
-              child: Row(
-                children: [
-                  MaterialButton(
-                    onPressed: () {
-                      if(widget.book.status=='AVAILABLE'){
-                        //popup
-                        showTopSnackBar(
-                          Overlay.of(context),
-                          CustomSnackBar.success(
-                            message: "You can borrow the book by going to the librarian :)",
-                            textAlign: TextAlign.left,
+            FutureBuilder<UserDTO?>(
+              future: CacheManager.getUserDTOFromCache(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting ||
+                    snapshot.hasError) {
+                  return Text("");
+                } else if (snapshot.hasData && snapshot.data != null && snapshot.data!.role == "USER") {
+                  return Positioned(
+                    bottom: 0,
+                    left: widget.book.status=='AVAILABLE'?(MediaQuery.of(context).size.width/2):(MediaQuery.of(context).size.width/2)-10,
+                    width: 200.0,
+                    height: 50.0,
+                    child: Row(
+                      children: [
+                        MaterialButton(
+                          onPressed: () {
+                            if(widget.book.status=='AVAILABLE'){
+                              //popup
+                              showTopSnackBar(
+                                Overlay.of(context),
+                                CustomSnackBar.success(
+                                  message: "You can borrow the book by going to the librarian :)",
+                                  textAlign: TextAlign.left,
+                                ),
+                              );
+                            }else{
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => QueueUser(
+                                      book: widget.book),
+                                ),
+                              );
+                            }
+                          },
+                          color: Color(0xfffafafa),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(top: Radius.circular(22.0)),
                           ),
-                        );
-                      }else{
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => QueueUser(
-                                book: widget.book),
+                          padding: EdgeInsets.all(16),
+                          child: Text(
+                            widget.book.status=='AVAILABLE'?'Book is Available!':'Click To View Queue',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              fontStyle: FontStyle.normal,
+                            ),
                           ),
-                        );
-                      }
-                    },
-                    color: Color(0xfffafafa),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(22.0)),
-                    ),
-                    padding: EdgeInsets.all(16),
-                    child: Text(
-                      widget.book.status=='AVAILABLE'?'Book is Available!':'Click To View Queue',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        fontStyle: FontStyle.normal,
-                      ),
-                    ),
-                    textColor: Color(0xffd2232a),
-                    height: 50,
-                  ),
+                          textColor: Color(0xffd2232a),
+                          height: 50,
+                        ),
 
-                ],
-              ),
+                      ],
+                    ),
+                  );
+                } else {
+                  return Text("");
+                }
+              },
             ),
+
             Positioned(
               bottom: -120.0,
               left: 20,
@@ -217,17 +233,17 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
               ),
             ),
             Positioned(
-              bottom: -240.0,
+              bottom: -280.0,
               left: 20,
               width: MediaQuery.of(context).size.width-40,
-              height: 160,
+              height: 210,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   TextField(
                     readOnly: true,
                     textAlign: TextAlign.start,
-                    maxLines: 9,
+                    maxLines: 12,
                     controller: TextEditingController(
                         text:
                         (widget.book.author!= null &&
@@ -235,7 +251,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                             widget.book.name != null &&
                             widget.book.description != null)
                             ?
-                        widget.book.name! + ' is written by '+widget.book.author! + ' and published by '+ widget.book.publisher! + '.\n\n' + widget.book.description!
+                        widget.book.name! + ' is written by '+widget.book.author! + ' and published by '+ widget.book.publisher! + '.' + widget.book.description!
                             :''
                     ),
                     style: TextStyle(
@@ -258,8 +274,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                       filled: true,
                       fillColor: Color(0x00ffffff),
                       isDense: false,
-                      contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                      prefixIcon: Icon(Icons.book, color: Color(0xff212435), size: 12),
+                      contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                     ),
                   ),
 

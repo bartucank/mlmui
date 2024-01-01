@@ -8,6 +8,7 @@ import 'package:mlmui/models/UserDTO.dart';
 import 'package:mlmui/models/UserDTOListResponse.dart';
 import 'package:mlmui/models/UserNamesDTO.dart';
 import 'package:mlmui/models/UserNamesDTOListResponse.dart';
+import 'package:mlmui/pages/LibrarianScreens/BookQueueDetail.dart';
 import 'package:mlmui/pages/LibrarianScreens/UpdateBookPage.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
@@ -255,6 +256,9 @@ class _BookListScreenState extends State<BookListScreen> {
   }
 
   Future refresh() async {
+    if(isLoading){
+      return;
+    }
     setState(() {
       isLoading=true;
       bookDTOList.clear();
@@ -286,6 +290,9 @@ class _BookListScreenState extends State<BookListScreen> {
   }
 
   void fetchFirstBooks() async {
+    if(isLoading){
+      return;
+    }
     if (page - 1 > totalPage) {
       return;
     }
@@ -680,8 +687,6 @@ class _BookListScreenState extends State<BookListScreen> {
                     itemBuilder: (context2, index) {
                       if (index < bookDTOList.length) {
                         BookDTO currentbook = bookDTOList[index];
-
-                        print("ok:"+currentbook.status!);
                         return Slidable(
                             startActionPane: ActionPane(
                               motion: const StretchMotion(),
@@ -762,37 +767,44 @@ class _BookListScreenState extends State<BookListScreen> {
                                       icon: Icons.keyboard_return,
                                       label: 'Take Back',
                                       onPressed: (context) async {
-                                        takeBack(context,currentbook).then((s) {
-                                          print(s);
-                                          if (s != null) {
-                                            if (s == 'success') {
-                                              showTopSnackBar(
-                                                Overlay.of(context2),
-                                                const CustomSnackBar.success(
-                                                  message: "Success!",
-                                                  textAlign: TextAlign.left,
-                                                ),
-                                              );
-                                              refresh();
-                                            } else {
-                                              showTopSnackBar(
-                                                Overlay.of(context2),
-                                                CustomSnackBar.error(
-                                                  message: s,
-                                                  textAlign: TextAlign.left,
-                                                ),
-                                              );
-                                            }
-                                          }
-                                        }).catchError((e) {
-                                          showTopSnackBar(
-                                            Overlay.of(context2),
-                                            CustomSnackBar.error(
-                                              message: e,
-                                              textAlign: TextAlign.left,
-                                            ),
-                                          );
-                                        });
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => BookQueueDetail(
+                                                id: currentbook.id),
+                                          ),
+                                        );
+                                        // takeBack(context,currentbook).then((s) {
+                                        //   print(s);
+                                        //   if (s != null) {
+                                        //     if (s == 'success') {
+                                        //       showTopSnackBar(
+                                        //         Overlay.of(context2),
+                                        //         const CustomSnackBar.success(
+                                        //           message: "Success!",
+                                        //           textAlign: TextAlign.left,
+                                        //         ),
+                                        //       );
+                                        //       refresh();
+                                        //     } else {
+                                        //       showTopSnackBar(
+                                        //         Overlay.of(context2),
+                                        //         CustomSnackBar.error(
+                                        //           message: s,
+                                        //           textAlign: TextAlign.left,
+                                        //         ),
+                                        //       );
+                                        //     }
+                                        //   }
+                                        // }).catchError((e) {
+                                        //   showTopSnackBar(
+                                        //     Overlay.of(context2),
+                                        //     CustomSnackBar.error(
+                                        //       message: e,
+                                        //       textAlign: TextAlign.left,
+                                        //     ),
+                                        //   );
+                                        // });
 
                                       }
 

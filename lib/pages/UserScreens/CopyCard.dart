@@ -1,4 +1,5 @@
 import 'package:art_sweetalert/art_sweetalert.dart';
+import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:lazy_data_table_plus/lazy_data_table_plus.dart';
 import 'package:multi_image_picker_view/multi_image_picker_view.dart';
@@ -44,10 +45,14 @@ class _CopyCardState extends State<CopyCard> {
   void initState() {
     super.initState();
     userFuture = apiService.getUserDetails();
+    fetchHistory();
   }
 
   void fetchHistory() async {
     ReceiptHistoryDTOListResponse response = await apiService.getReceiptsofUser();
+    print(response.receiptHistoryDTOList.length);
+    print(response.receiptHistoryDTOList);
+
     setState(() {
       history.addAll(response.receiptHistoryDTOList);
     });
@@ -155,23 +160,81 @@ class _CopyCardState extends State<CopyCard> {
   }
 
   Future<void> showReceiptHistoryPopup(BuildContext context) async {
-    ArtDialogResponse response = await ArtSweetAlert.show(
-        artDialogKey: _artDialogKey,
-        context: context,
-        artDialogArgs: ArtDialogArgs(
-          title: "Receipt History",
-          customColumns: [
-            Container(child: Text('sdf'),)
-          ],
-          confirmButtonText: "Close",
-          confirmButtonColor: Color(0xFFD2232A),
-          onConfirm: () async {
+    List<Widget> receiptHistoryWidgets = [];
 
-          },
-          onDispose: () {
-            _artDialogKey = GlobalKey<ArtDialogState>();
-          },
-        ));
+    if (history.isNotEmpty) {
+      int itemCount = history.length > 3 ? 3 : history.length;
+
+      for (int i = history.length-1; i > history.length-4; i--) {
+        ReceiptHistoryDTO entry = history[i];
+        String approve = "Not approved yet.";
+        if(entry.approved!){
+          approve = "Approved!";
+        }
+
+        receiptHistoryWidgets.add(
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Receipt ID: ${entry.id}',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 8.0),
+                Text(
+                  'Approve Status: $approve',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 8.0),
+                if(entry.approved!)
+                  Text(
+                    'Amount: ${entry.balance} ₺',
+                    style: TextStyle(
+                      fontSize: 14,
+                    ),
+                  ),
+                Divider(color: Colors.grey),
+              ],
+            ),
+          ),
+        );
+      }
+    } else {
+      receiptHistoryWidgets.add(
+        Text(
+          'No transaction history available.',
+          style: TextStyle(fontSize: 16),
+        ),
+      );
+    }
+
+    ArtDialogResponse response = await ArtSweetAlert.show(
+      artDialogKey: _artDialogKey,
+      context: context,
+      artDialogArgs: ArtDialogArgs(
+        title: "Receipt History",
+        confirmButtonText: "Close",
+        confirmButtonColor: Color(0xFFD2232A),
+        customColumns: receiptHistoryWidgets,
+        onConfirm: () async {
+
+          _artDialogKey.currentState?.closeDialog();
+        },
+
+        onDispose: () {
+          _artDialogKey = GlobalKey<ArtDialogState>();
+        },
+
+      ),
+    );
 
     if (response == null) {
       return;
@@ -179,13 +242,69 @@ class _CopyCardState extends State<CopyCard> {
 
     if (response.isTapConfirmButton) {
       ArtSweetAlert.show(
-          context: context,
-          artDialogArgs: ArtDialogArgs(customColumns: [
+        context: context,
+        artDialogArgs: ArtDialogArgs(
+          customColumns: [
             Container(
               margin: EdgeInsets.only(bottom: 12.0),
               child: Image.network(response.data["image"]),
-            )
-          ]));
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+  }
+
+  Future<void> showBankAccounts(BuildContext context) async {
+    ArtDialogResponse response = await ArtSweetAlert.show(
+      artDialogKey: _artDialogKey,
+      context: context,
+      artDialogArgs: ArtDialogArgs(
+        title: "",
+        confirmButtonText: "Copy Iban and Close",
+        confirmButtonColor: Color(0xFFD2232A),
+        customColumns: [
+          Container(
+            child: Center(
+              child: Column(
+                children: [
+                  Image.asset("assets/images/isbank.png"),
+                  Text("ODTÜ KKK / O.D.T.Ü K.K.T.C"),
+                  Text("Branch 6822 / Account Number 2002"),
+                  Text("IBAN: TR91 0006 4000 0016 8220 0020 02"),
+                ],
+              ),
+            ),
+          )
+        ],
+        onConfirm: () async {
+          FlutterClipboard.copy('TR91 0006 4000 0016 8220 0020 02').then(( value ) => {
+
+              _artDialogKey.currentState?.closeDialog()
+          });
+
+        },
+
+        onDispose: () {
+          _artDialogKey = GlobalKey<ArtDialogState>();
+        },
+
+      ),
+    );
+
+    if (response == null) {
+      return;
+    }
+
+    if (response.isTapConfirmButton) {
+      showTopSnackBar(
+        Overlay.of(context),
+        CustomSnackBar.success(
+          message: "IBAN kopyalandı.",
+          textAlign: TextAlign.center,
+        ),
+      );
       return;
     }
   }
@@ -348,7 +467,9 @@ class _CopyCardState extends State<CopyCard> {
                 OutlinedButtonsCopyCardPage(
                   buttonLabel: 'Access Bank Accounts',
                   buttonIcon: Icons.account_balance,
-                  onPressed: () {},
+                  onPressed: () {
+                    showBankAccounts(context);
+                  },
                   color: Colors.black,
                   textColor: Color(0xffd2232a),
                 ),

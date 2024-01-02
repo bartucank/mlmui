@@ -48,7 +48,7 @@ class BookCard extends StatelessWidget {
           String base64Image = snapshot.data!;
           return ListTile(
             contentPadding: const EdgeInsets.symmetric(vertical: 1, horizontal: 16),
-            title: Text(book.id.toString() + "-"+book.name!),
+            title: Text(book.name!),
             subtitle: Text(book.category!),
             leading: CircleAvatar(
               radius: 15,

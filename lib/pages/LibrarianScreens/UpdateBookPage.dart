@@ -28,7 +28,7 @@ class UpdateBookPage extends StatefulWidget {
 }
 
 class _UpdateBookPage extends State<UpdateBookPage> {
-  final controller = MultiImagePickerController(
+  MultiImagePickerController controller = MultiImagePickerController(
     maxImages: 1,
     allowedImageTypes: ['png', 'jpg', 'jpeg','heic','HEIC'],
     withData: true,
@@ -124,7 +124,7 @@ class _UpdateBookPage extends State<UpdateBookPage> {
                 textAlign: TextAlign.left,
               ),
             );
-            Navigator.pop(context);
+            Navigator.pop(context,"s");
           } else {
             showTopSnackBar(
               Overlay.of(context),
@@ -166,7 +166,7 @@ class _UpdateBookPage extends State<UpdateBookPage> {
             ),
           );
 
-          Navigator.pop(context);
+          Navigator.pop(context,"s");
         } else {
           showTopSnackBar(
             Overlay.of(context),

@@ -6,6 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:mlmui/models/ReceiptHistoryDTOListResponse.dart';
 import 'package:mlmui/models/ShelfDTOListResponse.dart';
+import 'package:mlmui/models/StatisticsDTOListResponse.dart';
 import 'package:mlmui/models/UserDTO.dart';
 import 'package:mlmui/models/UserDTOListResponse.dart';
 import 'package:mlmui/models/UserNamesDTOListResponse.dart';
@@ -447,6 +448,25 @@ class ApiService {
     return StatisticsDTO.fromJson(jsonResponse['data']);
   }
 
+
+  Future<StatisticsDTOListResponse> getStatisticsForChart() async {
+    final jwtToken = await getJwtToken();
+    final response = await http.get(
+      Uri.parse('${Constants.apiBaseUrl}/api/admin/getStatisticsForChart'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 401) {
+      throw CustomException("NEED_LOGIN");
+    }
+    print(response.body);
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+    return StatisticsDTOListResponse.fromJson(jsonResponse['data']);
+  }
+
   Future<QueueDetailDTO> getQueueStatusBasedOnBookForLibrarian(int bookId) async {
     final jwtToken = await getJwtToken();
     final response = await http.get(
@@ -459,6 +479,14 @@ class ApiService {
 
     if (response.statusCode == 401) {
       throw CustomException("NEED_LOGIN");
+    }
+
+    if (response.statusCode == 500) {
+
+      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+      print(response.body);
+      throw CustomException(jsonResponse['message']);
     }
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
     print(response.body);

@@ -73,7 +73,6 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.pushReplacementNamed(context, '/libHome');
       }
     }).catchError((error) {
-      print("error while fetching details of the user.");
     });
   }
   @override

@@ -106,6 +106,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(16.0),
                     child: Image.memory(
+                      width:150,
                       base64Decode(_base64Image),
                        fit: BoxFit.cover,
                     ),

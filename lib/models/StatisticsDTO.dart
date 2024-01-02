@@ -10,6 +10,10 @@ class StatisticsDTO{
   double sumOfBalance;
   double sumOfDebt;
   int queueCount;
+  String? day;
+  String? dayDesc;
+  int dayInt;
+  int id;
 
   StatisticsDTO(
       this.totalUserCount,
@@ -18,7 +22,11 @@ class StatisticsDTO{
       this.unavailableBookCount,
       this.sumOfBalance,
       this.sumOfDebt,
-      this.queueCount
+      this.queueCount,
+      this.day,
+      this.dayDesc,
+      this.dayInt,
+      this.id
       );
 
   factory StatisticsDTO.fromJson(Map<String,dynamic> data) => _$StatisticsDTOFromJson(data);

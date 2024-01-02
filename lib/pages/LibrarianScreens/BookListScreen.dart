@@ -64,7 +64,7 @@ class _BookListScreenState extends State<BookListScreen> {
   Map<String, dynamic> globalFilterRequest = {};
 
   GlobalKey<ArtDialogState> _artDialogKey = GlobalKey<ArtDialogState>();
-  bool isLoading = true;
+  bool isLoading = false;
 
   Future<String> borrowPopup(BuildContext context, BookDTO book) async {
     Completer<String> completer = Completer<String>();
@@ -208,7 +208,17 @@ class _BookListScreenState extends State<BookListScreen> {
 
 
   }
-
+  Future<void> gotoupdate(BookDTO currentbook ) async {
+    Object? a = await Navigator.pushNamed(
+        context, '/updatebookpage',
+        arguments: {
+          'currentbook': currentbook
+        });
+    if (a == "s") {
+      print("$isLoading");
+      refresh();
+    }
+  }
   void fetchCategories() async {
     try {
       BookCategoryEnumDTOListResponse response =
@@ -260,7 +270,6 @@ class _BookListScreenState extends State<BookListScreen> {
       return;
     }
     setState(() {
-      isLoading=true;
       bookDTOList.clear();
     });
     page = -1;
@@ -293,14 +302,17 @@ class _BookListScreenState extends State<BookListScreen> {
     if(isLoading){
       return;
     }
+
     if (page - 1 > totalPage) {
       return;
     }
+
     Map<String, dynamic> request = {
       "page": page + 1,
       "size": size,
     };
     setState(() {
+      isLoading = true;
       globalFilterRequest = request;
     });
 
@@ -695,12 +707,8 @@ class _BookListScreenState extends State<BookListScreen> {
                                     backgroundColor: Colors.blue,
                                     icon: Icons.edit,
                                     label: 'Update',
-                                    onPressed: (context) =>
-                                        Navigator.pushNamed(
-                                            context, '/updatebookpage',
-                                            arguments: {
-                                              'currentbook': currentbook
-                                            })),
+                                    onPressed: (context) => gotoupdate(currentbook)
+                                ),
                                 SlidableAction(
                                   backgroundColor: Colors.red,
                                   icon: Icons.search,
@@ -764,47 +772,22 @@ class _BookListScreenState extends State<BookListScreen> {
                                 if(currentbook.status != 'AVAILABLE')
                                   SlidableAction(
                                       backgroundColor: Colors.green,
-                                      icon: Icons.keyboard_return,
-                                      label: 'Take Back',
+                                      icon: Icons.query_stats,
+                                      label: 'View Queue',
                                       onPressed: (context) async {
-                                        Navigator.push(
+
+
+                                        Object? a = await Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) => BookQueueDetail(
                                                 id: currentbook.id),
                                           ),
                                         );
-                                        // takeBack(context,currentbook).then((s) {
-                                        //   print(s);
-                                        //   if (s != null) {
-                                        //     if (s == 'success') {
-                                        //       showTopSnackBar(
-                                        //         Overlay.of(context2),
-                                        //         const CustomSnackBar.success(
-                                        //           message: "Success!",
-                                        //           textAlign: TextAlign.left,
-                                        //         ),
-                                        //       );
-                                        //       refresh();
-                                        //     } else {
-                                        //       showTopSnackBar(
-                                        //         Overlay.of(context2),
-                                        //         CustomSnackBar.error(
-                                        //           message: s,
-                                        //           textAlign: TextAlign.left,
-                                        //         ),
-                                        //       );
-                                        //     }
-                                        //   }
-                                        // }).catchError((e) {
-                                        //   showTopSnackBar(
-                                        //     Overlay.of(context2),
-                                        //     CustomSnackBar.error(
-                                        //       message: e,
-                                        //       textAlign: TextAlign.left,
-                                        //     ),
-                                        //   );
-                                        // });
+                                        if (a == "s") {
+                                          refresh();
+                                        }
+
 
                                       }
 

@@ -481,12 +481,12 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
                                     label: 'Details',
                                     onPressed: (context) {
                                       dissmissed();
-                                      // Navigator.push(
-                                      //   context,
-                                      //   MaterialPageRoute(
-                                      //     builder: (context) => BookDetailsPage(book: currentbook),
-                                      //   ),
-                                      // );
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => BookDetailsPage(book: currentbook),
+                                        ),
+                                      );
                                     },
                                   )
                                 ],

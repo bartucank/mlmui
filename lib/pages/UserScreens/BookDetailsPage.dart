@@ -251,7 +251,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                             widget.book.name != null &&
                             widget.book.description != null)
                             ?
-                        widget.book.name! + ' is written by '+widget.book.author! + ' and published by '+ widget.book.publisher! + '.' + widget.book.description!
+                         widget.book.description!
                             :''
                     ),
                     style: TextStyle(

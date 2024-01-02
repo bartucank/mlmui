@@ -252,7 +252,8 @@ class _UserHomeState extends State<UserHome> {
                     buttonLabel: 'My Books',
                     buttonIcon: Icons.library_books,
                     onPressed: () {
-                      print('My books pressed');
+
+                      Navigator.pushNamed(context, '/mybookspage');
                     },
                   color: Colors.black,
                 )

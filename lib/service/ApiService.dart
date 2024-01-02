@@ -394,7 +394,7 @@ class ApiService {
 
   Future<ReceiptHistoryDTOListResponse> getReceiptsofUser() async {
     final jwtToken = await getJwtToken();
-    final response = await http.post(
+    final response = await http.get(
       Uri.parse('${Constants.apiBaseUrl}/api/user/getReceiptsofUser'),
       headers: {
         'Authorization': 'Bearer $jwtToken',

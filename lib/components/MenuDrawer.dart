@@ -48,7 +48,7 @@ class MenuDrawer extends StatelessWidget {
                       leading: const Icon(Icons.person),
                       title: const Text("Profile"),
                       onTap: () {
-                        CacheManager.logout();
+                        // CacheManager.logout();
                         Navigator.pushNamed(context, '/booklistforuser');
                       },
                     ),
@@ -63,7 +63,7 @@ class MenuDrawer extends StatelessWidget {
             leading: const Icon(Icons.library_books),
             title: const Text("Book List"),
             onTap: () {
-              CacheManager.logout();
+              // CacheManager.logout();
               Navigator.pushNamed(context, '/booklistforuser');
             },
           ),ListTile(

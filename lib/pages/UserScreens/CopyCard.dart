@@ -109,6 +109,7 @@ class _CopyCardState extends State<CopyCard> {
 
             _artDialogKey.currentState?.hideLoader();
             if (result['statusCode'].toString().toUpperCase() == "S") {
+              fetchHistory();
               showTopSnackBar(
                 Overlay.of(context),
                 const CustomSnackBar.success(
@@ -127,10 +128,11 @@ class _CopyCardState extends State<CopyCard> {
               );
 
             } else {
+              fetchHistory();
               String msg = result['msg'].toString();
               showTopSnackBar(
                 Overlay.of(context),
-                CustomSnackBar.success(
+                CustomSnackBar.info(
                   message: msg.toString(),
                   textAlign: TextAlign.left,
                 ),
@@ -164,49 +166,94 @@ class _CopyCardState extends State<CopyCard> {
 
     if (history.isNotEmpty) {
       int itemCount = history.length > 3 ? 3 : history.length;
+      if(history.length>4){
+        for (int i = history.length-1; i > history.length-4; i--) {
+          ReceiptHistoryDTO entry = history[i];
+          String approve = "Not approved yet.";
+          if(entry.approved!){
+            approve = "Approved!";
+          }
 
-      for (int i = history.length-1; i > history.length-4; i--) {
-        ReceiptHistoryDTO entry = history[i];
-        String approve = "Not approved yet.";
-        if(entry.approved!){
-          approve = "Approved!";
-        }
-
-        receiptHistoryWidgets.add(
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Receipt ID: ${entry.id}',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 8.0),
-                Text(
-                  'Approve Status: $approve',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 8.0),
-                if(entry.approved!)
+          receiptHistoryWidgets.add(
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Text(
-                    'Amount: ${entry.balance} ₺',
+                    'Receipt ID: ${entry.id}',
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                Divider(color: Colors.grey),
-              ],
+                  SizedBox(height: 8.0),
+                  Text(
+                    'Approve Status: $approve',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8.0),
+                  if(entry.approved!)
+                    Text(
+                      'Amount: ${entry.balance} ₺',
+                      style: TextStyle(
+                        fontSize: 14,
+                      ),
+                    ),
+                  Divider(color: Colors.grey),
+                ],
+              ),
             ),
-          ),
-        );
+          );
+        }
+      }else{
+        for (int i = 0; i <=history.length-1; i++) {
+          ReceiptHistoryDTO entry = history[i];
+          String approve = "Not approved yet.";
+          if(entry.approved!){
+            approve = "Approved!";
+          }
+
+          receiptHistoryWidgets.add(
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Receipt ID: ${entry.id}',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8.0),
+                  Text(
+                    'Approve Status: $approve',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8.0),
+                  if(entry.approved!)
+                    Text(
+                      'Amount: ${entry.balance} ₺',
+                      style: TextStyle(
+                        fontSize: 14,
+                      ),
+                    ),
+                  Divider(color: Colors.grey),
+                ],
+              ),
+            ),
+          );
+        }
       }
+
     } else {
       receiptHistoryWidgets.add(
         Text(
@@ -270,9 +317,12 @@ class _CopyCardState extends State<CopyCard> {
               child: Column(
                 children: [
                   Image.asset("assets/images/isbank.png"),
+                  SizedBox(height: 20,),
                   Text("ODTÜ KKK / O.D.T.Ü K.K.T.C"),
                   Text("Branch 6822 / Account Number 2002"),
                   Text("IBAN: TR91 0006 4000 0016 8220 0020 02"),
+
+                  SizedBox(height: 20,),
                 ],
               ),
             ),
@@ -301,7 +351,7 @@ class _CopyCardState extends State<CopyCard> {
       showTopSnackBar(
         Overlay.of(context),
         CustomSnackBar.success(
-          message: "IBAN kopyalandı.",
+          message: "IBAN copied!",
           textAlign: TextAlign.center,
         ),
       );

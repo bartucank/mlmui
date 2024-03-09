@@ -8,6 +8,8 @@ import '../../components/MenuDrawerLibrarian.dart';
 import '../../components/UserCard.dart';
 import '../../service/ApiService.dart';
 import 'package:we_slide/we_slide.dart';
+
+import '../../service/constants.dart';
 class UserListScreen extends StatefulWidget {
   const UserListScreen({Key? key}) : super(key: key);
 
@@ -88,7 +90,7 @@ class _UserListScreenState extends State<UserListScreen> {
         key: _scaffoldKey,
         drawer: const MenuDrawerLibrarian(),
         appBar: AppBar(
-          backgroundColor: Color(0xffd2232a),
+          backgroundColor: Constants.mainRedColor,
           title: Text('User List'),
           centerTitle: false,
           leading: IconButton(

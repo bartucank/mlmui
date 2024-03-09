@@ -11,6 +11,7 @@ import 'dart:convert';
 import 'package:mlmui/components/BookCard.dart';
 import 'dart:ui' as ui;
 
+import '../../service/constants.dart';
 import 'BookDetailsPage.dart';
 
 
@@ -68,7 +69,7 @@ class _UserHomeState extends State<UserHome> {
       key: _scaffoldKey,
       drawer: const MenuDrawer(),
       appBar: AppBar(
-        backgroundColor: Color(0xffd2232a),
+        backgroundColor: Constants.mainRedColor,
         title: Text(
             'MLM',
           style: TextStyle(
@@ -213,7 +214,7 @@ class _UserHomeState extends State<UserHome> {
                               Text(
                                 'Debt:',
                                 style: TextStyle(
-                                  color: Color(0xffd2232a),
+                                  color: Constants.mainRedColor,
                                   fontSize: 15.0,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -222,7 +223,7 @@ class _UserHomeState extends State<UserHome> {
                               Text(
                                 '${user?.debt} ₺',//${user?.dept}
                                 style: TextStyle(
-                                  color: Colors.black,
+                                  color: Constants.mainDarkColor,
                                   fontSize: 15.0,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -246,7 +247,7 @@ class _UserHomeState extends State<UserHome> {
                    Object? status = await Navigator.pushNamed(context, '/copycard');
 
                   },
-                  color: Colors.black,
+                  color: Constants.mainDarkColor,
                 ),
                 OutlinedButtons(
                     buttonLabel: 'My Books',
@@ -255,7 +256,7 @@ class _UserHomeState extends State<UserHome> {
 
                       Navigator.pushNamed(context, '/mybookspage');
                     },
-                  color: Colors.black,
+                  color: Constants.mainDarkColor,
                 )
               ],
             ),
@@ -268,7 +269,7 @@ class _UserHomeState extends State<UserHome> {
                   onPressed: (){
                     print('Room Res. pressed');
                   },
-                  color: Colors.black,
+                  color: Constants.mainDarkColor,
                 ),
                 OutlinedButtons(
                     buttonLabel: 'Room Con.',
@@ -363,7 +364,7 @@ class _UserHomeState extends State<UserHome> {
                                             BackdropFilter(
                                               filter: ui.ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0),
                                               child: Container(
-                                                color: Colors.black.withOpacity(0.4),
+                                                color: Constants.mainDarkColor.withOpacity(0.4),
                                               ),
                                             ),
                                             Align(

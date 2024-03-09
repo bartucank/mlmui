@@ -12,6 +12,7 @@ import '../../models/UserDTO.dart';
 import '../../models/StatisticsDTO.dart';
 import '../../service/ApiService.dart';
 import '../../components/LibrarianInfoCard.dart';
+import '../../service/constants.dart';
 
 class LibrarianHome extends StatefulWidget {
   const LibrarianHome({Key? key}) : super(key: key);
@@ -156,7 +157,7 @@ class _LibrarianHomeState extends State<LibrarianHome> {
       key: _scaffoldKey,
       drawer: const MenuDrawerLibrarian(),
       appBar: AppBar(
-        backgroundColor: Color(0xffd2232a),
+        backgroundColor: Constants.mainRedColor,
         title: Text('MLM'),
         centerTitle: false,
         leading: IconButton(

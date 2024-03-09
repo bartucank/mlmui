@@ -9,6 +9,8 @@ import '../../components/UserCard.dart';
 import '../../service/ApiService.dart';
 import 'package:we_slide/we_slide.dart';
 
+import '../../service/constants.dart';
+
 class LibListScreen extends StatefulWidget {
   const LibListScreen({Key? key}) : super(key: key);
 
@@ -165,7 +167,7 @@ class _LibListScreenState extends State<LibListScreen> {
         key: _scaffoldKey,
         drawer: const MenuDrawerLibrarian(),
         appBar: AppBar(
-          backgroundColor: Color(0xffd2232a),
+          backgroundColor: Constants.mainRedColor,
           title: Text('Librarian List'),
           centerTitle: false,
           leading: IconButton(
@@ -180,8 +182,8 @@ class _LibListScreenState extends State<LibListScreen> {
           panelMinSize: _panelMinSize,
           blur: false,
           panelMaxSize: MediaQuery.of(context).size.height / 2,
-          overlayColor: Colors.black,
-          blurColor: Colors.black,
+          overlayColor: Constants.mainDarkColor,
+          blurColor: Constants.mainDarkColor,
           blurSigma: 2,
           backgroundColor: Colors.white,
           overlayOpacity: 0.7,
@@ -210,27 +212,27 @@ class _LibListScreenState extends State<LibListScreen> {
                         fontWeight: FontWeight.w400,
                         fontStyle: FontStyle.normal,
                         fontSize: 14,
-                        color: Colors.black,
+                        color: Constants.mainDarkColor,
                       ),
                       decoration: InputDecoration(
                         disabledBorder: UnderlineInputBorder(
                           borderRadius: BorderRadius.circular(4.0),
-                          borderSide: BorderSide(color: Colors.black, width: 1),
+                          borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                         ),
                         focusedBorder: UnderlineInputBorder(
                           borderRadius: BorderRadius.circular(4.0),
-                          borderSide: BorderSide(color: Colors.black, width: 1),
+                          borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                         ),
                         enabledBorder: UnderlineInputBorder(
                           borderRadius: BorderRadius.circular(4.0),
-                          borderSide: BorderSide(color: Colors.black, width: 1),
+                          borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                         ),
                         labelText: "Search by Name Surname",
                         labelStyle: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontStyle: FontStyle.normal,
                           fontSize: 16,
-                          color: Colors.black,
+                          color: Constants.mainDarkColor,
                         ),
                         filled: true,
                         fillColor: Color(0x00ffffff),
@@ -238,7 +240,7 @@ class _LibListScreenState extends State<LibListScreen> {
                         contentPadding:
                         EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                         prefixIcon:
-                        Icon(Icons.person, color: Colors.black, size: 18),
+                        Icon(Icons.person, color: Constants.mainDarkColor, size: 18),
                       ),
                     ),
                   ),
@@ -253,27 +255,27 @@ class _LibListScreenState extends State<LibListScreen> {
                         fontWeight: FontWeight.w400,
                         fontStyle: FontStyle.normal,
                         fontSize: 14,
-                        color: Colors.black,
+                        color: Constants.mainDarkColor,
                       ),
                       decoration: InputDecoration(
                         disabledBorder: UnderlineInputBorder(
                           borderRadius: BorderRadius.circular(4.0),
-                          borderSide: BorderSide(color: Colors.black, width: 1),
+                          borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                         ),
                         focusedBorder: UnderlineInputBorder(
                           borderRadius: BorderRadius.circular(4.0),
-                          borderSide: BorderSide(color: Colors.black, width: 1),
+                          borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                         ),
                         enabledBorder: UnderlineInputBorder(
                           borderRadius: BorderRadius.circular(4.0),
-                          borderSide: BorderSide(color: Colors.black, width: 1),
+                          borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                         ),
                         labelText: "Search by Username",
                         labelStyle: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontStyle: FontStyle.normal,
                           fontSize: 16,
-                          color: Colors.black,
+                          color: Constants.mainDarkColor,
                         ),
                         filled: true,
                         fillColor: Color(0x00ffffff),
@@ -281,7 +283,7 @@ class _LibListScreenState extends State<LibListScreen> {
                         contentPadding:
                         EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                         prefixIcon:
-                        Icon(Icons.abc, color: Colors.black, size: 18),
+                        Icon(Icons.abc, color: Constants.mainDarkColor, size: 18),
                       ),
                     ),
                   ),
@@ -296,27 +298,27 @@ class _LibListScreenState extends State<LibListScreen> {
                         fontWeight: FontWeight.w400,
                         fontStyle: FontStyle.normal,
                         fontSize: 14,
-                        color: Colors.black,
+                        color: Constants.mainDarkColor,
                       ),
                       decoration: InputDecoration(
                         disabledBorder: UnderlineInputBorder(
                           borderRadius: BorderRadius.circular(4.0),
-                          borderSide: BorderSide(color: Colors.black, width: 1),
+                          borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                         ),
                         focusedBorder: UnderlineInputBorder(
                           borderRadius: BorderRadius.circular(4.0),
-                          borderSide: BorderSide(color: Colors.black, width: 1),
+                          borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                         ),
                         enabledBorder: UnderlineInputBorder(
                           borderRadius: BorderRadius.circular(4.0),
-                          borderSide: BorderSide(color: Colors.black, width: 1),
+                          borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                         ),
                         labelText: "Search by Email",
                         labelStyle: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontStyle: FontStyle.normal,
                           fontSize: 16,
-                          color: Colors.black,
+                          color: Constants.mainDarkColor,
                         ),
                         filled: true,
                         fillColor: Color(0x00ffffff),
@@ -324,7 +326,7 @@ class _LibListScreenState extends State<LibListScreen> {
                         contentPadding:
                         EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                         prefixIcon: Icon(Icons.alternate_email,
-                            color: Colors.black, size: 18),
+                            color: Constants.mainDarkColor, size: 18),
                       ),
                     ),
                   ),
@@ -338,7 +340,7 @@ class _LibListScreenState extends State<LibListScreen> {
                             onPressed: () {
                               filter();
                             },
-                            color: Color(0xffd2232a),
+                            color: Constants.mainRedColor,
                             elevation: 0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.0),
@@ -368,7 +370,7 @@ class _LibListScreenState extends State<LibListScreen> {
                             elevation: 0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.0),
-                              side: BorderSide(color: Colors.black, width: 1),
+                              side: BorderSide(color: Constants.mainDarkColor, width: 1),
                             ),
                             padding: EdgeInsets.all(16),
                             child: Text(
@@ -379,7 +381,7 @@ class _LibListScreenState extends State<LibListScreen> {
                                 fontStyle: FontStyle.normal,
                               ),
                             ),
-                            textColor: Color(0xffd2232a),
+                            textColor: Constants.mainRedColor,
                             height: 45,
                           ),
                         ),
@@ -394,7 +396,7 @@ class _LibListScreenState extends State<LibListScreen> {
               BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Invite Metuian'),
             ],
             elevation: 0,
-            backgroundColor: Color(0xffd2232a),
+            backgroundColor: Constants.mainRedColor,
             type: BottomNavigationBarType.fixed,
             selectedItemColor: Colors.white,
             unselectedItemColor: Colors.white.withOpacity(0.5), //Colors.grey,

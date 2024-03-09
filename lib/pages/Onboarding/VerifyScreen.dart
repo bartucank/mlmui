@@ -5,6 +5,7 @@ import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 import '../../service/ApiService.dart';
+import '../../service/constants.dart';
 
 class VerifyScreen extends StatefulWidget {
   const VerifyScreen({Key? key}) : super(key: key);
@@ -75,7 +76,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                   width: MediaQuery.of(context).size.width,
                   height: 150,
                   decoration: BoxDecoration(
-                    color: Color(0xffd2232a),
+                    color: Constants.mainRedColor,
                     shape: BoxShape.rectangle,
                     borderRadius: BorderRadius.zero,
                   ),
@@ -121,7 +122,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                   fontWeight: FontWeight.w400,
                   fontStyle: FontStyle.normal,
                   fontSize: 16,
-                  color: Color(0xff000000),
+                  color: Constants.mainDarkColor,
                 ),
               ),
             ),
@@ -143,9 +144,9 @@ class _VerifyScreenState extends State<VerifyScreen> {
                 showFieldAsBox: true,
                 fieldWidth: 50,
                 filled: true,
-                fillColor: Color(0x00000000),
+                fillColor: Constants.mainDarkColor,
                 enabledBorderColor: Color(0xffaaaaaa),
-                focusedBorderColor: Color(0xffd2232a),
+                focusedBorderColor: Constants.mainRedColor,
                 borderWidth: 2,
                 margin: EdgeInsets.all(0),
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -156,7 +157,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                   fontWeight: FontWeight.w400,
                   fontStyle: FontStyle.normal,
                   fontSize: 20,
-                  color: Color(0xff000000),
+                  color: Constants.mainDarkColor,
                 ),
                 onCodeChanged: (String code) {},
                 onSubmit: (String verificationCode){

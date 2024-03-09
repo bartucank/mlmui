@@ -8,8 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/BookDTO.dart';
 
-
-
 class BookCard extends StatelessWidget {
   final BookDTO book;
 
@@ -22,21 +20,21 @@ class BookCard extends StatelessWidget {
     if (base64Image != null) {
       return base64Image;
     } else {
-      final response = await http.get(Uri.parse('${Constants.apiBaseUrl}/api/user/getImageBase64ById?id=$imageId'));
+      final response = await http.get(Uri.parse(
+          '${Constants.apiBaseUrl}/api/user/getImageBase64ById?id=$imageId'));
 
       if (response.statusCode == 200) {
         String base64 = base64Encode(response.bodyBytes);
         prefs.setString(imageId.toString(), base64);
         return base64;
       } else {
-        return"1";
+        return "1";
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    print("ok");
     return FutureBuilder<String>(
       future: getImageBase64(book.imageId!),
       builder: (context, snapshot) {
@@ -46,23 +44,34 @@ class BookCard extends StatelessWidget {
           return CircularProgressIndicator();
         } else {
           String base64Image = snapshot.data!;
-          return ListTile(
-            contentPadding: const EdgeInsets.symmetric(vertical: 1, horizontal: 16),
-            title: Text(book.name!),
-            subtitle: Text(book.category!),
-            leading: CircleAvatar(
-              radius: 15,
-              backgroundColor: Colors.white,
-              backgroundImage: MemoryImage(
-                base64Decode(base64Image),
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 2.0),
+            child: Card(
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: ListTile(
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                title: Text(book.name!),
+                subtitle: Text(book.category!),
+                leading: ClipRRect(
+                  borderRadius: BorderRadius.circular(5.0), //or 15.0
+                  child: Container(
+                    color: Colors.white,
+                    child: Image(
+                      image: MemoryImage(
+                        base64Decode(base64Image),
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
           );
         }
       },
     );
-
-
-
   }
 }

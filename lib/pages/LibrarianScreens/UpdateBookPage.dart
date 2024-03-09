@@ -299,7 +299,7 @@ class _UpdateBookPage extends State<UpdateBookPage> {
         key: _scaffoldKey,
         drawer: const MenuDrawerLibrarian(),
         appBar: AppBar(
-          backgroundColor: Color(0xffd2232a),
+          backgroundColor: Constants.mainRedColor,
           title: Text('Update Book Page'),
           centerTitle: false,
           leading: IconButton(
@@ -311,7 +311,7 @@ class _UpdateBookPage extends State<UpdateBookPage> {
         ),
         body: Theme(
           data: Theme.of(context).copyWith(
-              colorScheme: ColorScheme.light(primary: Color(0xffd2232a))),
+              colorScheme: ColorScheme.light(primary: Constants.mainRedColor)),
           child: Stepper(
             physics: ClampingScrollPhysics(),
             onStepTapped: (step) => setState(() => currentStep = step),
@@ -434,27 +434,27 @@ class _UpdateBookPage extends State<UpdateBookPage> {
                   fontWeight: FontWeight.w400,
                   fontStyle: FontStyle.normal,
                   fontSize: 14,
-                  color: Color(0xff000000),
+                  color: Constants.mainDarkColor,
                 ),
                 decoration: InputDecoration(
                   disabledBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                    borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                   ),
                   focusedBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                    borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                   ),
                   enabledBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                    borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                   ),
                   labelText: "Name",
                   labelStyle: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontStyle: FontStyle.normal,
                     fontSize: 16,
-                    color: Color(0xff000000),
+                    color: Constants.mainDarkColor,
                   ),
                   filled: true,
                   fillColor: Color(0x00ffffff),
@@ -462,7 +462,7 @@ class _UpdateBookPage extends State<UpdateBookPage> {
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   prefixIcon:
-                      Icon(Icons.book, color: Color(0xff212435), size: 18),
+                      Icon(Icons.book, color: Constants.mainDarkColor, size: 18),
                 ),
               ),
               TextField(
@@ -474,27 +474,27 @@ class _UpdateBookPage extends State<UpdateBookPage> {
                   fontWeight: FontWeight.w400,
                   fontStyle: FontStyle.normal,
                   fontSize: 14,
-                  color: Color(0xff000000),
+                  color: Constants.mainDarkColor,
                 ),
                 decoration: InputDecoration(
                   disabledBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                    borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                   ),
                   focusedBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                    borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                   ),
                   enabledBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                    borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                   ),
                   labelText: "Description",
                   labelStyle: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontStyle: FontStyle.normal,
                     fontSize: 16,
-                    color: Color(0xff000000),
+                    color: Constants.mainDarkColor,
                   ),
                   filled: true,
                   fillColor: Color(0x00ffffff),
@@ -502,7 +502,7 @@ class _UpdateBookPage extends State<UpdateBookPage> {
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   prefixIcon:
-                      Icon(Icons.book, color: Color(0xff212435), size: 18),
+                      Icon(Icons.book, color: Constants.mainDarkColor, size: 18),
                 ),
               ),
               TextField(
@@ -514,27 +514,27 @@ class _UpdateBookPage extends State<UpdateBookPage> {
                   fontWeight: FontWeight.w400,
                   fontStyle: FontStyle.normal,
                   fontSize: 14,
-                  color: Color(0xff000000),
+                  color: Constants.mainDarkColor,
                 ),
                 decoration: InputDecoration(
                   disabledBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                    borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                   ),
                   focusedBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                    borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                   ),
                   enabledBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                    borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                   ),
                   labelText: "Publisher",
                   labelStyle: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontStyle: FontStyle.normal,
                     fontSize: 16,
-                    color: Color(0xff000000),
+                    color: Constants.mainDarkColor,
                   ),
                   filled: true,
                   fillColor: Color(0x00ffffff),
@@ -542,7 +542,7 @@ class _UpdateBookPage extends State<UpdateBookPage> {
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   prefixIcon:
-                      Icon(Icons.publish, color: Color(0xff212435), size: 18),
+                      Icon(Icons.publish, color: Constants.mainDarkColor, size: 18),
                 ),
               ),
               TextField(
@@ -554,27 +554,27 @@ class _UpdateBookPage extends State<UpdateBookPage> {
                   fontWeight: FontWeight.w400,
                   fontStyle: FontStyle.normal,
                   fontSize: 14,
-                  color: Color(0xff000000),
+                  color: Constants.mainDarkColor,
                 ),
                 decoration: InputDecoration(
                   disabledBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                    borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                   ),
                   focusedBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                    borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                   ),
                   enabledBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                    borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                   ),
                   labelText: "Author",
                   labelStyle: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontStyle: FontStyle.normal,
                     fontSize: 16,
-                    color: Color(0xff000000),
+                    color: Constants.mainDarkColor,
                   ),
                   filled: true,
                   fillColor: Color(0x00ffffff),
@@ -582,7 +582,7 @@ class _UpdateBookPage extends State<UpdateBookPage> {
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   prefixIcon:
-                      Icon(Icons.person, color: Color(0xff212435), size: 18),
+                      Icon(Icons.person, color: Constants.mainDarkColor, size: 18),
                 ),
               ),
 
@@ -604,7 +604,7 @@ class _UpdateBookPage extends State<UpdateBookPage> {
                         fontWeight: FontWeight.w400,
                         fontStyle: FontStyle.normal,
                         fontSize: 14,
-                        color: Color(0xff000000),
+                        color: Constants.mainDarkColor,
                       ),
                     ),
                   );
@@ -618,21 +618,21 @@ class _UpdateBookPage extends State<UpdateBookPage> {
                   disabledBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
                     borderSide: BorderSide(
-                      color: Color(0xff000000),
+                      color: Constants.mainDarkColor,
                       width: 1,
                     ),
                   ),
                   focusedBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
                     borderSide: BorderSide(
-                      color: Color(0xff000000),
+                      color: Constants.mainDarkColor,
                       width: 1,
                     ),
                   ),
                   enabledBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
                     borderSide: BorderSide(
-                      color: Color(0xff000000),
+                      color: Constants.mainDarkColor,
                       width: 1,
                     ),
                   ),
@@ -641,7 +641,7 @@ class _UpdateBookPage extends State<UpdateBookPage> {
                     fontWeight: FontWeight.w700,
                     fontStyle: FontStyle.normal,
                     fontSize: 16,
-                    color: Color(0xff000000),
+                    color: Constants.mainDarkColor,
                   ),
                   filled: true,
                   fillColor: Color(0x00ffffff),
@@ -652,7 +652,7 @@ class _UpdateBookPage extends State<UpdateBookPage> {
                   ),
                   prefixIcon: Icon(
                     Icons.arrow_drop_down,
-                    color: Color(0xff212435),
+                    color: Constants.mainDarkColor,
                     size: 18,
                   ),
                 ),
@@ -668,7 +668,7 @@ class _UpdateBookPage extends State<UpdateBookPage> {
                         fontWeight: FontWeight.w400,
                         fontStyle: FontStyle.normal,
                         fontSize: 14,
-                        color: Color(0xff000000),
+                        color: Constants.mainDarkColor,
                       ),
                     ),
                   );
@@ -682,21 +682,21 @@ class _UpdateBookPage extends State<UpdateBookPage> {
                   disabledBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
                     borderSide: BorderSide(
-                      color: Color(0xff000000),
+                      color: Constants.mainDarkColor,
                       width: 1,
                     ),
                   ),
                   focusedBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
                     borderSide: BorderSide(
-                      color: Color(0xff000000),
+                      color: Constants.mainDarkColor,
                       width: 1,
                     ),
                   ),
                   enabledBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
                     borderSide: BorderSide(
-                      color: Color(0xff000000),
+                      color: Constants.mainDarkColor,
                       width: 1,
                     ),
                   ),
@@ -705,7 +705,7 @@ class _UpdateBookPage extends State<UpdateBookPage> {
                     fontWeight: FontWeight.w700,
                     fontStyle: FontStyle.normal,
                     fontSize: 16,
-                    color: Color(0xff000000),
+                    color: Constants.mainDarkColor,
                   ),
                   filled: true,
                   fillColor: Color(0x00ffffff),
@@ -716,7 +716,7 @@ class _UpdateBookPage extends State<UpdateBookPage> {
                   ),
                   prefixIcon: Icon(
                     Icons.arrow_drop_down,
-                    color: Color(0xff212435),
+                    color: Constants.mainDarkColor,
                     size: 18,
                   ),
                 ),

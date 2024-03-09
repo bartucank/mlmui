@@ -5,6 +5,7 @@ import 'package:mlmui/service/CacheManager.dart';
 
 import '../models/UserDTO.dart';
 import '../service/ApiService.dart';
+import '../service/constants.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -117,7 +118,7 @@ class _SplashScreenState extends State<SplashScreen> {
                                 Navigator.pushReplacementNamed(
                                     context, '/register');
                               },
-                              color: Color(0xffd2232a),
+                              color: Constants.mainRedColor,
                               elevation: 0,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(22.0),

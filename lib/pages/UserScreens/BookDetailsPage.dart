@@ -77,7 +77,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xffd2232a),
+        backgroundColor: Constants.mainRedColor,
         title: Text('Book Details'),
         centerTitle: false,
         leading: IconButton(
@@ -94,7 +94,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
           children: [
             Container(
               height: 200.0,
-              color: Color(0xffd2232a),
+              color: Constants.mainRedColor,
             ),
             Positioned(
               bottom: -25.0,
@@ -141,7 +141,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                       'by ${widget.book.author?.toUpperCase()}'??'',
                       style: TextStyle(
                         fontSize: 15,
-                        color: Colors.black,
+                        color: Constants.mainDarkColor,
                         fontWeight: FontWeight.w700,
                       ),
                       overflow: TextOverflow.ellipsis,
@@ -201,7 +201,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                               fontStyle: FontStyle.normal,
                             ),
                           ),
-                          textColor: Color(0xffd2232a),
+                          textColor: Constants.mainRedColor,
                           height: 50,
                         ),
 
@@ -259,18 +259,18 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                       fontWeight: FontWeight.w400,
                       fontStyle: FontStyle.normal,
                       fontSize: 14,
-                      color: Color(0xff000000),
+                      color: Constants.mainDarkColor,
                     ),
                     decoration: InputDecoration(
                       disabledBorder: UnderlineInputBorder(
                         borderRadius: BorderRadius.circular(4.0),
-                        borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                        borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                       ),
                       labelStyle: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontStyle: FontStyle.normal,
                         fontSize: 16,
-                        color: Color(0xff000000),
+                        color: Constants.mainDarkColor,
                       ),
                       filled: true,
                       fillColor: Color(0x00ffffff),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/UserDTO.dart';
 import '../service/CacheManager.dart';
+import '../service/constants.dart';
 
 class MenuDrawerLibrarian extends StatelessWidget {
   const MenuDrawerLibrarian({Key? key}) : super(key: key);
@@ -86,7 +87,7 @@ class MenuDrawerLibrarian extends StatelessWidget {
               Navigator.pushNamed(context, '/booklist');
             },
           ),
-          const Divider(color: Colors.black54),
+          const Divider(color: Constants.mainDarkColor),
           ListTile(
             leading: const Icon(Icons.logout_outlined),
             title: const Text("Log out"),
@@ -95,7 +96,7 @@ class MenuDrawerLibrarian extends StatelessWidget {
               Navigator.pushReplacementNamed(context, '/splash');
             },
           ),
-          const Divider(color: Colors.black54),
+          const Divider(color: Constants.mainDarkColor),
           Center(
             child: Text(
               "MLM - 2023",

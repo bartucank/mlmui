@@ -329,7 +329,7 @@ class _BookQueueDetailState extends State<BookQueueDetail> {
         key: _scaffoldKey,
         drawer: const MenuDrawerLibrarian(),
         appBar: AppBar(
-          backgroundColor: Color(0xffd2232a),
+          backgroundColor: Constants.mainRedColor,
           title: Text('Queue Detail'),
           centerTitle: false,
           leading: IconButton(
@@ -343,7 +343,7 @@ class _BookQueueDetailState extends State<BookQueueDetail> {
           children: [
             if (isLoading)
               Container(
-                color: Colors.black.withOpacity(0.5),
+                color: Constants.mainDarkColor.withOpacity(0.5),
                 child: Center(
                   child: CircularProgressIndicator(),
                 ),
@@ -546,7 +546,7 @@ class _BookQueueDetailState extends State<BookQueueDetail> {
                                                     fontWeight: FontWeight.w700,
                                                     fontStyle: FontStyle.normal,
                                                     fontSize: 20,
-                                                    color: Color(0xff000000),
+                                                    color: Constants.mainDarkColor,
                                                   ),
                                                 ),
                                               ),
@@ -571,7 +571,7 @@ class _BookQueueDetailState extends State<BookQueueDetail> {
                                                 fontWeight: FontWeight.w400,
                                                 fontStyle: FontStyle.normal,
                                                 fontSize: 14,
-                                                color: Color(0xff000000),
+                                                color: Constants.mainDarkColor,
                                               ),
                                             ),
                                           ),
@@ -663,7 +663,7 @@ class _BookQueueDetailState extends State<BookQueueDetail> {
                                                           Icon(
                                                             Icons.date_range,
                                                             color:
-                                                            Color(0xff212435),
+                                                            Constants.mainDarkColor,
                                                             size: 18,
                                                           ),
                                                           Expanded(
@@ -728,7 +728,7 @@ class _BookQueueDetailState extends State<BookQueueDetail> {
                                                               FontStyle.normal,
                                                               fontSize: 14,
                                                               color:
-                                                              Color(0xff000000),
+                                                              Constants.mainDarkColor,
                                                             ),
                                                           ),
                                                         ],

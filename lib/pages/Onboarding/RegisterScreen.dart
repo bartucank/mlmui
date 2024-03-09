@@ -3,6 +3,7 @@ import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 import '../../service/ApiService.dart';
+import '../../service/constants.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -123,7 +124,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             fontWeight: FontWeight.w700,
                             fontStyle: FontStyle.normal,
                             fontSize: 20,
-                            color: Color(0xff000000),
+                            color: Constants.mainDarkColor,
                           ),
                         ),
                         Padding(
@@ -151,30 +152,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               fontWeight: FontWeight.w400,
                               fontStyle: FontStyle.normal,
                               fontSize: 14,
-                              color: Color(0xff000000),
+                              color: Constants.mainDarkColor,
                             ),
                             decoration: InputDecoration(
                               disabledBorder: UnderlineInputBorder(
                                 borderRadius: BorderRadius.circular(4.0),
                                 borderSide: BorderSide(
-                                    color: Color(0xff000000), width: 1),
+                                    color: Constants.mainDarkColor, width: 1),
                               ),
                               focusedBorder: UnderlineInputBorder(
                                 borderRadius: BorderRadius.circular(4.0),
                                 borderSide: BorderSide(
-                                    color: Color(0xff000000), width: 1),
+                                    color: Constants.mainDarkColor, width: 1),
                               ),
                               enabledBorder: UnderlineInputBorder(
                                 borderRadius: BorderRadius.circular(4.0),
                                 borderSide: BorderSide(
-                                    color: Color(0xff000000), width: 1),
+                                    color: Constants.mainDarkColor, width: 1),
                               ),
                               labelText: "Name Surname",
                               labelStyle: TextStyle(
                                 fontWeight: FontWeight.w700,
                                 fontStyle: FontStyle.normal,
                                 fontSize: 16,
-                                color: Color(0xff000000),
+                                color: Constants.mainDarkColor,
                               ),
                               filled: true,
                               fillColor: Color(0x00ffffff),
@@ -182,7 +183,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               contentPadding: EdgeInsets.symmetric(
                                   vertical: 8, horizontal: 12),
                               prefixIcon: Icon(Icons.abc,
-                                  color: Color(0xff212435), size: 18),
+                                  color: Constants.mainDarkColor, size: 18),
                             ),
                           ),
                         ),
@@ -197,30 +198,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               fontWeight: FontWeight.w400,
                               fontStyle: FontStyle.normal,
                               fontSize: 14,
-                              color: Color(0xff000000),
+                              color: Constants.mainDarkColor,
                             ),
                             decoration: InputDecoration(
                               disabledBorder: UnderlineInputBorder(
                                 borderRadius: BorderRadius.circular(4.0),
                                 borderSide: BorderSide(
-                                    color: Color(0xff000000), width: 1),
+                                    color: Constants.mainDarkColor, width: 1),
                               ),
                               focusedBorder: UnderlineInputBorder(
                                 borderRadius: BorderRadius.circular(4.0),
                                 borderSide: BorderSide(
-                                    color: Color(0xff000000), width: 1),
+                                    color: Constants.mainDarkColor, width: 1),
                               ),
                               enabledBorder: UnderlineInputBorder(
                                 borderRadius: BorderRadius.circular(4.0),
                                 borderSide: BorderSide(
-                                    color: Color(0xff000000), width: 1),
+                                    color: Constants.mainDarkColor, width: 1),
                               ),
                               labelText: "Username",
                               labelStyle: TextStyle(
                                 fontWeight: FontWeight.w700,
                                 fontStyle: FontStyle.normal,
                                 fontSize: 16,
-                                color: Color(0xff000000),
+                                color: Constants.mainDarkColor,
                               ),
                               filled: true,
                               fillColor: Color(0x00ffffff),
@@ -228,7 +229,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               contentPadding: EdgeInsets.symmetric(
                                   vertical: 8, horizontal: 12),
                               prefixIcon: Icon(Icons.person,
-                                  color: Color(0xff212435), size: 18),
+                                  color: Constants.mainDarkColor, size: 18),
                             ),
                           ),
                         ),
@@ -243,30 +244,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               fontWeight: FontWeight.w400,
                               fontStyle: FontStyle.normal,
                               fontSize: 14,
-                              color: Color(0xff000000),
+                              color: Constants.mainDarkColor,
                             ),
                             decoration: InputDecoration(
                               disabledBorder: UnderlineInputBorder(
                                 borderRadius: BorderRadius.circular(4.0),
                                 borderSide: BorderSide(
-                                    color: Color(0xff000000), width: 1),
+                                    color: Constants.mainDarkColor, width: 1),
                               ),
                               focusedBorder: UnderlineInputBorder(
                                 borderRadius: BorderRadius.circular(4.0),
                                 borderSide: BorderSide(
-                                    color: Color(0xff000000), width: 1),
+                                    color: Constants.mainDarkColor, width: 1),
                               ),
                               enabledBorder: UnderlineInputBorder(
                                 borderRadius: BorderRadius.circular(4.0),
                                 borderSide: BorderSide(
-                                    color: Color(0xff000000), width: 1),
+                                    color: Constants.mainDarkColor, width: 1),
                               ),
                               labelText: "Metu Mail",
                               labelStyle: TextStyle(
                                 fontWeight: FontWeight.w700,
                                 fontStyle: FontStyle.normal,
                                 fontSize: 16,
-                                color: Color(0xff000000),
+                                color: Constants.mainDarkColor,
                               ),
                               filled: true,
                               fillColor: Color(0xffffffff),
@@ -274,7 +275,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               contentPadding: EdgeInsets.symmetric(
                                   vertical: 8, horizontal: 12),
                               prefixIcon: Icon(Icons.alternate_email,
-                                  color: Color(0xff212435), size: 18),
+                                  color: Constants.mainDarkColor, size: 18),
                             ),
                           ),
                         ),
@@ -289,30 +290,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               fontWeight: FontWeight.w400,
                               fontStyle: FontStyle.normal,
                               fontSize: 14,
-                              color: Color(0xff000000),
+                              color: Constants.mainDarkColor,
                             ),
                             decoration: InputDecoration(
                               disabledBorder: UnderlineInputBorder(
                                 borderRadius: BorderRadius.circular(4.0),
                                 borderSide: BorderSide(
-                                    color: Color(0xff000000), width: 1),
+                                    color: Constants.mainDarkColor, width: 1),
                               ),
                               focusedBorder: UnderlineInputBorder(
                                 borderRadius: BorderRadius.circular(4.0),
                                 borderSide: BorderSide(
-                                    color: Color(0xff000000), width: 1),
+                                    color: Constants.mainDarkColor, width: 1),
                               ),
                               enabledBorder: UnderlineInputBorder(
                                 borderRadius: BorderRadius.circular(4.0),
                                 borderSide: BorderSide(
-                                    color: Color(0xff000000), width: 1),
+                                    color: Constants.mainDarkColor, width: 1),
                               ),
                               labelText: "Password",
                               labelStyle: TextStyle(
                                 fontWeight: FontWeight.w700,
                                 fontStyle: FontStyle.normal,
                                 fontSize: 16,
-                                color: Color(0xff000000),
+                                color: Constants.mainDarkColor,
                               ),
                               filled: true,
                               fillColor: Color(0xffffffff),
@@ -320,7 +321,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               contentPadding: EdgeInsets.symmetric(
                                   vertical: 8, horizontal: 12),
                               prefixIcon: Icon(Icons.lock,
-                                  color: Color(0xff212435), size: 18),
+                                  color: Constants.mainDarkColor, size: 18),
                             ),
                           ),
                         ),
@@ -330,7 +331,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             onPressed: () {
                               _register();
                             },
-                            color: Color(0xffd2232a),
+                            color: Constants.mainRedColor,
                             elevation: 0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.0),
@@ -372,7 +373,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 fontStyle: FontStyle.normal,
                               ),
                             ),
-                            textColor: Color(0xffd2232a),
+                            textColor: Constants.mainRedColor,
                             height: 45,
                             minWidth: MediaQuery.of(context).size.width,
                           ),
@@ -385,7 +386,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
             if (_loading)
               Container(
-                color: Colors.black.withOpacity(0.5),
+                color: Constants.mainDarkColor.withOpacity(0.5),
                 child: Center(
                   child: CircularProgressIndicator(),
                 ),

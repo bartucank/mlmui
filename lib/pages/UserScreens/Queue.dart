@@ -14,6 +14,7 @@ import 'dart:convert';
 import 'package:mlmui/components/BookCard.dart';
 import 'dart:ui' as ui;
 
+import '../../service/constants.dart';
 import 'BookDetailsPage.dart';
 
 class QueueUser extends StatefulWidget {
@@ -65,7 +66,7 @@ class _QueueUserState extends State<QueueUser>
         backgroundColor: const Color.fromARGB(255, 3, 19, 32),
         key: _scaffoldKey,
         appBar: AppBar(
-          backgroundColor: Color(0xffd2232a),
+          backgroundColor: Constants.mainRedColor,
           title: Text('Queue'),
           centerTitle: false,
           leading: IconButton(
@@ -82,7 +83,7 @@ class _QueueUserState extends State<QueueUser>
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Color(0xffd2232a),
+                Constants.mainRedColor,
                 Color(0xffffffff),
               ],
               stops: [0.2, 1],
@@ -203,7 +204,7 @@ class _QueueUserState extends State<QueueUser>
                               text: "Enter Queue",
                               textStyle: Theme.of(context).textTheme.headline6!.merge(
                                   const TextStyle(
-                                      color: Color(0xffd2232a),
+                                      color: Constants.mainRedColor,
                                       fontWeight: FontWeight.bold)),
                               key: _key,
                               onSubmit: () async {
@@ -236,7 +237,7 @@ class _QueueUserState extends State<QueueUser>
                                 });
 
                               },
-                              innerColor: Color(0xffd2232a),
+                              innerColor: Constants.mainRedColor,
                               outerColor: Colors.white,
                             ),
                           ),

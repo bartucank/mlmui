@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:mlmui/models/BookDTO.dart';
 import 'package:mlmui/models/UserDTO.dart';
 import 'package:mlmui/models/UserDTOListResponse.dart';
@@ -31,6 +32,7 @@ import '../../components/UserCard.dart';
 import '../../service/ApiService.dart';
 import 'package:we_slide/we_slide.dart';
 
+import '../../service/constants.dart';
 import '../UserScreens/BookDetailsPage.dart';
 
 class BookListScreen extends StatefulWidget {
@@ -41,6 +43,12 @@ class BookListScreen extends StatefulWidget {
 }
 
 class _BookListScreenState extends State<BookListScreen> {
+
+  static const _pageSize = 20;
+  final PagingController<int, BookDTO> _pagingController =
+  PagingController(firstPageKey: 0);
+
+
   final listcontroller = ScrollController();
   TextEditingController _titleController = TextEditingController();
   TextEditingController _authorController = TextEditingController();
@@ -50,7 +58,8 @@ class _BookListScreenState extends State<BookListScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   int page = -1;
-  int size = 7;
+  int size = 6;
+  int totalSize = 0;
   int totalPage = 1000;
   late Future<BookDTOListResponse> bookDTOListResponseFuture;
   List<BookDTO> bookDTOList = [];
@@ -93,7 +102,7 @@ class _BookListScreenState extends State<BookListScreen> {
                     fontWeight: FontWeight.w700,
                     fontStyle: FontStyle.normal,
                     fontSize: 16,
-                    color: Colors.black,
+                    color: Constants.mainDarkColor,
                   ),
                   filled: true,
                   fillColor: Color(0x00ffffff),
@@ -103,12 +112,12 @@ class _BookListScreenState extends State<BookListScreen> {
                     horizontal: 12,
                   ),
                   prefixIcon: Icon(Icons.person,
-                      color: Colors.black, size: 18),
+                      color: Constants.mainDarkColor, size: 18),
                   border: OutlineInputBorder(
                     // Add this line to define a border
                     borderRadius: BorderRadius.circular(4.0),
                     borderSide:
-                    BorderSide(color: Colors.black, width: 1),
+                    BorderSide(color: Constants.mainDarkColor, width: 1),
                   ),
                 ),
                 items: _dropdownItemsForUsers.map((user) {
@@ -273,12 +282,15 @@ class _BookListScreenState extends State<BookListScreen> {
       bookDTOList.clear();
     });
     page = -1;
-    size = 7;
+    size = 6;
     fetchFirstBooks();
   }
 
   void fetchMoreBook() async {
     if (page - 1 > totalPage) {
+      return;
+    }
+    if(totalSize<=bookDTOList.length){
       return;
     }
     globalFilterRequest['page'] = globalFilterRequest['page'] + 1;
@@ -324,6 +336,7 @@ class _BookListScreenState extends State<BookListScreen> {
         bookDTOList.addAll(response.bookDTOList);
         lastList.addAll(response.bookDTOList);
         totalPage = response.totalPage;
+        totalSize = response.totalResult;
         page++;
       });
     } catch (e) {
@@ -422,11 +435,13 @@ class _BookListScreenState extends State<BookListScreen> {
         key: _scaffoldKey,
         drawer: const MenuDrawerLibrarian(),
         appBar: AppBar(
-          backgroundColor: Color(0xffd2232a),
-          title: Text('Book List'),
+          backgroundColor: Constants.mainRedColor,
+          title: Text('Book List', style: TextStyle(
+            color: Constants.whiteColor
+          ),),
           centerTitle: false,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: Icon(Icons.arrow_back,color: Constants.whiteColor,),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -437,8 +452,8 @@ class _BookListScreenState extends State<BookListScreen> {
             panelMinSize: _panelMinSize,
             blur: false,
             panelMaxSize: MediaQuery.of(context).size.height / 2,
-            overlayColor: Colors.black,
-            blurColor: Colors.black,
+            overlayColor: Constants.mainDarkColor,
+            blurColor: Constants.mainDarkColor,
             blurSigma: 2,
             backgroundColor: Colors.white,
             overlayOpacity: 0.7,
@@ -467,30 +482,30 @@ class _BookListScreenState extends State<BookListScreen> {
                           fontWeight: FontWeight.w400,
                           fontStyle: FontStyle.normal,
                           fontSize: 14,
-                          color: Colors.black,
+                          color: Constants.mainDarkColor,
                         ),
                         decoration: InputDecoration(
                           disabledBorder: UnderlineInputBorder(
                             borderRadius: BorderRadius.circular(4.0),
                             borderSide:
-                                BorderSide(color: Colors.black, width: 1),
+                                BorderSide(color: Constants.mainDarkColor, width: 1),
                           ),
                           focusedBorder: UnderlineInputBorder(
                             borderRadius: BorderRadius.circular(4.0),
                             borderSide:
-                                BorderSide(color: Colors.black, width: 1),
+                                BorderSide(color: Constants.mainDarkColor, width: 1),
                           ),
                           enabledBorder: UnderlineInputBorder(
                             borderRadius: BorderRadius.circular(4.0),
                             borderSide:
-                                BorderSide(color: Colors.black, width: 1),
+                                BorderSide(color: Constants.mainDarkColor, width: 1),
                           ),
                           labelText: "Search by Title",
                           labelStyle: TextStyle(
                             fontWeight: FontWeight.w700,
                             fontStyle: FontStyle.normal,
                             fontSize: 16,
-                            color: Colors.black,
+                            color: Constants.mainDarkColor,
                           ),
                           filled: true,
                           fillColor: Color(0x00ffffff),
@@ -498,7 +513,7 @@ class _BookListScreenState extends State<BookListScreen> {
                           contentPadding:
                               EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                           prefixIcon:
-                              Icon(Icons.person, color: Colors.black, size: 18),
+                              Icon(Icons.person, color: Constants.mainDarkColor, size: 18),
                         ),
                       ),
                     ),
@@ -513,30 +528,30 @@ class _BookListScreenState extends State<BookListScreen> {
                           fontWeight: FontWeight.w400,
                           fontStyle: FontStyle.normal,
                           fontSize: 14,
-                          color: Colors.black,
+                          color: Constants.mainDarkColor,
                         ),
                         decoration: InputDecoration(
                           disabledBorder: UnderlineInputBorder(
                             borderRadius: BorderRadius.circular(4.0),
                             borderSide:
-                                BorderSide(color: Colors.black, width: 1),
+                                BorderSide(color: Constants.mainDarkColor, width: 1),
                           ),
                           focusedBorder: UnderlineInputBorder(
                             borderRadius: BorderRadius.circular(4.0),
                             borderSide:
-                                BorderSide(color: Colors.black, width: 1),
+                                BorderSide(color: Constants.mainDarkColor, width: 1),
                           ),
                           enabledBorder: UnderlineInputBorder(
                             borderRadius: BorderRadius.circular(4.0),
                             borderSide:
-                                BorderSide(color: Colors.black, width: 1),
+                                BorderSide(color: Constants.mainDarkColor, width: 1),
                           ),
                           labelText: "Search by Author",
                           labelStyle: TextStyle(
                             fontWeight: FontWeight.w700,
                             fontStyle: FontStyle.normal,
                             fontSize: 16,
-                            color: Colors.black,
+                            color: Constants.mainDarkColor,
                           ),
                           filled: true,
                           fillColor: Color(0x00ffffff),
@@ -544,7 +559,7 @@ class _BookListScreenState extends State<BookListScreen> {
                           contentPadding:
                               EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                           prefixIcon:
-                              Icon(Icons.abc, color: Colors.black, size: 18),
+                              Icon(Icons.abc, color: Constants.mainDarkColor, size: 18),
                         ),
                       ),
                     ),
@@ -563,7 +578,7 @@ class _BookListScreenState extends State<BookListScreen> {
                             fontWeight: FontWeight.w700,
                             fontStyle: FontStyle.normal,
                             fontSize: 16,
-                            color: Colors.black,
+                            color: Constants.mainDarkColor,
                           ),
                           filled: true,
                           fillColor: Color(0x00ffffff),
@@ -573,12 +588,12 @@ class _BookListScreenState extends State<BookListScreen> {
                             horizontal: 12,
                           ),
                           prefixIcon: Icon(Icons.alternate_email,
-                              color: Colors.black, size: 18),
+                              color: Constants.mainDarkColor, size: 18),
                           border: OutlineInputBorder(
                             // Add this line to define a border
                             borderRadius: BorderRadius.circular(4.0),
                             borderSide:
-                                BorderSide(color: Colors.black, width: 1),
+                                BorderSide(color: Constants.mainDarkColor, width: 1),
                           ),
                         ),
                         items: _dropdownItems.map((category) {
@@ -604,7 +619,7 @@ class _BookListScreenState extends State<BookListScreen> {
                               onPressed: () {
                                 filter();
                               },
-                              color: Color(0xffd2232a),
+                              color: Constants.mainRedColor,
                               elevation: 0,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.0),
@@ -634,7 +649,7 @@ class _BookListScreenState extends State<BookListScreen> {
                               elevation: 0,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.0),
-                                side: BorderSide(color: Colors.black, width: 1),
+                                side: BorderSide(color: Constants.mainDarkColor, width: 1),
                               ),
                               padding: EdgeInsets.all(16),
                               child: Text(
@@ -645,7 +660,7 @@ class _BookListScreenState extends State<BookListScreen> {
                                   fontStyle: FontStyle.normal,
                                 ),
                               ),
-                              textColor: Color(0xffd2232a),
+                              textColor: Constants.mainRedColor,
                               height: 45,
                             ),
                           ),
@@ -657,12 +672,12 @@ class _BookListScreenState extends State<BookListScreen> {
             footer: BottomNavigationBar(
               items: [
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.search), label: 'Filter'),
+                    icon: Icon(Icons.search,color: Constants.whiteColor,), label: 'Filter'),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.add), label: 'Add New Book'),
+                    icon: Icon(Icons.add,color: Constants.whiteColor,), label: 'Add New Book'),
               ],
               elevation: 0,
-              backgroundColor: Color(0xffd2232a),
+              backgroundColor: Constants.mainRedColor,
               type: BottomNavigationBarType.fixed,
               selectedItemColor: Colors.white,
               unselectedItemColor: Colors.white,
@@ -691,49 +706,47 @@ class _BookListScreenState extends State<BookListScreen> {
                 padding: EdgeInsets.fromLTRB(0, 0, 0, 80),
                 child: bookDTOList.isEmpty
                     ? Text("")
-                    : RefreshIndicator(
-                  onRefresh: refresh,
-                  child: ListView.builder(
-                    controller: listcontroller,
-                    itemCount: bookDTOList.length + 1,
-                    itemBuilder: (context2, index) {
-                      if (index < bookDTOList.length) {
-                        BookDTO currentbook = bookDTOList[index];
-                        return Slidable(
-                            startActionPane: ActionPane(
-                              motion: const StretchMotion(),
-                              children: [
-                                SlidableAction(
-                                    backgroundColor: Colors.blue,
-                                    icon: Icons.edit,
-                                    label: 'Update',
-                                    onPressed: (context) => gotoupdate(currentbook)
-                                ),
-                                SlidableAction(
-                                  backgroundColor: Colors.red,
-                                  icon: Icons.search,
-                                  label: 'Details',
-                                  onPressed: (context) => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => BookDetailsPage(
-                                          book: currentbook),
-                                    ),
+                    : ListView.builder(
+                  controller: listcontroller,
+                  itemCount: bookDTOList.length + 1,
+                  itemBuilder: (context2, index) {
+                    if (index < bookDTOList.length) {
+                      BookDTO currentbook = bookDTOList[index];
+                      return Slidable(
+                          startActionPane: ActionPane(
+                            motion: const StretchMotion(),
+                            children: [
+                              SlidableAction(
+                                  backgroundColor: Colors.blue,
+                                  icon: Icons.edit,
+                                  label: 'Update',
+                                  onPressed: (context) => gotoupdate(currentbook)
+                              ),
+                              SlidableAction(
+                                backgroundColor: Colors.red,
+                                icon: Icons.search,
+                                label: 'Details',
+                                onPressed: (context) => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => BookDetailsPage(
+                                        book: currentbook),
                                   ),
-                                )
-                              ],
-                            ),
-                            endActionPane: ActionPane(
-                              motion: const StretchMotion(),
-                              children: [
-                                if(currentbook.status == 'AVAILABLE')
-                                  SlidableAction(
+                                ),
+                              )
+                            ],
+                          ),
+                          endActionPane: ActionPane(
+                            motion: const StretchMotion(),
+                            children: [
+                              if(currentbook.status == 'AVAILABLE')
+                                SlidableAction(
                                     backgroundColor: Colors.green,
                                     icon: Icons.send,
                                     label: 'Borrow',
                                     onPressed: (context) async {
-                                        borrowPopup(context,currentbook).then((s) {
-                                          print(s);
+                                      borrowPopup(context,currentbook).then((s) {
+                                        print(s);
                                         if (s != null) {
                                           if (s == 'success') {
                                             showTopSnackBar(
@@ -756,66 +769,60 @@ class _BookListScreenState extends State<BookListScreen> {
                                           }
                                         }
                                       }).catchError((e) {
-                                          showTopSnackBar(
-                                            Overlay.of(context2),
-                                            CustomSnackBar.error(
-                                              message: e,
-                                              textAlign: TextAlign.left,
-                                            ),
-                                          );
+                                        showTopSnackBar(
+                                          Overlay.of(context2),
+                                          CustomSnackBar.error(
+                                            message: e,
+                                            textAlign: TextAlign.left,
+                                          ),
+                                        );
                                       });
 
                                     }
 
-                                  ),
+                                ),
 
-                                if(currentbook.status != 'AVAILABLE')
-                                  SlidableAction(
-                                      backgroundColor: Colors.green,
-                                      icon: Icons.query_stats,
-                                      label: 'View Queue',
-                                      onPressed: (context) async {
-
-
-                                        Object? a = await Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => BookQueueDetail(
-                                                id: currentbook.id),
-                                          ),
-                                        );
-                                        if (a == "s") {
-                                          refresh();
-                                        }
+                              if(currentbook.status != 'AVAILABLE')
+                                SlidableAction(
+                                    backgroundColor: Colors.green,
+                                    icon: Icons.query_stats,
+                                    label: 'View Queue',
+                                    onPressed: (context) async {
 
 
+                                      Object? a = await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => BookQueueDetail(
+                                              id: currentbook.id),
+                                        ),
+                                      );
+                                      if (a == "s") {
+                                        refresh();
                                       }
 
-                                  )
-                              ],
-                            ),
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                border: Border(bottom: BorderSide()),
-                              ),
-                              child: ListTile(
-                                title: BookCard(book: currentbook),
-                              ),
-                            ));
+
+                                    }
+
+                                )
+                            ],
+                          ),
+                          child: ListTile(
+                            title: BookCard(book: currentbook),
+                          ));
+                    } else {
+                      if (!lastList.isEmpty && totalSize<bookDTOList.length) {
+                        return const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 32),
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
                       } else {
-                        if (!lastList.isEmpty && bookDTOList.length > 7) {
-                          return const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 32),
-                            child: Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          );
-                        } else {
-                          return SizedBox();
-                        }
+                        return SizedBox();
                       }
-                    },
-                  ),
+                    }
+                  },
                 ),
               )
             ],)

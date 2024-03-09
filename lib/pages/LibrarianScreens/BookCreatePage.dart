@@ -13,6 +13,7 @@ import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import '../../components/MenuDrawerLibrarian.dart';
 import '../../models/OpenLibraryBookDetails.dart';
 import '../../service/ApiService.dart';
+import '../../service/constants.dart';
 
 class BookCreatePage extends StatefulWidget {
   const BookCreatePage({Key? key}) : super(key: key);
@@ -227,7 +228,7 @@ class _BookCreatePageState extends State<BookCreatePage> {
         key: _scaffoldKey,
         drawer: const MenuDrawerLibrarian(),
         appBar: AppBar(
-          backgroundColor: Color(0xffd2232a),
+          backgroundColor: Constants.mainRedColor,
           title: Text('Create a book'),
           centerTitle: false,
           leading: IconButton(
@@ -241,7 +242,7 @@ class _BookCreatePageState extends State<BookCreatePage> {
           children: [
             Theme(
               data: Theme.of(context).copyWith(
-                  colorScheme: ColorScheme.light(primary: Color(0xffd2232a))),
+                  colorScheme: ColorScheme.light(primary: Constants.mainRedColor)),
               child: Stepper(
                 physics: ClampingScrollPhysics(),
                 onStepTapped: (step) => setState(() => currentStep = step),
@@ -314,7 +315,7 @@ class _BookCreatePageState extends State<BookCreatePage> {
             ),
             if (isLoading)
               Container(
-                color: Colors.black.withOpacity(0.5),
+                color: Constants.mainDarkColor.withOpacity(0.5),
                 child: Center(
                   child: CircularProgressIndicator(),
                 ),
@@ -378,27 +379,27 @@ class _BookCreatePageState extends State<BookCreatePage> {
                   fontWeight: FontWeight.w400,
                   fontStyle: FontStyle.normal,
                   fontSize: 14,
-                  color: Color(0xff000000),
+                  color: Constants.mainDarkColor,
                 ),
                 decoration: InputDecoration(
                   disabledBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                    borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                   ),
                   focusedBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                    borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                   ),
                   enabledBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                    borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                   ),
                   labelText: "ISBN number",
                   labelStyle: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontStyle: FontStyle.normal,
                     fontSize: 16,
-                    color: Color(0xff000000),
+                    color: Constants.mainDarkColor,
                   ),
                   filled: true,
                   fillColor: Color(0x00ffffff),
@@ -406,7 +407,7 @@ class _BookCreatePageState extends State<BookCreatePage> {
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   prefixIcon:
-                      Icon(Icons.numbers, color: Color(0xff212435), size: 18),
+                      Icon(Icons.numbers, color: Constants.mainDarkColor, size: 18),
                 ),
               ),
               Align(
@@ -426,7 +427,7 @@ class _BookCreatePageState extends State<BookCreatePage> {
                       fetchByIsbn();
                     }
                   },
-                  color: Color(0xffd2232a),
+                  color: Constants.mainRedColor,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
@@ -460,27 +461,27 @@ class _BookCreatePageState extends State<BookCreatePage> {
                   fontWeight: FontWeight.w400,
                   fontStyle: FontStyle.normal,
                   fontSize: 14,
-                  color: Color(0xff000000),
+                  color: Constants.mainDarkColor,
                 ),
                 decoration: InputDecoration(
                   disabledBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                    borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                   ),
                   focusedBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                    borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                   ),
                   enabledBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                    borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                   ),
                   labelText: "Name",
                   labelStyle: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontStyle: FontStyle.normal,
                     fontSize: 16,
-                    color: Color(0xff000000),
+                    color: Constants.mainDarkColor,
                   ),
                   filled: true,
                   fillColor: Color(0x00ffffff),
@@ -488,7 +489,7 @@ class _BookCreatePageState extends State<BookCreatePage> {
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   prefixIcon:
-                      Icon(Icons.book, color: Color(0xff212435), size: 18),
+                      Icon(Icons.book, color: Constants.mainDarkColor, size: 18),
                 ),
               ),
               TextField(
@@ -500,27 +501,27 @@ class _BookCreatePageState extends State<BookCreatePage> {
                   fontWeight: FontWeight.w400,
                   fontStyle: FontStyle.normal,
                   fontSize: 14,
-                  color: Color(0xff000000),
+                  color: Constants.mainDarkColor,
                 ),
                 decoration: InputDecoration(
                   disabledBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                    borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                   ),
                   focusedBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                    borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                   ),
                   enabledBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                    borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                   ),
                   labelText: "Description",
                   labelStyle: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontStyle: FontStyle.normal,
                     fontSize: 16,
-                    color: Color(0xff000000),
+                    color: Constants.mainDarkColor,
                   ),
                   filled: true,
                   fillColor: Color(0x00ffffff),
@@ -528,7 +529,7 @@ class _BookCreatePageState extends State<BookCreatePage> {
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   prefixIcon:
-                      Icon(Icons.book, color: Color(0xff212435), size: 18),
+                      Icon(Icons.book, color: Constants.mainDarkColor, size: 18),
                 ),
               ),
               TextField(
@@ -540,27 +541,27 @@ class _BookCreatePageState extends State<BookCreatePage> {
                   fontWeight: FontWeight.w400,
                   fontStyle: FontStyle.normal,
                   fontSize: 14,
-                  color: Color(0xff000000),
+                  color: Constants.mainDarkColor,
                 ),
                 decoration: InputDecoration(
                   disabledBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                    borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                   ),
                   focusedBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                    borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                   ),
                   enabledBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                    borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                   ),
                   labelText: "Publisher",
                   labelStyle: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontStyle: FontStyle.normal,
                     fontSize: 16,
-                    color: Color(0xff000000),
+                    color: Constants.mainDarkColor,
                   ),
                   filled: true,
                   fillColor: Color(0x00ffffff),
@@ -568,7 +569,7 @@ class _BookCreatePageState extends State<BookCreatePage> {
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   prefixIcon:
-                      Icon(Icons.publish, color: Color(0xff212435), size: 18),
+                      Icon(Icons.publish, color: Constants.mainDarkColor, size: 18),
                 ),
               ),
               TextField(
@@ -580,27 +581,27 @@ class _BookCreatePageState extends State<BookCreatePage> {
                   fontWeight: FontWeight.w400,
                   fontStyle: FontStyle.normal,
                   fontSize: 14,
-                  color: Color(0xff000000),
+                  color: Constants.mainDarkColor,
                 ),
                 decoration: InputDecoration(
                   disabledBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                    borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                   ),
                   focusedBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                    borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                   ),
                   enabledBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
-                    borderSide: BorderSide(color: Color(0xff000000), width: 1),
+                    borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                   ),
                   labelText: "Author",
                   labelStyle: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontStyle: FontStyle.normal,
                     fontSize: 16,
-                    color: Color(0xff000000),
+                    color: Constants.mainDarkColor,
                   ),
                   filled: true,
                   fillColor: Color(0x00ffffff),
@@ -608,7 +609,7 @@ class _BookCreatePageState extends State<BookCreatePage> {
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   prefixIcon:
-                      Icon(Icons.person, color: Color(0xff212435), size: 18),
+                      Icon(Icons.person, color: Constants.mainDarkColor, size: 18),
                 ),
               ),
 
@@ -630,7 +631,7 @@ class _BookCreatePageState extends State<BookCreatePage> {
                         fontWeight: FontWeight.w400,
                         fontStyle: FontStyle.normal,
                         fontSize: 14,
-                        color: Color(0xff000000),
+                        color: Constants.mainDarkColor,
                       ),
                     ),
                   );
@@ -644,21 +645,21 @@ class _BookCreatePageState extends State<BookCreatePage> {
                   disabledBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
                     borderSide: BorderSide(
-                      color: Color(0xff000000),
+                      color: Constants.mainDarkColor,
                       width: 1,
                     ),
                   ),
                   focusedBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
                     borderSide: BorderSide(
-                      color: Color(0xff000000),
+                      color: Constants.mainDarkColor,
                       width: 1,
                     ),
                   ),
                   enabledBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
                     borderSide: BorderSide(
-                      color: Color(0xff000000),
+                      color: Constants.mainDarkColor,
                       width: 1,
                     ),
                   ),
@@ -667,7 +668,7 @@ class _BookCreatePageState extends State<BookCreatePage> {
                     fontWeight: FontWeight.w700,
                     fontStyle: FontStyle.normal,
                     fontSize: 16,
-                    color: Color(0xff000000),
+                    color: Constants.mainDarkColor,
                   ),
                   filled: true,
                   fillColor: Color(0x00ffffff),
@@ -678,7 +679,7 @@ class _BookCreatePageState extends State<BookCreatePage> {
                   ),
                   prefixIcon: Icon(
                     Icons.arrow_drop_down,
-                    color: Color(0xff212435),
+                    color: Constants.mainDarkColor,
                     size: 18,
                   ),
                 ),
@@ -694,7 +695,7 @@ class _BookCreatePageState extends State<BookCreatePage> {
                         fontWeight: FontWeight.w400,
                         fontStyle: FontStyle.normal,
                         fontSize: 14,
-                        color: Color(0xff000000),
+                        color: Constants.mainDarkColor,
                       ),
                     ),
                   );
@@ -708,21 +709,21 @@ class _BookCreatePageState extends State<BookCreatePage> {
                   disabledBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
                     borderSide: BorderSide(
-                      color: Color(0xff000000),
+                      color: Constants.mainDarkColor,
                       width: 1,
                     ),
                   ),
                   focusedBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
                     borderSide: BorderSide(
-                      color: Color(0xff000000),
+                      color: Constants.mainDarkColor,
                       width: 1,
                     ),
                   ),
                   enabledBorder: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(4.0),
                     borderSide: BorderSide(
-                      color: Color(0xff000000),
+                      color: Constants.mainDarkColor,
                       width: 1,
                     ),
                   ),
@@ -731,7 +732,7 @@ class _BookCreatePageState extends State<BookCreatePage> {
                     fontWeight: FontWeight.w700,
                     fontStyle: FontStyle.normal,
                     fontSize: 16,
-                    color: Color(0xff000000),
+                    color: Constants.mainDarkColor,
                   ),
                   filled: true,
                   fillColor: Color(0x00ffffff),
@@ -742,7 +743,7 @@ class _BookCreatePageState extends State<BookCreatePage> {
                   ),
                   prefixIcon: Icon(
                     Icons.arrow_drop_down,
-                    color: Color(0xff212435),
+                    color: Constants.mainDarkColor,
                     size: 18,
                   ),
                 ),

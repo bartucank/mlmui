@@ -18,6 +18,8 @@ import 'dart:convert';
 import 'package:mlmui/components/BookCard.dart';
 import 'dart:ui' as ui;
 
+import '../../service/constants.dart';
+
 class CopyCard extends StatefulWidget {
   const CopyCard({Key? key}) : super(key: key);
 
@@ -365,7 +367,7 @@ class _CopyCardState extends State<CopyCard> {
       key: _scaffoldKey,
       drawer: const MenuDrawer(),
       appBar: AppBar(
-        backgroundColor: Color(0xffd2232a),
+        backgroundColor: Constants.mainRedColor,
         title: Text(
           'CopyCard',
           style: TextStyle(
@@ -461,7 +463,7 @@ class _CopyCardState extends State<CopyCard> {
                           borderRadius: BorderRadius.circular(15),
                           color: Colors.white,
                           border: Border.all(
-                            color: Colors.black,
+                            color: Constants.mainDarkColor,
                             width: 2,
                           ),
                         ),
@@ -520,8 +522,8 @@ class _CopyCardState extends State<CopyCard> {
                   onPressed: () {
                     showBankAccounts(context);
                   },
-                  color: Colors.black,
-                  textColor: Color(0xffd2232a),
+                  color: Constants.mainDarkColor,
+                  textColor: Constants.mainRedColor,
                 ),
                 SizedBox(height: 20),
                 OutlinedButtonsCopyCardPage(
@@ -530,8 +532,8 @@ class _CopyCardState extends State<CopyCard> {
                   onPressed: () {
                     copyCardShowDialog(context);
                   },
-                  color: Colors.black,
-                  textColor: Color(0xffd2232a),
+                  color: Constants.mainDarkColor,
+                  textColor: Constants.mainRedColor,
                 ),
                 SizedBox(height: 20),
                 OutlinedButtonsCopyCardPage(
@@ -540,8 +542,8 @@ class _CopyCardState extends State<CopyCard> {
                   onPressed: () {
                     showReceiptHistoryPopup(context);
                   },
-                  color: Colors.black,
-                  textColor: Color(0xffd2232a),
+                  color: Constants.mainDarkColor,
+                  textColor: Constants.mainRedColor,
                 ),
               ],
             ),

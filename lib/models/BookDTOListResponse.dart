@@ -6,8 +6,9 @@ part 'BookDTOListResponse.g.dart';
 class BookDTOListResponse {
   List<BookDTO> bookDTOList;
   int totalPage;
+  int totalResult;
 
-  BookDTOListResponse(this.bookDTOList,this.totalPage);
+  BookDTOListResponse(this.bookDTOList,this.totalPage,this.totalResult);
 
   factory BookDTOListResponse.fromJson(Map<String,dynamic> data) => _$BookDTOListResponseFromJson(data);
 

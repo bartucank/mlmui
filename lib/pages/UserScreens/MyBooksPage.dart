@@ -12,6 +12,8 @@ import '../../service/ApiService.dart';
 import 'package:we_slide/we_slide.dart';
 import 'dart:convert';
 
+import '../../service/constants.dart';
+
 
 
 class MyBooksPage extends StatefulWidget {
@@ -76,7 +78,7 @@ class _MyBooksPage extends State<MyBooksPage> {
         key: _scaffoldKey,
         drawer: const MenuDrawerLibrarian(),
         appBar: AppBar(
-          backgroundColor: Color(0xffd2232a),
+          backgroundColor: Constants.mainRedColor,
           title: Text('My Books'),
           centerTitle: false,
           leading: IconButton(
@@ -91,8 +93,8 @@ class _MyBooksPage extends State<MyBooksPage> {
           panelMinSize: _panelMinSize,
           blur: false,
           panelMaxSize: MediaQuery.of(context).size.height / 2,
-          overlayColor: Colors.black,
-          blurColor: Colors.black,
+          overlayColor: Constants.mainDarkColor,
+          blurColor: Constants.mainDarkColor,
           blurSigma: 2,
           backgroundColor: Colors.white,
           overlayOpacity: 0.7,
@@ -163,7 +165,7 @@ class _MyBooksPage extends State<MyBooksPage> {
                                           Container(
                                             decoration: BoxDecoration(
                                               borderRadius: BorderRadius.circular(10),
-                                              color: Colors.black.withOpacity(0.3), // Semi-transparent black overlay
+                                              color: Constants.mainDarkColor.withOpacity(0.3), // Semi-transparent black overlay
                                             ),
                                             height: 150,
                                             width: 100,
@@ -179,7 +181,7 @@ class _MyBooksPage extends State<MyBooksPage> {
                                               foreground: Paint()
                                                 ..style = PaintingStyle.stroke
                                                 ..strokeWidth = 4
-                                                ..color = Colors.black,
+                                                ..color = Constants.mainDarkColor,
                                             ),
                                             maxLines: 2,
                                             overflow: TextOverflow.ellipsis,
@@ -214,7 +216,7 @@ class _MyBooksPage extends State<MyBooksPage> {
                                         '${currentbook.days} Days Left!',
                                         style: TextStyle(
                                           fontSize: 12,
-                                          color: Colors.black,
+                                          color: Constants.mainDarkColor,
                                         ),
                                         textAlign: TextAlign.center,
                                       ),
@@ -223,7 +225,7 @@ class _MyBooksPage extends State<MyBooksPage> {
                                         '${currentbook.days} Days Late!',
                                         style: TextStyle(
                                           fontSize: 12,
-                                          color: Colors.black,
+                                          color: Constants.mainDarkColor,
                                         ),
                                         textAlign: TextAlign.center,
                                       ),

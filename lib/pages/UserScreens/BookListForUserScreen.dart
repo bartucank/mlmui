@@ -8,6 +8,7 @@ import '../../service/ApiService.dart';
 import 'package:we_slide/we_slide.dart';
 import 'package:mlmui/models/BookCategoryEnumDTO.dart';
 import 'package:mlmui/models/BookCategoryEnumDTOListResponse.dart';
+import '../../service/constants.dart';
 import 'BookDetailsPage.dart';
 
 class BookListForUserScreen extends StatefulWidget {
@@ -209,7 +210,7 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
         key: _scaffoldKey,
         drawer: const MenuDrawer(),
         appBar: AppBar(
-          backgroundColor: Color(0xffd2232a),
+          backgroundColor: Constants.mainRedColor,
           title: Text('Book List'),
           centerTitle: false,
           leading: IconButton(
@@ -224,8 +225,8 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
           panelMinSize: _panelMinSize,
           blur: false,
           panelMaxSize: MediaQuery.of(context).size.height / 2,
-          overlayColor: Colors.black,
-          blurColor: Colors.black,
+          overlayColor: Constants.mainDarkColor,
+          blurColor: Constants.mainDarkColor,
           blurSigma: 2,
           backgroundColor: Colors.white,
           overlayOpacity: 0.7,
@@ -254,27 +255,27 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
                         fontWeight: FontWeight.w400,
                         fontStyle: FontStyle.normal,
                         fontSize: 14,
-                        color: Colors.black,
+                        color: Constants.mainDarkColor,
                       ),
                       decoration: InputDecoration(
                         disabledBorder: UnderlineInputBorder(
                           borderRadius: BorderRadius.circular(4.0),
-                          borderSide: BorderSide(color: Colors.black, width: 1),
+                          borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                         ),
                         focusedBorder: UnderlineInputBorder(
                           borderRadius: BorderRadius.circular(4.0),
-                          borderSide: BorderSide(color: Colors.black, width: 1),
+                          borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                         ),
                         enabledBorder: UnderlineInputBorder(
                           borderRadius: BorderRadius.circular(4.0),
-                          borderSide: BorderSide(color: Colors.black, width: 1),
+                          borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                         ),
                         labelText: "Search by Title",
                         labelStyle: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontStyle: FontStyle.normal,
                           fontSize: 16,
-                          color: Colors.black,
+                          color: Constants.mainDarkColor,
                         ),
                         filled: true,
                         fillColor: Color(0x00ffffff),
@@ -282,7 +283,7 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
                         contentPadding:
                             EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                         prefixIcon:
-                            Icon(Icons.person, color: Colors.black, size: 18),
+                            Icon(Icons.person, color: Constants.mainDarkColor, size: 18),
                       ),
                     ),
                   ),
@@ -297,27 +298,27 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
                         fontWeight: FontWeight.w400,
                         fontStyle: FontStyle.normal,
                         fontSize: 14,
-                        color: Colors.black,
+                        color: Constants.mainDarkColor,
                       ),
                       decoration: InputDecoration(
                         disabledBorder: UnderlineInputBorder(
                           borderRadius: BorderRadius.circular(4.0),
-                          borderSide: BorderSide(color: Colors.black, width: 1),
+                          borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                         ),
                         focusedBorder: UnderlineInputBorder(
                           borderRadius: BorderRadius.circular(4.0),
-                          borderSide: BorderSide(color: Colors.black, width: 1),
+                          borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                         ),
                         enabledBorder: UnderlineInputBorder(
                           borderRadius: BorderRadius.circular(4.0),
-                          borderSide: BorderSide(color: Colors.black, width: 1),
+                          borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                         ),
                         labelText: "Search by Author",
                         labelStyle: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontStyle: FontStyle.normal,
                           fontSize: 16,
-                          color: Colors.black,
+                          color: Constants.mainDarkColor,
                         ),
                         filled: true,
                         fillColor: Color(0x00ffffff),
@@ -325,7 +326,7 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
                         contentPadding:
                             EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                         prefixIcon:
-                            Icon(Icons.abc, color: Colors.black, size: 18),
+                            Icon(Icons.abc, color: Constants.mainDarkColor, size: 18),
                       ),
                     ),
                   ),
@@ -344,7 +345,7 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
                           fontWeight: FontWeight.w700,
                           fontStyle: FontStyle.normal,
                           fontSize: 16,
-                          color: Colors.black,
+                          color: Constants.mainDarkColor,
                         ),
                         filled: true,
                         fillColor: Color(0x00ffffff),
@@ -353,10 +354,10 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
                           vertical: 8,
                           horizontal: 12,
                         ),
-                        prefixIcon: Icon(Icons.alternate_email, color: Colors.black, size: 18),
+                        prefixIcon: Icon(Icons.alternate_email, color: Constants.mainDarkColor, size: 18),
                         border: OutlineInputBorder(  // Add this line to define a border
                           borderRadius: BorderRadius.circular(4.0),
-                          borderSide: BorderSide(color: Colors.black, width: 1),
+                          borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
                         ),
                       ),
                       items: _dropdownItems.map((category) {
@@ -382,7 +383,7 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
                             onPressed: () {
                               filter();
                             },
-                            color: Color(0xffd2232a),
+                            color: Constants.mainRedColor,
                             elevation: 0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.0),
@@ -412,7 +413,7 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
                             elevation: 0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.0),
-                              side: BorderSide(color: Colors.black, width: 1),
+                              side: BorderSide(color: Constants.mainDarkColor, width: 1),
                             ),
                             padding: EdgeInsets.all(16),
                             child: Text(
@@ -423,7 +424,7 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
                                 fontStyle: FontStyle.normal,
                               ),
                             ),
-                            textColor: Color(0xffd2232a),
+                            textColor: Constants.mainRedColor,
                             height: 45,
                           ),
                         ),
@@ -440,7 +441,7 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
                   icon: Icon(Icons.clear), label: 'Clear Filters'),
             ],
             elevation: 0,
-            backgroundColor: Color(0xffd2232a),
+            backgroundColor: Constants.mainRedColor,
             type: BottomNavigationBarType.fixed,
             selectedItemColor: Colors.white,
             unselectedItemColor: Colors.white,

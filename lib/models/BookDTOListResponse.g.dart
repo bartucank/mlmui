@@ -12,6 +12,7 @@ BookDTOListResponse _$BookDTOListResponseFromJson(Map<String, dynamic> json) =>
           .map((e) => BookDTO.fromJson(e as Map<String, dynamic>))
           .toList(),
       json['totalPage'] as int,
+      json['totalResult'] as int,
     );
 
 Map<String, dynamic> _$BookDTOListResponseToJson(
@@ -19,4 +20,5 @@ Map<String, dynamic> _$BookDTOListResponseToJson(
     <String, dynamic>{
       'bookDTOList': instance.bookDTOList.map((e) => e.toJson()).toList(),
       'totalPage': instance.totalPage,
+      'totalResult': instance.totalResult,
     };

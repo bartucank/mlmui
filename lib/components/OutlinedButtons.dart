@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../service/constants.dart';
+
 class OutlinedButtons extends StatelessWidget {
   final String buttonLabel;
   final IconData buttonIcon;
@@ -21,7 +23,7 @@ class OutlinedButtons extends StatelessWidget {
       label: Text(
         '${buttonLabel}',
         style: TextStyle(
-          color: Colors.black,
+          color: Constants.mainDarkColor,
         ),
       ),
       icon: Icon(

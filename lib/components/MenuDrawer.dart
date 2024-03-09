@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/UserDTO.dart';
 import '../service/CacheManager.dart';
+import '../service/constants.dart';
 
 class MenuDrawer extends StatelessWidget {
   const MenuDrawer({Key? key}) : super(key: key);
@@ -75,7 +76,7 @@ class MenuDrawer extends StatelessWidget {
               CacheManager.logout();
             },
           ),
-          const Divider(color: Colors.black54),
+          const Divider(color: Constants.mainDarkColor),
           Center(
             child: Text(
               "MLM - 2023",

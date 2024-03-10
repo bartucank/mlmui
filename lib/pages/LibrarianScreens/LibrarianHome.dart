@@ -158,10 +158,10 @@ class _LibrarianHomeState extends State<LibrarianHome> {
       drawer: const MenuDrawerLibrarian(),
       appBar: AppBar(
         backgroundColor: Constants.mainRedColor,
-        title: Text('MLM'),
+        title: Text('MLM',style: TextStyle(color: Constants.whiteColor),),
         centerTitle: false,
         leading: IconButton(
-          icon: Icon(Icons.menu),
+          icon: Icon(Icons.menu,color: Constants.whiteColor,),
           onPressed: () {
             _scaffoldKey.currentState?.openDrawer();
           },

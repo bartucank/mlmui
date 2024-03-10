@@ -21,6 +21,7 @@ BookDTO _$BookDTOFromJson(Map<String, dynamic> json) => BookDTO(
       json['categoryStr'] as String?,
       json['status'] as String?,
       json['statusStr'] as String?,
+      (json['averagePoint'] as num?)?.toDouble(),
     );
 
 Map<String, dynamic> _$BookDTOToJson(BookDTO instance) {
@@ -46,5 +47,6 @@ Map<String, dynamic> _$BookDTOToJson(BookDTO instance) {
   writeNotNull('categoryStr', instance.categoryStr);
   writeNotNull('status', instance.status);
   writeNotNull('statusStr', instance.statusStr);
+  writeNotNull('averagePoint', instance.averagePoint);
   return val;
 }

@@ -16,6 +16,7 @@ class BookDTO {
   String? categoryStr;
   String? status;
   String? statusStr;
+  double? averagePoint;
 
   BookDTO(
       this.id,
@@ -31,7 +32,7 @@ class BookDTO {
       this.category,
       this.categoryStr,
       this.status,
-      this.statusStr);
+      this.statusStr, this.averagePoint);
 
 
   factory BookDTO.fromJson(Map<String,dynamic> data) => _$BookDTOFromJson(data);

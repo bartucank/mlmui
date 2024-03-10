@@ -426,9 +426,6 @@ class _BookListScreenState extends State<BookListScreen> {
     }
   }
 
-  final double _panelMinSize = 70.0;
-  final double _panelMaxSize = 200;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -449,7 +446,7 @@ class _BookListScreenState extends State<BookListScreen> {
         ),
         body: WeSlide(
             controller: weSlideController,
-            panelMinSize: _panelMinSize,
+            panelMinSize: MediaQuery.of(context).size.height/20,
             blur: false,
             panelMaxSize: MediaQuery.of(context).size.height / 2,
             overlayColor: Constants.mainDarkColor,
@@ -694,138 +691,142 @@ class _BookListScreenState extends State<BookListScreen> {
                 }
               },
             ),
-            body: Stack(children: [
+            body: Container(
+              color: Constants.mainBackgroundColor,
+              child: Stack(children: [
 
-              if (isLoading)
-                Container(
-                  child: Center(
-                    child: CircularProgressIndicator(backgroundColor: Colors.white,),
+                if (isLoading)
+                  Container(
+                    child: Center(
+                      child: CircularProgressIndicator(backgroundColor: Colors.white,),
+                    ),
                   ),
-                ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(0, 0, 0, 80),
-                child: bookDTOList.isEmpty
-                    ? Text("")
-                    : ListView.builder(
-                  controller: listcontroller,
-                  itemCount: bookDTOList.length + 1,
-                  itemBuilder: (context2, index) {
-                    if (index < bookDTOList.length) {
-                      BookDTO currentbook = bookDTOList[index];
-                      return Slidable(
-                          startActionPane: ActionPane(
-                            motion: const StretchMotion(),
-                            children: [
-                              SlidableAction(
-                                  backgroundColor: Colors.blue,
-                                  icon: Icons.edit,
-                                  label: 'Update',
-                                  onPressed: (context) => gotoupdate(currentbook)
-                              ),
-                              SlidableAction(
-                                backgroundColor: Colors.red,
-                                icon: Icons.search,
-                                label: 'Details',
-                                onPressed: (context) => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => BookDetailsPage(
-                                        book: currentbook),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(0, 0, 0, 80),
+                  child: bookDTOList.isEmpty
+                      ? Text("")
+                      : ListView.builder(
+                    itemExtent: 100,
+                    controller: listcontroller,
+                    itemCount: bookDTOList.length + 1,
+                    itemBuilder: (context2, index) {
+                      if (index < bookDTOList.length) {
+                        BookDTO currentbook = bookDTOList[index];
+                        return Slidable(
+                            startActionPane: ActionPane(
+                              motion: const StretchMotion(),
+                              children: [
+                                SlidableAction(
+                                    backgroundColor: Colors.blue,
+                                    icon: Icons.edit,
+                                    label: 'Update',
+                                    onPressed: (context) => gotoupdate(currentbook)
+                                ),
+                                SlidableAction(
+                                  backgroundColor: Colors.red,
+                                  icon: Icons.search,
+                                  label: 'Details',
+                                  onPressed: (context) => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => BookDetailsPage(
+                                          book: currentbook),
+                                    ),
                                   ),
-                                ),
-                              )
-                            ],
-                          ),
-                          endActionPane: ActionPane(
-                            motion: const StretchMotion(),
-                            children: [
-                              if(currentbook.status == 'AVAILABLE')
-                                SlidableAction(
-                                    backgroundColor: Colors.green,
-                                    icon: Icons.send,
-                                    label: 'Borrow',
-                                    onPressed: (context) async {
-                                      borrowPopup(context,currentbook).then((s) {
-                                        print(s);
-                                        if (s != null) {
-                                          if (s == 'success') {
-                                            showTopSnackBar(
-                                              Overlay.of(context2),
-                                              const CustomSnackBar.success(
-                                                message: "Success!",
-                                                textAlign: TextAlign.left,
-                                              ),
-                                            );
+                                )
+                              ],
+                            ),
+                            endActionPane: ActionPane(
+                              motion: const StretchMotion(),
+                              children: [
+                                if(currentbook.status == 'AVAILABLE')
+                                  SlidableAction(
+                                      backgroundColor: Colors.green,
+                                      icon: Icons.send,
+                                      label: 'Borrow',
+                                      onPressed: (context) async {
+                                        borrowPopup(context,currentbook).then((s) {
+                                          print(s);
+                                          if (s != null) {
+                                            if (s == 'success') {
+                                              showTopSnackBar(
+                                                Overlay.of(context2),
+                                                const CustomSnackBar.success(
+                                                  message: "Success!",
+                                                  textAlign: TextAlign.left,
+                                                ),
+                                              );
 
-                                            refresh();
-                                          } else {
-                                            showTopSnackBar(
-                                              Overlay.of(context2),
-                                              CustomSnackBar.error(
-                                                message: s,
-                                                textAlign: TextAlign.left,
-                                              ),
-                                            );
+                                              refresh();
+                                            } else {
+                                              showTopSnackBar(
+                                                Overlay.of(context2),
+                                                CustomSnackBar.error(
+                                                  message: s,
+                                                  textAlign: TextAlign.left,
+                                                ),
+                                              );
+                                            }
                                           }
-                                        }
-                                      }).catchError((e) {
-                                        showTopSnackBar(
-                                          Overlay.of(context2),
-                                          CustomSnackBar.error(
-                                            message: e,
-                                            textAlign: TextAlign.left,
-                                          ),
-                                        );
-                                      });
+                                        }).catchError((e) {
+                                          showTopSnackBar(
+                                            Overlay.of(context2),
+                                            CustomSnackBar.error(
+                                              message: e,
+                                              textAlign: TextAlign.left,
+                                            ),
+                                          );
+                                        });
 
-                                    }
-
-                                ),
-
-                              if(currentbook.status != 'AVAILABLE')
-                                SlidableAction(
-                                    backgroundColor: Colors.green,
-                                    icon: Icons.query_stats,
-                                    label: 'View Queue',
-                                    onPressed: (context) async {
-
-
-                                      Object? a = await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => BookQueueDetail(
-                                              id: currentbook.id),
-                                        ),
-                                      );
-                                      if (a == "s") {
-                                        refresh();
                                       }
 
+                                  ),
 
-                                    }
+                                if(currentbook.status != 'AVAILABLE')
+                                  SlidableAction(
+                                      backgroundColor: Colors.green,
+                                      icon: Icons.query_stats,
+                                      label: 'View Queue',
+                                      onPressed: (context) async {
 
-                                )
-                            ],
-                          ),
-                          child: ListTile(
-                            title: BookCard(book: currentbook),
-                          ));
-                    } else {
-                      if (!lastList.isEmpty && totalSize<bookDTOList.length) {
-                        return const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 32),
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
+
+                                        Object? a = await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => BookQueueDetail(
+                                                id: currentbook.id),
+                                          ),
+                                        );
+                                        if (a == "s") {
+                                          refresh();
+                                        }
+
+
+                                      }
+
+                                  )
+                              ],
+                            ),
+                            child: ListTile(
+                              title: BookCard(book: currentbook),
+                            ));
                       } else {
-                        return SizedBox();
+                        if (!lastList.isEmpty && totalSize<bookDTOList.length) {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 32),
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
+                        } else {
+                          return SizedBox();
+                        }
                       }
-                    }
-                  },
-                ),
-              )
-            ],)
+                    },
+                  ),
+                )
+              ],),
+            )
         )
     );
   }

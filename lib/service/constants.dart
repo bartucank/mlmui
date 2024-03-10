@@ -8,6 +8,7 @@ class Constants {
   static const String successFlag = "S";
   static const String unexpectedError = "Unexpected error.";
   static const Color mainDarkColor = Color(0xff1c3144);
+  static const Color mainBackgroundColor = Color(0xffeceff4);
   static const Color mainRedColor = Color(0xffd2232a);
   static const Color yellowColor = Color(0xffFFBA08);
   static const Color greyColor = Color(0xffA2AEBB);

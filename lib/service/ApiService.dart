@@ -297,6 +297,34 @@ class ApiService {
       print('Error uploading image: $e');
     }
   }
+  Future<int> uploadImageByBase64(String base64) async {
+    try {
+
+      Map<String, dynamic> request = {
+        "base64":base64,
+      };
+      final jwtToken = await getJwtToken();
+      final res = await http.post(
+        Uri.parse('${Constants.apiBaseUrl}/api/admin/uploadImageByBase64'),
+        headers: {
+          'Authorization': 'Bearer $jwtToken',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(request),
+      );
+      print(res.statusCode);
+      print(res.body);
+      if (res.statusCode == 200) {
+        Map<String, dynamic> jsonResponse = jsonDecode(res.body);
+        var msgValue = int.parse(jsonResponse['data']['msg']);
+        return msgValue;
+      }
+      return -1;
+    } catch (e) {
+      return -1;
+      print('Error uploading image: $e');
+    }
+  }
 
   Future<Map<String, dynamic>> createReceipt(int id) async {
     final jwtToken = await getJwtToken();

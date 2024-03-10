@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -31,6 +32,7 @@ class _BookCreatePageState extends State<BookCreatePage> {
       images: <ImageFile>[] // array of pre/default selected images
       );
   late File selectedImage;
+   String _base64Image = "-1";
 
   TextEditingController _nameController = TextEditingController();
   TextEditingController _isbnController = TextEditingController();
@@ -52,7 +54,15 @@ class _BookCreatePageState extends State<BookCreatePage> {
     setState(() {
       isLoading = true;
     });
-    int value = await apiService.uploadImage(controller.images.first);
+    int value;
+    print(_base64Image);
+    if(_base64Image!=null && _base64Image!="-1"){
+      print("asdfasdasdf");
+      print(_base64Image);
+      value=await apiService.uploadImageByBase64(_base64Image);
+    }else{
+      value = await apiService.uploadImage(controller.images.first);
+    }
     print("myvalue:"+value.toString());
     if(value == -1){
       setState(() {
@@ -151,6 +161,9 @@ class _BookCreatePageState extends State<BookCreatePage> {
             ? response.authors!.first.key!
             : "";
         currentStep++;
+        if(response.img != null){
+          _base64Image = response.img!;
+        }
 
         isLoading = false;
       });
@@ -229,10 +242,10 @@ class _BookCreatePageState extends State<BookCreatePage> {
         drawer: const MenuDrawerLibrarian(),
         appBar: AppBar(
           backgroundColor: Constants.mainRedColor,
-          title: Text('Create a book'),
+          title: Text('Create a book',style: TextStyle(color: Constants.whiteColor),),
           centerTitle: false,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: Icon(Icons.arrow_back,color: Constants.whiteColor,),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -618,7 +631,7 @@ class _BookCreatePageState extends State<BookCreatePage> {
         Step(
             state: currentStep > 2 ? StepState.complete : StepState.indexed,
             isActive: currentStep >= 2,
-            title: Text("Shelf and Image"),
+            title: Text("Shelf and Category"),
             content: Column(children: <Widget>[
               DropdownButtonFormField<ShelfDTO>(
                 value: _selectedValue,
@@ -748,11 +761,28 @@ class _BookCreatePageState extends State<BookCreatePage> {
                   ),
                 ),
               ),
-              MultiImagePickerView(
-                controller: controller,
-                padding: const EdgeInsets.all(10),
-              )
             ])), // Shelf, Image
+
+    Step(
+        state: currentStep > 3 ? StepState.complete : StepState.indexed,
+        isActive: currentStep >= 3,
+        title: Text("Image"),
+        content: Column(children: <Widget>[
+          if(_base64Image != "-1")
+            Text("If you want to change image, please add new one. If not, do not upload new image."),
+          if(_base64Image != "-1")
+            Image.memory(
+              base64Decode(_base64Image),
+              width: 150,
+              height: 150,
+              fit: BoxFit.cover,
+            ),
+          MultiImagePickerView(
+            controller: controller,
+            padding: const EdgeInsets.all(10),
+          ),
+
+        ]))
       ];
 }
 

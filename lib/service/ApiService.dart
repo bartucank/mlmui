@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:mlmui/models/ReceiptHistoryDTOListResponse.dart';
@@ -297,6 +298,39 @@ class ApiService {
       print('Error uploading image: $e');
     }
   }
+
+
+  Future<int> uploadExcelForBook(File file) async {
+    try {
+      final jwtToken = await getJwtToken();
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse('${Constants.apiBaseUrl}/api/admin/uploadExcel'),
+      );
+      Map<String, String> headers = {
+        "Authorization": "Bearer $jwtToken",
+        "Content-type": "multipart/form-data"
+      };
+
+      print(file.readAsBytesSync());
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'file',
+          file.readAsBytesSync(),
+          filename: 'excel.xlsx',
+        ),
+      );
+      request.headers.addAll(headers);
+      var res = await request.send();
+      if (res.statusCode == 200) {
+        return 1;
+      }
+      return -1;
+    } catch (e) {
+      return -1;
+    }
+  }
+
   Future<int> uploadImageByBase64(String base64) async {
     try {
 

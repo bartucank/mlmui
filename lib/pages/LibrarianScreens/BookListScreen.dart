@@ -11,6 +11,7 @@ import 'package:mlmui/models/UserNamesDTO.dart';
 import 'package:mlmui/models/UserNamesDTOListResponse.dart';
 import 'package:mlmui/pages/LibrarianScreens/BookQueueDetail.dart';
 import 'package:mlmui/pages/LibrarianScreens/UpdateBookPage.dart';
+import 'package:multi_image_picker_view/multi_image_picker_view.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:mlmui/components/BookCard.dart';
@@ -43,6 +44,123 @@ class BookListScreen extends StatefulWidget {
 }
 
 class _BookListScreenState extends State<BookListScreen> {
+
+  Future<void> excelPopup(BuildContext context) async {
+    ArtDialogResponse response = await ArtSweetAlert.show(
+        artDialogKey: _artDialogKey,
+        context: context,
+        artDialogArgs: ArtDialogArgs(
+          barrierColor: Constants.mainBarrierColor,
+          title: "",
+          customColumns: [
+            Stack(children: [
+              Container(
+                margin: EdgeInsets.only(bottom: 20.0),
+                child: Text("sadf"),
+              ),
+
+            ])
+          ],
+          showCancelBtn: true,
+          cancelButtonText: "Cancel",
+          cancelButtonColor: Constants.mainRedColor,
+          onCancel: () async {
+            _artDialogKey.currentState?.showLoader();
+            _artDialogKey.currentState?.hideLoader();
+            _artDialogKey.currentState?.closeDialog();
+          },
+          confirmButtonText: "Send to confirmation",
+          confirmButtonColor: Constants.mainDarkColor,
+          onConfirm: () async {
+            _artDialogKey.currentState?.showLoader();
+            _artDialogKey.currentState?.hideLoader();
+            _artDialogKey.currentState?.closeDialog();
+          },
+          onDispose: () {
+            _artDialogKey = GlobalKey<ArtDialogState>();
+          },
+        ));
+
+    if (response == null) {
+      return;
+    }
+
+    if (response.isTapConfirmButton) {
+      ArtSweetAlert.show(
+          context: context,
+          artDialogArgs: ArtDialogArgs(customColumns: [
+            Container(
+              margin: EdgeInsets.only(bottom: 12.0),
+              child: Image.network(response.data["image"]),
+            )
+          ]));
+      return;
+    }
+  }
+
+
+  Future<void> addNewBookDialog(BuildContext context) async {
+    ArtDialogResponse response = await ArtSweetAlert.show(
+        artDialogKey: _artDialogKey,
+        context: context,
+        artDialogArgs: ArtDialogArgs(
+          title: "Create Book(s)",
+          customColumns: [
+            Stack(children: [
+              Container(
+                margin: EdgeInsets.only(bottom: 20.0),
+                child: Text("If you want to upload books in bulk, you can use an Excel document."),
+              ),
+
+            ])
+          ],
+          barrierColor: Constants.mainBarrierColor,
+          denyButtonText: "By Manuel",
+          denyButtonColor: Constants.mainDarkColor,
+          onDeny: () async{
+            _artDialogKey.currentState?.showLoader();
+            Object? a = await Navigator.pushNamed(context, "/bookcreate");
+            if (a == "s") {
+              refresh();
+            }
+            _artDialogKey.currentState?.hideLoader();
+            _artDialogKey.currentState?.closeDialog();
+          },
+
+
+          confirmButtonText: "By Excel",
+          confirmButtonColor: Constants.mainRedColor,
+          onConfirm: () async {
+            _artDialogKey.currentState?.showLoader();
+            Object? a = await Navigator.pushNamed(context, "/bookcreatebyexcel");
+            if (a == "s") {
+              refresh();
+            }
+            _artDialogKey.currentState?.hideLoader();
+            _artDialogKey.currentState?.closeDialog();
+          },
+          onDispose: () {
+            _artDialogKey = GlobalKey<ArtDialogState>();
+          },
+        ));
+
+    if (response == null) {
+      return;
+    }
+
+    if (response.isTapConfirmButton) {
+      ArtSweetAlert.show(
+          context: context,
+          artDialogArgs: ArtDialogArgs(customColumns: [
+            Container(
+              margin: EdgeInsets.only(bottom: 12.0),
+              child: Image.network(response.data["image"]),
+            )
+          ]));
+      return;
+    }
+  }
+
 
   static const _pageSize = 20;
   final PagingController<int, BookDTO> _pagingController =
@@ -81,6 +199,7 @@ class _BookListScreenState extends State<BookListScreen> {
         artDialogKey: _artDialogKey,
         context: context,
         artDialogArgs: ArtDialogArgs(
+          barrierColor: Constants.mainBarrierColor,
           title: "Borrow",
           customColumns: [
             Container(
@@ -178,6 +297,7 @@ class _BookListScreenState extends State<BookListScreen> {
         barrierDismissible: false,
         context: context,
         artDialogArgs: ArtDialogArgs(
+            barrierColor: Constants.mainBarrierColor,
             denyButtonText: "Cancel",
             title: "Are you sure?",
             text: "You won't be able to revert this!",
@@ -684,10 +804,8 @@ class _BookListScreenState extends State<BookListScreen> {
                   weSlideController.show();
                 }
                 if (index == 1) {
-                  Object? a = await Navigator.pushNamed(context, "/bookcreate");
-                  if (a == "s") {
-                    refresh();
-                  }
+                  addNewBookDialog(context);
+
                 }
               },
             ),

@@ -67,5 +67,10 @@
     <string>My description about why I need this capability</string>
     <key>NSLocationUsageDescription</key>
     <string>My description about why I need this capability</string>
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+      <string>sms</string>
+      <string>tel</string>
+    </array>
 </dict>
 </plist>

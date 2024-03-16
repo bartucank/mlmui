@@ -64,6 +64,7 @@ class _CopyCardState extends State<CopyCard> {
         artDialogKey: _artDialogKey,
         context: context,
         artDialogArgs: ArtDialogArgs(
+          barrierColor: Constants.mainBarrierColor,
           title: "Please Upload Receipt",
           customColumns: [
             Stack(children: [
@@ -269,6 +270,7 @@ class _CopyCardState extends State<CopyCard> {
       artDialogKey: _artDialogKey,
       context: context,
       artDialogArgs: ArtDialogArgs(
+        barrierColor: Constants.mainBarrierColor,
         title: "Receipt History",
         confirmButtonText: "Close",
         confirmButtonColor: Color(0xFFD2232A),
@@ -310,6 +312,7 @@ class _CopyCardState extends State<CopyCard> {
       artDialogKey: _artDialogKey,
       context: context,
       artDialogArgs: ArtDialogArgs(
+        barrierColor: Constants.mainBarrierColor,
         title: "",
         confirmButtonText: "Copy Iban and Close",
         confirmButtonColor: Color(0xFFD2232A),

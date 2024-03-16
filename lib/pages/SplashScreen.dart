@@ -160,7 +160,7 @@ class _SplashScreenState extends State<SplashScreen> {
                                   fontStyle: FontStyle.normal,
                                 ),
                               ),
-                              textColor: Color(0xff3a57e8),
+                              textColor: Constants.mainRedColor,
                               height: 50,
                             ),
                           ),

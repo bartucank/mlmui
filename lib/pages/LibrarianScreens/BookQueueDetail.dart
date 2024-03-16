@@ -169,6 +169,7 @@ class _BookQueueDetailState extends State<BookQueueDetail> {
         artDialogKey: _artDialogKey,
         context: context,
         artDialogArgs: ArtDialogArgs(
+          barrierColor: Constants.mainBarrierColor,
           dialogAlignment: Alignment.centerLeft,
           title: "Details and Actions for ${dto.userDTO!.fullName!} ",
           customColumns: [

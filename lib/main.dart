@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_frame/flutter_web_frame.dart';
+import 'package:mlmui/pages/LibrarianScreens/BookCreateByExcel.dart';
 import 'package:mlmui/pages/LibrarianScreens/BookCreatePage.dart';
 import 'package:mlmui/pages/LibrarianScreens/BookListScreen.dart';
 import 'package:mlmui/pages/LibrarianScreens/LibListScreen.dart';
@@ -52,6 +53,7 @@ class MyApp extends StatelessWidget {
               '/liblist': (context) =>  LibListScreen(),
               '/booklist': (context) =>  BookListScreen(),
               '/bookcreate': (context) =>  BookCreatePage(),
+              '/bookcreatebyexcel':(context) => BookCreateByExcelPage(),
               '/booklistforuser': (context) => BookListForUserScreen(),
               '/bookdetails': (context) => BookDetailsPage(book: ModalRoute.of(context)?.settings.arguments as BookDTO),
               '/updatebookpage' : (context) => UpdateBookPage(),

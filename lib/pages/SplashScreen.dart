@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mlmui/service/CacheManager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/UserDTO.dart';
 import '../service/ApiService.dart';
@@ -19,9 +21,15 @@ class _SplashScreenState extends State<SplashScreen> {
   final ApiService apiService = ApiService();
   late Future<UserDTO> userFuture;
 
-  @override
-  void initState() {
-    super.initState();
+  void hello() async {
+    final FlutterSecureStorage storage = FlutterSecureStorage();
+    await storage.delete(key: "jwt_token");
+    await storage.deleteAll();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove("userdto");
+    await prefs.clear();
+
+
     userFuture = apiService.getUserDetails();
     userFuture.then((user) {
       CacheManager.saveUserDTOToCache(user);
@@ -33,6 +41,13 @@ class _SplashScreenState extends State<SplashScreen> {
     }).catchError((error) {
 
     });
+
+  }
+  @override
+  void initState() {
+    super.initState();
+    hello();
+
   }
 
   @override

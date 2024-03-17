@@ -32,11 +32,11 @@ class CacheManager {
   }
   static Future<void> logout() async {
 
-    final FlutterSecureStorage storage = FlutterSecureStorage();
-    await storage.delete(key: "jwt_token");
-    await storage.deleteAll();
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove("userdto");
-    await prefs.clear();
+    // final FlutterSecureStorage storage = FlutterSecureStorage();
+    // await storage.delete(key: "jwt_token");
+    // await storage.deleteAll();
+    // final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // await prefs.remove("userdto");
+    // await prefs.clear();
   }
 }

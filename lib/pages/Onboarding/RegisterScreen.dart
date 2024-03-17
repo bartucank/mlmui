@@ -328,8 +328,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         Padding(
                           padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
                           child: MaterialButton(
-                            onPressed: () {
-                              _register();
+                            onPressed: () async {
+                              await _register();
                             },
                             color: Constants.mainRedColor,
                             elevation: 0,

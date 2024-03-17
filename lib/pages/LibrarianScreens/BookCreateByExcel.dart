@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -209,8 +210,8 @@ class _BookCreateByExcelPageState extends State<BookCreateByExcelPage> {
                     allowedExtensions: ['xlsx'],
                     allowMultiple: false
                   );
-                  File file = File(result!.files.single.path!);
-                  if(result == null || file == null ){
+
+                  if(result == null){
                     showTopSnackBar(
                       Overlay.of(context),
                       const CustomSnackBar.error(
@@ -220,27 +221,73 @@ class _BookCreateByExcelPageState extends State<BookCreateByExcelPage> {
                       ),
                     );
                   }else{
-                    Object flag = await apiService.uploadExcelForBook(file);
-                    if(flag == 1){
-                      showTopSnackBar(
-                        Overlay.of(context),
-                        const CustomSnackBar.success(
-                          message:
-                          "Success!",
-                          textAlign: TextAlign.left,
-                        ),
-                      );
-                      Navigator.pop(context,"s");
+                    if(kIsWeb){
+                      Object flag = await apiService.uploadExcelForBookForWeb(result.files.first.bytes!);
+                      print(flag);
+                      if(flag == "0"){
+                        showTopSnackBar(
+                          Overlay.of(context),
+                          const CustomSnackBar.error(
+                            message:
+                            "There is no valid row :(",
+                            textAlign: TextAlign.left,
+                          ),
+                        );
+                      }else if(flag == "-1"){
+                        showTopSnackBar(
+                          Overlay.of(context),
+                          const CustomSnackBar.error(
+                            message:
+                            "Something happened :(",
+                            textAlign: TextAlign.left,
+                          ),
+                        );
+                      }else{
+                        showTopSnackBar(
+                          Overlay.of(context),
+                          const CustomSnackBar.success(
+                            message:
+                            "Valid rows created!",
+                            textAlign: TextAlign.left,
+                          ),
+                        );
+                        Navigator.pop(context,"s");
+                      }
                     }else{
-                      showTopSnackBar(
-                        Overlay.of(context),
-                        const CustomSnackBar.error(
-                          message:
-                          "Something happened :(",
-                          textAlign: TextAlign.left,
-                        ),
-                      );
+                      File file = File(result!.files.single.path!);
+                      Object flag = await apiService.uploadExcelForBook(file);
+                      print(flag);
+                      if(flag == "0"){
+                        showTopSnackBar(
+                          Overlay.of(context),
+                          const CustomSnackBar.error(
+                            message:
+                            "There is no valid row :(",
+                            textAlign: TextAlign.left,
+                          ),
+                        );
+                      }else if(flag == "-1"){
+                        showTopSnackBar(
+                          Overlay.of(context),
+                          const CustomSnackBar.error(
+                            message:
+                            "Something happened :(",
+                            textAlign: TextAlign.left,
+                          ),
+                        );
+                      }else{
+                        showTopSnackBar(
+                          Overlay.of(context),
+                          const CustomSnackBar.success(
+                            message:
+                            "Valid rows created!",
+                            textAlign: TextAlign.left,
+                          ),
+                        );
+                        Navigator.pop(context,"s");
+                      }
                     }
+
                   }
                 },
                 color: Constants.mainDarkColor,

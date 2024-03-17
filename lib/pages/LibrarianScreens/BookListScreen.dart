@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:art_sweetalert/art_sweetalert.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -162,10 +163,6 @@ class _BookListScreenState extends State<BookListScreen> {
   }
 
 
-  static const _pageSize = 20;
-  final PagingController<int, BookDTO> _pagingController =
-  PagingController(firstPageKey: 0);
-
 
   final listcontroller = ScrollController();
   TextEditingController _titleController = TextEditingController();
@@ -176,7 +173,7 @@ class _BookListScreenState extends State<BookListScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   int page = -1;
-  int size = 6;
+  int size =kIsWeb?10:6;
   int totalSize = 0;
   int totalPage = 1000;
   late Future<BookDTOListResponse> bookDTOListResponseFuture;
@@ -270,13 +267,11 @@ class _BookListScreenState extends State<BookListScreen> {
                 completer.complete('success');
               } else {
                 String msg = result['message'].toString();
-                print(msg);
                 completer.completeError(msg);
                 _artDialogKey.currentState?.closeDialog();
               }
             } catch (e) {
               String msg = result['message'].toString();
-              print(msg);
               completer.completeError(msg);
               _artDialogKey.currentState?.closeDialog();
             }
@@ -316,13 +311,11 @@ class _BookListScreenState extends State<BookListScreen> {
                   completer2.complete('success');
                 } else {
                   String msg = result['message'].toString();
-                  print(msg);
                   completer2.completeError(msg);
                   _artDialogKey.currentState?.closeDialog();
                 }
               } catch (e) {
                 String msg = result['message'].toString();
-                print(msg);
                 completer2.completeError(msg);
                 _artDialogKey.currentState?.closeDialog();
               }
@@ -344,7 +337,6 @@ class _BookListScreenState extends State<BookListScreen> {
           'currentbook': currentbook
         });
     if (a == "s") {
-      print("$isLoading");
       refresh();
     }
   }
@@ -356,7 +348,6 @@ class _BookListScreenState extends State<BookListScreen> {
         _dropdownItems.addAll(response.list);
       });
     } catch (e) {
-      print("Error! $e");
     }
   }
 
@@ -384,7 +375,6 @@ class _BookListScreenState extends State<BookListScreen> {
         _dropdownItemsForUsers.addAll(response.dtoList);
       });
     } catch (e) {
-      print("Error! $e");
     }
   }
 
@@ -426,7 +416,6 @@ class _BookListScreenState extends State<BookListScreen> {
         page++;
       });
     } catch (e) {
-      print("Error! $e");
     }
   }
 
@@ -460,7 +449,6 @@ class _BookListScreenState extends State<BookListScreen> {
         page++;
       });
     } catch (e) {
-      print("Error! $e");
     }
     setState(() {
       isLoading=false;
@@ -542,7 +530,6 @@ class _BookListScreenState extends State<BookListScreen> {
         isLoading=false;
       });
     } catch (e) {
-      print("Error! $e");
     }
   }
 
@@ -864,7 +851,6 @@ class _BookListScreenState extends State<BookListScreen> {
                                       label: 'Borrow',
                                       onPressed: (context) async {
                                         borrowPopup(context,currentbook).then((s) {
-                                          print(s);
                                           if (s != null) {
                                             if (s == 'success') {
                                               showTopSnackBar(

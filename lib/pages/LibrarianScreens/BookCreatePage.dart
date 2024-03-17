@@ -57,13 +57,10 @@ class _BookCreatePageState extends State<BookCreatePage> {
     int value;
     print(_base64Image);
     if(_base64Image!=null && _base64Image!="-1"){
-      print("asdfasdasdf");
-      print(_base64Image);
       value=await apiService.uploadImageByBase64(_base64Image);
     }else{
       value = await apiService.uploadImage(controller.images.first);
     }
-    print("myvalue:"+value.toString());
     if(value == -1){
       setState(() {
         isLoading = false;

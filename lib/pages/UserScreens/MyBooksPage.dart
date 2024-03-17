@@ -38,10 +38,8 @@ class _MyBooksPage extends State<MyBooksPage> {
     try{
       MyBooksDTOListResponse response =
       await apiService.getMyBooks();
-      print('Geldi mi ?9');
       setState(() {
         mybooksDTOList.addAll(response.myBooksDTOList);
-        print('Geldi mi ?7');
       });
     }catch(e){
       print("Error! $e");
@@ -53,7 +51,6 @@ class _MyBooksPage extends State<MyBooksPage> {
       mybooksDTOList.clear();
     });
     fetchMyBooks();
-    print('Geldi mi ?6');
   }
 
   @override
@@ -61,10 +58,8 @@ class _MyBooksPage extends State<MyBooksPage> {
     super.initState();
 
     fetchMyBooks();
-    print('Geldi mi ?8');
     listcontroller.addListener(() {
       if (listcontroller.position.maxScrollExtent == listcontroller.offset) {
-        print('Geldi mi ?5');
         fetchMyBooks();
       }
     });

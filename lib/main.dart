@@ -8,11 +8,13 @@ import 'package:mlmui/pages/LibrarianScreens/BookCreatePage.dart';
 import 'package:mlmui/pages/LibrarianScreens/BookListScreen.dart';
 import 'package:mlmui/pages/LibrarianScreens/LibListScreen.dart';
 import 'package:mlmui/pages/LibrarianScreens/LibrarianHome.dart';
+import 'package:mlmui/pages/LibrarianScreens/RoomManagementScreen.dart';
 import 'package:mlmui/pages/Onboarding/LoginScreen.dart';
 import 'package:mlmui/pages/SplashScreen.dart';
 import 'package:mlmui/pages/UserScreens/BookListForUserScreen.dart';
 import 'package:mlmui/pages/UserScreens/CopyCard.dart';
 import 'package:mlmui/pages/UserScreens/Queue.dart';
+import 'package:mlmui/pages/UserScreens/RoomListScreen.dart';
 import 'package:mlmui/pages/UserScreens/UserHome.dart';
 import 'package:mlmui/pages/LibrarianScreens/UserListScreen.dart';
 import 'package:mlmui/pages/Onboarding/VerifyScreen.dart';
@@ -59,7 +61,9 @@ class MyApp extends StatelessWidget {
               '/updatebookpage' : (context) => UpdateBookPage(),
               '/copycard':(context) => CopyCard(),
               '/queueuser':(context) => QueueUser(book: ModalRoute.of(context)?.settings.arguments as BookDTO),
-              '/mybookspage':(context) => MyBooksPage()
+              '/mybookspage':(context) => MyBooksPage(),
+              '/roomLib':(context) => RoomManagementScreen(),
+              '/roomlistuser':(context) => RoomListScreen()
 
             },
           );

@@ -7,6 +7,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:mlmui/models/ReceiptHistoryDTOListResponse.dart';
+import 'package:mlmui/models/RoomDTOListResponse.dart';
 import 'package:mlmui/models/ShelfDTOListResponse.dart';
 import 'package:mlmui/models/StatisticsDTOListResponse.dart';
 import 'package:mlmui/models/UserDTO.dart';
@@ -566,7 +567,24 @@ class ApiService {
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
     return QueueDetailDTO.fromJson(jsonResponse['data']);
   }
-    
+
+  Future<RoomDTOListResponse> getrooms() async {
+    final jwtToken = await getJwtToken();
+    final response = await http.get(
+      Uri.parse(
+          '${Constants.apiBaseUrl}/api/user/getRooms'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+    );
+    if (response.statusCode == 401) {
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+    return RoomDTOListResponse.fromJson(jsonResponse['data']);
+  }
+
 }
 
 class CustomException implements Exception {

@@ -207,14 +207,17 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Constants.mainBackgroundColor,
         key: _scaffoldKey,
         drawer: const MenuDrawer(),
         appBar: AppBar(
           backgroundColor: Constants.mainRedColor,
-          title: Text('Book List'),
+          title: Text('Book List', style: TextStyle(
+              color: Constants.whiteColor
+          ),),
           centerTitle: false,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: Icon(Icons.arrow_back,color: Constants.whiteColor,),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -464,57 +467,50 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
             padding: EdgeInsets.fromLTRB(0, 0, 0, 80),
             child: bookDTOList.isEmpty
                 ? Text("")
-                : RefreshIndicator(
-                    onRefresh: refresh,
-                    child: ListView.builder(
-                      controller: listcontroller,
-                      itemCount: bookDTOList.length + 1,
-                      itemBuilder: (context2, index) {
-                        if (index < bookDTOList.length) {
-                          BookDTO currentbook = bookDTOList[index];
-                          return Slidable(
-                              endActionPane: ActionPane(
-                                motion: const StretchMotion(),
-                                children: [
-                                  SlidableAction(
-                                    backgroundColor: Colors.green,
-                                    icon: Icons.format_list_bulleted,
-                                    label: 'Details',
-                                    onPressed: (context) {
-                                      dissmissed();
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => BookDetailsPage(book: currentbook),
-                                        ),
-                                      );
-                                    },
-                                  )
-                                ],
-                              ),
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  border: Border(bottom: BorderSide()),
-                                ),
-                                child: ListTile(
-                                  title: BookCard(book: currentbook),
-                                ),
-                              ));
-                        } else {
-                          if (!lastList.isEmpty && bookDTOList.length > 7) {
-                            return const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 64),
-                              child: Center(
-                                child: CircularProgressIndicator(),
-                              ),
-                            );
-                          } else {
-                            return SizedBox();
-                          }
-                        }
-                      },
-                    ),
-                  ),
+                : ListView.builder(
+              itemExtent: 100,
+                  controller: listcontroller,
+                  itemCount: bookDTOList.length + 1,
+                  itemBuilder: (context2, index) {
+                    if (index < bookDTOList.length) {
+                      BookDTO currentbook = bookDTOList[index];
+                      return Slidable(
+                          endActionPane: ActionPane(
+                            motion: const StretchMotion(),
+                            children: [
+                              SlidableAction(
+                                backgroundColor: Colors.green,
+                                icon: Icons.format_list_bulleted,
+                                label: 'Details',
+                                onPressed: (context) {
+                                  dissmissed();
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => BookDetailsPage(book: currentbook),
+                                    ),
+                                  );
+                                },
+                              )
+                            ],
+                          ),
+                          child: ListTile(
+                            title: BookCard(book: currentbook),
+                          ));
+                    } else {
+                      if (!lastList.isEmpty && bookDTOList.length > 7) {
+                        return const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 64),
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      } else {
+                        return SizedBox();
+                      }
+                    }
+                  },
+                ),
           ),
         )
     );

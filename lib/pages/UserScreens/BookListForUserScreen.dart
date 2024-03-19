@@ -226,10 +226,12 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
         drawer: const MenuDrawer(),
         appBar: AppBar(
           backgroundColor: Constants.mainRedColor,
-          title: Text('Book List'),
+          title: Text('Book List', style: TextStyle(
+              color: Constants.whiteColor
+          ),),
           centerTitle: false,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: Icon(Icons.arrow_back,color: Constants.whiteColor,),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -507,14 +509,10 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
                                   )
                                 ],
                               ),
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  border: Border(bottom: BorderSide()),
-                                ),
-                                child: ListTile(
-                                  title: BookCard(book: currentbook),
-                                ),
-                              ));
+                              child: ListTile(
+                                title: BookCard(book: currentbook),
+                              ),
+                          );
                         } else {
                           if (!lastList.isEmpty && totalSize<bookDTOList.length) {
                             return const Padding(

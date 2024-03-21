@@ -68,7 +68,7 @@ class MenuDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.meeting_room_rounded),
-            title: const Text("Room Management"),
+            title: const Text("Room Reservations"),
             onTap: () {
               Navigator.pushNamed(context, '/roomlistuser');
             },

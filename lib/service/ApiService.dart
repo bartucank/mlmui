@@ -22,6 +22,7 @@ import '../models/MyBooksDTO.dart';
 import '../models/MyBooksDTOListResponse.dart';
 import '../models/OpenLibraryBookDetails.dart';
 import '../models/QueueDetailDTO.dart';
+import '../models/RoomSlotDTOListResponse.dart';
 import 'CacheManager.dart';
 import 'constants.dart';
 
@@ -583,6 +584,22 @@ class ApiService {
     }
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
     return RoomDTOListResponse.fromJson(jsonResponse['data']);
+  }
+  Future<RoomSlotDTOListResponse> getroomslots(int id) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.get(
+      Uri.parse(
+          '${Constants.apiBaseUrl}/api/user/getRoomSlotsByRoomId?id=$id'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+    );
+    if (response.statusCode == 401) {
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+    return RoomSlotDTOListResponse.fromJson(jsonResponse['data']);
   }
 
 }

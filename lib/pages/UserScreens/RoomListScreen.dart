@@ -1,6 +1,8 @@
 
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -17,12 +19,15 @@ import '../../components/RoomItem.dart';
 import '../../models/BookCategoryEnumDTO.dart';
 
 import '../../models/RoomDTO.dart';
+import '../../models/RoomSlotDTO.dart';
+import '../../models/RoomSlotDTOListResponse.dart';
 import '../../service/ApiService.dart';
 import 'package:we_slide/we_slide.dart';
 
 
 import '../../service/constants.dart';
 import '../UserScreens/BookDetailsPage.dart';
+import 'RoomSlotListScreen.dart';
 
 class RoomListScreen extends StatefulWidget {
   const RoomListScreen({Key? key}) : super(key: key);
@@ -59,7 +64,6 @@ class _RoomListScreenState extends State<RoomListScreen> {
   void fetchRooms() async {
     try {
       RoomDTOListResponse response = await apiService.getrooms();
-      print(response);
       setState(() {
         roomDTOList.clear();
         roomDTOList.addAll(response.roomDTOList);
@@ -93,7 +97,7 @@ class _RoomListScreenState extends State<RoomListScreen> {
         drawer: const MenuDrawerLibrarian(),
         appBar: AppBar(
           backgroundColor: Constants.mainRedColor,
-          title: Text('Room Management', style: TextStyle(
+          title: Text('Room Reservations', style: TextStyle(
             color: Constants.whiteColor
           ),),
           centerTitle: false,
@@ -120,19 +124,30 @@ class _RoomListScreenState extends State<RoomListScreen> {
               childAspectRatio: 1,
             ),
             itemBuilder: (BuildContext context, int index) {
-              return FutureBuilder<String>(
-                future: getImageBase64(roomDTOList[index].imageId!),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
-                  } else {
-                    if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else {
-                      return RoomItem(base64Image: snapshot.data!, roomDTO: roomDTOList[index],);
-                    }
-                  }
+              return GestureDetector(
+                onTap: ()  {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RoomSlotListScreen(
+                          roomId: roomDTOList[index].id!),
+                    ),
+                  );
                 },
+                child: FutureBuilder<String>(
+                  future: getImageBase64(roomDTOList[index].imageId!),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else {
+                      if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        return RoomItem(base64Image: snapshot.data!, roomDTO: roomDTOList[index],);
+                      }
+                    }
+                  },
+                ),
               );
             },
           ),

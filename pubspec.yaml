@@ -30,6 +30,8 @@ dependencies:
   infinite_scroll_pagination: ^4.0.0
   file_picker: ^5.5.0
   url_launcher: ^6.2.5
+  table_calendar: ^3.1.0
+  dynamic_tabbar: ^1.0.6
 dev_dependencies:
   flutter_test:
     sdk: flutter

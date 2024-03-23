@@ -22,6 +22,7 @@ import 'package:mlmui/pages/LibrarianScreens/UserListScreen.dart';
 import 'package:mlmui/pages/Onboarding/VerifyScreen.dart';
 import 'package:mlmui/pages/UserScreens/BookDetailsPage.dart';
 import 'package:mlmui/pages/LibrarianScreens/UpdateBookPage.dart';
+import 'package:mlmui/pages/LibrarianScreens/CreateRoomPage.dart';
 import 'models/BookDTO.dart';
 import 'pages/Onboarding/RegisterScreen.dart';
 import 'package:mlmui/pages/UserScreens/MyBooksPage.dart';
@@ -64,9 +65,12 @@ class MyApp extends StatelessWidget {
               '/copycard':(context) => CopyCard(),
               '/queueuser':(context) => QueueUser(book: ModalRoute.of(context)?.settings.arguments as BookDTO),
               '/mybookspage':(context) => MyBooksPage(),
+              '/createroom':(context) => CreateRoomPage(),
+
               '/roomLib':(context) => RoomManagementScreen(),
               '/roomlistuser':(context) => RoomListScreen(),
               '/RoomDetailPage':(context) => RoomDetailPage(roomDTO: ModalRoute.of(context)?.settings.arguments as RoomDTO)
+
 
             },
           );

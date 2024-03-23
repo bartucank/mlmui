@@ -36,6 +36,8 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
     super.initState();
     _fetchImage();
   }
+  bool isExpanded = false;
+
 
   Future<void> _fetchImage() async {
     try {
@@ -77,15 +79,34 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Constants.mainRedColor,
-        title: Text('Book Details'),
-        centerTitle: false,
+        backgroundColor: Constants.whiteColor,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
+        actions: [
+          PopupMenuButton<String>(
+            icon: Icon(
+              Icons.more_vert,
+              color: Constants.mainDarkColor,
+            ),
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 'settings',
+                child: Text('Settings'),
+              ),
+              PopupMenuItem(
+                value: 'about',
+                child: Text('About'),
+              ),
+            ],
+            onSelected: (value) {
+              // Handle menu item selection ask
+            },
+          ),
+        ],
       ),
       body: SafeArea(
         top: true,
@@ -93,65 +114,56 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
           clipBehavior: Clip.none,
           children: [
             Container(
-              height: 200.0,
-              color: Constants.mainRedColor,
+              height: 400.0,
+              color: Constants.whiteColor,
             ),
             Positioned(
-              bottom: -25.0,
-              left: 15,
-              width: 150,
-              height: 200.0,
-              child: Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(16.0),
-                    child: Image.memory(
-                      width:150,
-                      base64Decode(_base64Image),
-                       fit: BoxFit.cover,
-                    ),
-                  ),
-
-                ],
-              ),
+                top:0,
+                left:75,
+                right: 75,
+                bottom: 120,
+                child: Image.memory(
+                  width: 150,
+                  base64Decode(_base64Image),
+                )
             ),
             Positioned(
-              top: 55,
-              left: 170,
-              width: MediaQuery.of(context).size.width /2 +10,
-              height: 100.0,
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(5,0,0,0),
-                    child: Text(
-                      widget.book.name??'N/A',
-                      style: TextStyle(
-                        fontSize: 22,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                top: 300,
+                left: 75,
+                right: 75,
+                height: 100.0,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(5,0,0,0),
+                      child: Text(
+                        widget.book.name??'N/A',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
                       ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1, // Adjust the number of lines as needed
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0,0,0,0),
-                    child: Text(
-                      'by ${widget.book.author?.toUpperCase()}'??'',
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Constants.mainDarkColor,
-                        fontWeight: FontWeight.w700,
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0,5,0,0),
+                      child: Text(
+                        'by ${widget.book.author?.toUpperCase()}'??'',
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Constants.greyColor,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1, // Adjust the number of lines as needed
                       ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2, // Adjust the number of lines as needed
                     ),
-                  ),
-
-                ],
-              ),
+                  ],
+                ),
             ),
+
             FutureBuilder<UserDTO?>(
               future: CacheManager.getUserDTOFromCache(),
               builder: (context, snapshot) {
@@ -160,12 +172,26 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                   return Text("");
                 } else if (snapshot.hasData && snapshot.data != null && snapshot.data!.role == "USER") {
                   return Positioned(
-                    bottom: 0,
-                    left: widget.book.status=='AVAILABLE'?(MediaQuery.of(context).size.width/2):(MediaQuery.of(context).size.width/2)-10,
-                    width: 200.0,
-                    height: 50.0,
+                    top: 420,
+                    left: 30,
                     child: Row(
                       children: [
+                        SizedBox(width: 10),
+                        Icon(
+                          Icons.star_border,
+                          color: Colors.orange,
+                        ),
+                        Text(
+                          'by ${widget.book.averagePoint}'??'',
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Constants.mainDarkColor,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1, // Adjust the number of lines as needed
+                        ),
+                        SizedBox(width: 145),
                         MaterialButton(
                           onPressed: () {
                             if(widget.book.status=='AVAILABLE'){
@@ -187,14 +213,12 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                               );
                             }
                           },
-                          color: Color(0xfffafafa),
-                          elevation: 0,
+                          color: Colors.pink.shade100,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(top: Radius.circular(22.0)),
+                            borderRadius: BorderRadius.circular(20.0),
                           ),
-                          padding: EdgeInsets.all(16),
                           child: Text(
-                            widget.book.status=='AVAILABLE'?'Book is Available!':'Click To View Queue',
+                            widget.book.status=='AVAILABLE'?'Available!':'Click To View Queue',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
@@ -202,9 +226,11 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                             ),
                           ),
                           textColor: Constants.mainRedColor,
-                          height: 50,
                         ),
-
+                        Icon(
+                          Icons.favorite_border,
+                          color: Colors.red,
+                        )
                       ],
                     ),
                   );
@@ -213,77 +239,55 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                 }
               },
             ),
-
             Positioned(
-              bottom: -120.0,
-              left: 20,
-              width: 200.0,
-              height: 65,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    'Description ' ,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-
-                ],
-              ),
-            ),
-            Positioned(
-              bottom: -280.0,
-              left: 20,
-              width: MediaQuery.of(context).size.width-40,
-              height: 210,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  TextField(
-                    readOnly: true,
-                    textAlign: TextAlign.start,
-                    maxLines: 12,
-                    controller: TextEditingController(
-                        text:
-                        (widget.book.author!= null &&
-                            widget.book.publisher!=null &&
-                            widget.book.name != null &&
-                            widget.book.description != null)
-                            ?
-                         widget.book.description!
-                            :''
-                    ),
-                    style: TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontStyle: FontStyle.normal,
-                      fontSize: 14,
-                      color: Constants.mainDarkColor,
-                    ),
-                    decoration: InputDecoration(
-                      disabledBorder: UnderlineInputBorder(
-                        borderRadius: BorderRadius.circular(4.0),
-                        borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
+                top:500,
+                left: 20,
+                right: 0,
+                child: Container(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                        child: Stack(
+                          children: [
+                            Text(
+                              widget.book.description ?? 'N/A',
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: Constants.greyColor,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              overflow: isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
+                              maxLines: isExpanded ? null : 4, // Toggle maxLines based on isExpanded
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              left: 340,
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    isExpanded = !isExpanded;
+                                  });
+                                },
+                                child: Text(
+                                  isExpanded ? 'Less' : 'More',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.red, // Use the theme's primary color
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      labelStyle: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontStyle: FontStyle.normal,
-                        fontSize: 16,
-                        color: Constants.mainDarkColor,
-                      ),
-                      filled: true,
-                      fillColor: Color(0x00ffffff),
-                      isDense: false,
-                      contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                    ),
-                  ),
-
-                ],
+                    ],
+                ),
               ),
             ),
           ],
-        )
+        ),
       )
     );
   }

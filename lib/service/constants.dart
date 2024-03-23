@@ -1,8 +1,10 @@
 import 'dart:ui';
 
 class Constants {
+
   static const String apiBaseUrl = "https://eew.com.tr/srv";
   // static const String apiBaseUrl = "https://068e-78-135-14-228.ngrok-free.app";
+
 
 
   static const String successFlag = "S";

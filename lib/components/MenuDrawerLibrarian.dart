@@ -83,8 +83,15 @@ class MenuDrawerLibrarian extends StatelessWidget {
             leading: const Icon(Icons.library_books),
             title: const Text("Book List"),
             onTap: () {
-              CacheManager.logout();
               Navigator.pushNamed(context, '/booklist');
+            },
+          ),
+
+          ListTile(
+            leading: const Icon(Icons.meeting_room_rounded),
+            title: const Text("Room Management"),
+            onTap: () {
+              Navigator.pushNamed(context, '/roomLib');
             },
           ),
           const Divider(color: Constants.mainDarkColor),

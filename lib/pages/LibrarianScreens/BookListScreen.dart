@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:art_sweetalert/art_sweetalert.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -11,6 +12,7 @@ import 'package:mlmui/models/UserNamesDTO.dart';
 import 'package:mlmui/models/UserNamesDTOListResponse.dart';
 import 'package:mlmui/pages/LibrarianScreens/BookQueueDetail.dart';
 import 'package:mlmui/pages/LibrarianScreens/UpdateBookPage.dart';
+import 'package:multi_image_picker_view/multi_image_picker_view.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:mlmui/components/BookCard.dart';
@@ -44,9 +46,122 @@ class BookListScreen extends StatefulWidget {
 
 class _BookListScreenState extends State<BookListScreen> {
 
-  static const _pageSize = 20;
-  final PagingController<int, BookDTO> _pagingController =
-  PagingController(firstPageKey: 0);
+  Future<void> excelPopup(BuildContext context) async {
+    ArtDialogResponse response = await ArtSweetAlert.show(
+        artDialogKey: _artDialogKey,
+        context: context,
+        artDialogArgs: ArtDialogArgs(
+          barrierColor: Constants.mainBarrierColor,
+          title: "",
+          customColumns: [
+            Stack(children: [
+              Container(
+                margin: EdgeInsets.only(bottom: 20.0),
+                child: Text("sadf"),
+              ),
+
+            ])
+          ],
+          showCancelBtn: true,
+          cancelButtonText: "Cancel",
+          cancelButtonColor: Constants.mainRedColor,
+          onCancel: () async {
+            _artDialogKey.currentState?.showLoader();
+            _artDialogKey.currentState?.hideLoader();
+            _artDialogKey.currentState?.closeDialog();
+          },
+          confirmButtonText: "Send to confirmation",
+          confirmButtonColor: Constants.mainDarkColor,
+          onConfirm: () async {
+            _artDialogKey.currentState?.showLoader();
+            _artDialogKey.currentState?.hideLoader();
+            _artDialogKey.currentState?.closeDialog();
+          },
+          onDispose: () {
+            _artDialogKey = GlobalKey<ArtDialogState>();
+          },
+        ));
+
+    if (response == null) {
+      return;
+    }
+
+    if (response.isTapConfirmButton) {
+      ArtSweetAlert.show(
+          context: context,
+          artDialogArgs: ArtDialogArgs(customColumns: [
+            Container(
+              margin: EdgeInsets.only(bottom: 12.0),
+              child: Image.network(response.data["image"]),
+            )
+          ]));
+      return;
+    }
+  }
+
+
+  Future<void> addNewBookDialog(BuildContext context) async {
+    ArtDialogResponse response = await ArtSweetAlert.show(
+        artDialogKey: _artDialogKey,
+        context: context,
+        artDialogArgs: ArtDialogArgs(
+          title: "Create Book(s)",
+          customColumns: [
+            Stack(children: [
+              Container(
+                margin: EdgeInsets.only(bottom: 20.0),
+                child: Text("If you want to upload books in bulk, you can use an Excel document."),
+              ),
+
+            ])
+          ],
+          barrierColor: Constants.mainBarrierColor,
+          denyButtonText: "By Manuel",
+          denyButtonColor: Constants.mainDarkColor,
+          onDeny: () async{
+            _artDialogKey.currentState?.showLoader();
+            Object? a = await Navigator.pushNamed(context, "/bookcreate");
+            if (a == "s") {
+              refresh();
+            }
+            _artDialogKey.currentState?.hideLoader();
+            _artDialogKey.currentState?.closeDialog();
+          },
+
+
+          confirmButtonText: "By Excel",
+          confirmButtonColor: Constants.mainRedColor,
+          onConfirm: () async {
+            _artDialogKey.currentState?.showLoader();
+            Object? a = await Navigator.pushNamed(context, "/bookcreatebyexcel");
+            if (a == "s") {
+              refresh();
+            }
+            _artDialogKey.currentState?.hideLoader();
+            _artDialogKey.currentState?.closeDialog();
+          },
+          onDispose: () {
+            _artDialogKey = GlobalKey<ArtDialogState>();
+          },
+        ));
+
+    if (response == null) {
+      return;
+    }
+
+    if (response.isTapConfirmButton) {
+      ArtSweetAlert.show(
+          context: context,
+          artDialogArgs: ArtDialogArgs(customColumns: [
+            Container(
+              margin: EdgeInsets.only(bottom: 12.0),
+              child: Image.network(response.data["image"]),
+            )
+          ]));
+      return;
+    }
+  }
+
 
 
   final listcontroller = ScrollController();
@@ -58,7 +173,7 @@ class _BookListScreenState extends State<BookListScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   int page = -1;
-  int size = 6;
+  int size =kIsWeb?10:6;
   int totalSize = 0;
   int totalPage = 1000;
   late Future<BookDTOListResponse> bookDTOListResponseFuture;
@@ -81,6 +196,7 @@ class _BookListScreenState extends State<BookListScreen> {
         artDialogKey: _artDialogKey,
         context: context,
         artDialogArgs: ArtDialogArgs(
+          barrierColor: Constants.mainBarrierColor,
           title: "Borrow",
           customColumns: [
             Container(
@@ -151,13 +267,11 @@ class _BookListScreenState extends State<BookListScreen> {
                 completer.complete('success');
               } else {
                 String msg = result['message'].toString();
-                print(msg);
                 completer.completeError(msg);
                 _artDialogKey.currentState?.closeDialog();
               }
             } catch (e) {
               String msg = result['message'].toString();
-              print(msg);
               completer.completeError(msg);
               _artDialogKey.currentState?.closeDialog();
             }
@@ -178,6 +292,7 @@ class _BookListScreenState extends State<BookListScreen> {
         barrierDismissible: false,
         context: context,
         artDialogArgs: ArtDialogArgs(
+            barrierColor: Constants.mainBarrierColor,
             denyButtonText: "Cancel",
             title: "Are you sure?",
             text: "You won't be able to revert this!",
@@ -196,13 +311,11 @@ class _BookListScreenState extends State<BookListScreen> {
                   completer2.complete('success');
                 } else {
                   String msg = result['message'].toString();
-                  print(msg);
                   completer2.completeError(msg);
                   _artDialogKey.currentState?.closeDialog();
                 }
               } catch (e) {
                 String msg = result['message'].toString();
-                print(msg);
                 completer2.completeError(msg);
                 _artDialogKey.currentState?.closeDialog();
               }
@@ -224,7 +337,6 @@ class _BookListScreenState extends State<BookListScreen> {
           'currentbook': currentbook
         });
     if (a == "s") {
-      print("$isLoading");
       refresh();
     }
   }
@@ -236,7 +348,6 @@ class _BookListScreenState extends State<BookListScreen> {
         _dropdownItems.addAll(response.list);
       });
     } catch (e) {
-      print("Error! $e");
     }
   }
 
@@ -264,7 +375,6 @@ class _BookListScreenState extends State<BookListScreen> {
         _dropdownItemsForUsers.addAll(response.dtoList);
       });
     } catch (e) {
-      print("Error! $e");
     }
   }
 
@@ -306,7 +416,6 @@ class _BookListScreenState extends State<BookListScreen> {
         page++;
       });
     } catch (e) {
-      print("Error! $e");
     }
   }
 
@@ -340,7 +449,6 @@ class _BookListScreenState extends State<BookListScreen> {
         page++;
       });
     } catch (e) {
-      print("Error! $e");
     }
     setState(() {
       isLoading=false;
@@ -422,7 +530,6 @@ class _BookListScreenState extends State<BookListScreen> {
         isLoading=false;
       });
     } catch (e) {
-      print("Error! $e");
     }
   }
 
@@ -684,10 +791,8 @@ class _BookListScreenState extends State<BookListScreen> {
                   weSlideController.show();
                 }
                 if (index == 1) {
-                  Object? a = await Navigator.pushNamed(context, "/bookcreate");
-                  if (a == "s") {
-                    refresh();
-                  }
+                  addNewBookDialog(context);
+
                 }
               },
             ),
@@ -746,7 +851,6 @@ class _BookListScreenState extends State<BookListScreen> {
                                       label: 'Borrow',
                                       onPressed: (context) async {
                                         borrowPopup(context,currentbook).then((s) {
-                                          print(s);
                                           if (s != null) {
                                             if (s == 'success') {
                                               showTopSnackBar(

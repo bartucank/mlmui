@@ -267,7 +267,7 @@ class _UserHomeState extends State<UserHome> {
                   buttonLabel: 'Room Res.',
                   buttonIcon: Icons.schedule,
                   onPressed: (){
-                    print('Room Res. pressed');
+                    Navigator.pushNamed(context, '/roomlistuser');
                   },
                   color: Constants.mainDarkColor,
                 ),

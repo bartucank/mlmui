@@ -235,8 +235,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         Padding(
                           padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
                           child: MaterialButton(
-                            onPressed: () {
-                              _login();
+                            onPressed: () async {
+                              await _login();
                             },
                             color: Constants.mainRedColor,
                             elevation: 0,

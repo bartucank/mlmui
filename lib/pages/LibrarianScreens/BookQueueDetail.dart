@@ -109,7 +109,6 @@ class _BookQueueDetailState extends State<BookQueueDetail> {
   }
 
   Future<String> takeBack(BuildContext context, int id) async {
-    print("ok1");
     Completer<String> completer2 = Completer<String>();
     _artDialogKey.currentState?.showLoader();
     Map<String, dynamic> result = await apiService.takeBackBook(id);
@@ -169,6 +168,7 @@ class _BookQueueDetailState extends State<BookQueueDetail> {
         artDialogKey: _artDialogKey,
         context: context,
         artDialogArgs: ArtDialogArgs(
+          barrierColor: Constants.mainBarrierColor,
           dialogAlignment: Alignment.centerLeft,
           title: "Details and Actions for ${dto.userDTO!.fullName!} ",
           customColumns: [

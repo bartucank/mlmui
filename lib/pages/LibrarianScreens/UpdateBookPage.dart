@@ -215,9 +215,7 @@ class _UpdateBookPage extends State<UpdateBookPage> {
   }
   void setImagePicker(BookDTO currentbook) async{
     Uint8List? imageData = await fetchImageData(currentbook.imageId!);
-    print("ok1");
     print(imageData);
-    print("ok2");
     if (imageData != null) {
       Stream<List<int>> streamData = Stream.fromIterable([imageData.toList()]);
 
@@ -300,10 +298,10 @@ class _UpdateBookPage extends State<UpdateBookPage> {
         drawer: const MenuDrawerLibrarian(),
         appBar: AppBar(
           backgroundColor: Constants.mainRedColor,
-          title: Text('Update Book Page'),
+          title: Text('Update Book Page', style: TextStyle(color: Colors.white)),
           centerTitle: false,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: Icon(Icons.arrow_back,color: Colors.white),
             onPressed: () {
               Navigator.pop(context);
             },

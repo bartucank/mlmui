@@ -49,7 +49,6 @@ class MenuDrawer extends StatelessWidget {
                       leading: const Icon(Icons.person),
                       title: const Text("Profile"),
                       onTap: () {
-                        // CacheManager.logout();
                         Navigator.pushNamed(context, '/booklistforuser');
                       },
                     ),
@@ -64,10 +63,17 @@ class MenuDrawer extends StatelessWidget {
             leading: const Icon(Icons.library_books),
             title: const Text("Book List"),
             onTap: () {
-              // CacheManager.logout();
               Navigator.pushNamed(context, '/booklistforuser');
             },
-          ),ListTile(
+          ),
+          ListTile(
+            leading: const Icon(Icons.meeting_room_rounded),
+            title: const Text("Room Reservations"),
+            onTap: () {
+              Navigator.pushNamed(context, '/roomlistuser');
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.logout_outlined),
             title: const Text("Log out"),
             onTap: () {

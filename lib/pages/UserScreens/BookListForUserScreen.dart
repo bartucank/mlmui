@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:mlmui/models/BookDTO.dart';
@@ -10,6 +11,7 @@ import 'package:mlmui/models/BookCategoryEnumDTO.dart';
 import 'package:mlmui/models/BookCategoryEnumDTOListResponse.dart';
 import '../../service/constants.dart';
 import 'BookDetailsPage.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class BookListForUserScreen extends StatefulWidget {
   const BookListForUserScreen({Key? key}) : super(key: key);
@@ -19,6 +21,7 @@ class BookListForUserScreen extends StatefulWidget {
 }
 
 class _BookListForUserScreenState extends State<BookListForUserScreen> {
+
   final listcontroller = ScrollController();
   TextEditingController _titleController = TextEditingController();
   TextEditingController _authorController = TextEditingController();
@@ -28,7 +31,8 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool isLoading = false;
   int page = -1;
-  int size = 7;
+  int size = kIsWeb?10:6;
+  int totalSize = 0;
   int totalPage = 1000;
   late Future<BookDTOListResponse> bookDTOListResponseFuture;
   List<BookDTO> bookDTOList = [];
@@ -60,6 +64,9 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
     });
   }
   void fetchFirstBooks() async {
+    if(isLoading){
+      return;
+    }
     if (page - 1 > totalPage) {
       return;
     }
@@ -68,6 +75,7 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
       "size": size,
     };
       setState(() {
+        isLoading = true;
       globalFilterRequest = request;
     });
 
@@ -80,11 +88,15 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
         bookDTOList.addAll(response.bookDTOList);
         lastList.addAll(response.bookDTOList);
         totalPage = response.totalPage;
+        totalSize = response.totalResult;
         page++;
       });
     } catch (e) {
       print("Error! $e");
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -98,12 +110,15 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
       bookDTOList.clear();
     });
     page = -1;
-    size = 7;
-    fetchMoreBook();
+    size = 6;
+    fetchFirstBooks();
   }
 
   void fetchMoreBook() async {
     if (page - 1 > totalPage) {
+      return;
+    }
+    if(totalSize<=bookDTOList.length){
       return;
     }
     globalFilterRequest['page'] = globalFilterRequest['page'] +1;
@@ -211,10 +226,12 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
         drawer: const MenuDrawer(),
         appBar: AppBar(
           backgroundColor: Constants.mainRedColor,
-          title: Text('Book List'),
+          title: Text('Book List', style: TextStyle(
+              color: Constants.whiteColor
+          ),),
           centerTitle: false,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: Icon(Icons.arrow_back,color: Constants.whiteColor,),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -492,16 +509,12 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
                                   )
                                 ],
                               ),
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  border: Border(bottom: BorderSide()),
-                                ),
-                                child: ListTile(
-                                  title: BookCard(book: currentbook),
-                                ),
-                              ));
+                              child: ListTile(
+                                title: BookCard(book: currentbook),
+                              ),
+                          );
                         } else {
-                          if (!lastList.isEmpty && bookDTOList.length > 7) {
+                          if (!lastList.isEmpty && totalSize<bookDTOList.length) {
                             return const Padding(
                               padding: EdgeInsets.symmetric(vertical: 64),
                               child: Center(

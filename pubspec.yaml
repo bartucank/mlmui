@@ -1,7 +1,7 @@
 name: mlmui
 description: MLM UI
 publish_to: 'none'
-version: 1.0.12+12
+version: 1.0.16+16
 environment:
   sdk: '>=3.0.6 <4.0.0'
 dependencies:
@@ -10,7 +10,7 @@ dependencies:
   http: ^1.1.0
   flutter_secure_storage: ^8.0.0
   pretty_http_logger: ^1.0.2
-  shared_preferences: ^2.2.0
+  shared_preferences: ^2.2.2
   top_snackbar_flutter: ^3.1.0
   cupertino_icons: ^1.0.2
   flutter_otp_text_field: ^1.1.1
@@ -28,6 +28,12 @@ dependencies:
   card_loading: ^0.3.0
   fl_chart: ^0.65.0
   infinite_scroll_pagination: ^4.0.0
+  file_picker: ^5.5.0
+  url_launcher: ^6.2.5
+  table_calendar: ^3.1.0
+  dynamic_tabbar: ^1.0.6
+  nfc_manager: ^3.4.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

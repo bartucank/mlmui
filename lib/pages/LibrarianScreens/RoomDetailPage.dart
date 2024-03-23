@@ -395,6 +395,10 @@ class _RoomDetailPage extends State<RoomDetailPage> {
               onPressed: () async {
                 bool isAvailable = await NfcManager.instance.isAvailable();
                 print(isAvailable);
+                if(!isAvailable){
+                  nfcController.text="nooo";
+                }
+
                 NfcManager.instance.startSession(
                   onDiscovered: (NfcTag tag) async {
                     Ndef? ndef = Ndef.from(tag);
@@ -420,6 +424,31 @@ class _RoomDetailPage extends State<RoomDetailPage> {
               padding: EdgeInsets.all(8),
               child: Text(
                 "Scan new NFC Tag",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  fontStyle: FontStyle.normal,
+                ),
+              ),
+              textColor: Color(0xffffffff),
+              height: 10,
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: MaterialButton(
+              onPressed: () async {
+                nfcController.text="clear";
+
+              },
+              color: Constants.mainDarkColor,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              padding: EdgeInsets.all(8),
+              child: Text(
+                "clear",
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,

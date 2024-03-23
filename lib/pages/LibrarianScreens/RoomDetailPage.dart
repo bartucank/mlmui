@@ -399,19 +399,15 @@ class _RoomDetailPage extends State<RoomDetailPage> {
                   onDiscovered: (NfcTag tag) async {
                     Ndef? ndef = Ndef.from(tag);
 
-                    if (ndef != null && ndef.cachedMessage != null) {
-                      String tempRecord = "";
-                      for (var record in ndef.cachedMessage!.records) {
-                        tempRecord =
-                        "$tempRecord ${String.fromCharCodes(record.payload.sublist(record.payload[0] + 1))}";
-                      }
-
+                    if (ndef != null) {
+                      String chipId = ndef.additionalData['identifier']
+                          .map((e) => e.toRadixString(16).padLeft(2, '0'))
+                          .join(':');
                       setState(() {
-                        nfcController.text = tempRecord;
+                        nfcController.text=chipId;
                       });
-                    } else {
-                      // Show a snackbar for example
                     }
+
                   },
                 );
 

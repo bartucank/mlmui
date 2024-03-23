@@ -3,11 +3,13 @@ import 'dart:collection';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_frame/flutter_web_frame.dart';
+import 'package:mlmui/models/RoomDTO.dart';
 import 'package:mlmui/pages/LibrarianScreens/BookCreateByExcel.dart';
 import 'package:mlmui/pages/LibrarianScreens/BookCreatePage.dart';
 import 'package:mlmui/pages/LibrarianScreens/BookListScreen.dart';
 import 'package:mlmui/pages/LibrarianScreens/LibListScreen.dart';
 import 'package:mlmui/pages/LibrarianScreens/LibrarianHome.dart';
+import 'package:mlmui/pages/LibrarianScreens/RoomDetailPage.dart';
 import 'package:mlmui/pages/LibrarianScreens/RoomManagementScreen.dart';
 import 'package:mlmui/pages/Onboarding/LoginScreen.dart';
 import 'package:mlmui/pages/SplashScreen.dart';
@@ -63,7 +65,8 @@ class MyApp extends StatelessWidget {
               '/queueuser':(context) => QueueUser(book: ModalRoute.of(context)?.settings.arguments as BookDTO),
               '/mybookspage':(context) => MyBooksPage(),
               '/roomLib':(context) => RoomManagementScreen(),
-              '/roomlistuser':(context) => RoomListScreen()
+              '/roomlistuser':(context) => RoomListScreen(),
+              '/RoomDetailPage':(context) => RoomDetailPage(roomDTO: ModalRoute.of(context)?.settings.arguments as RoomDTO)
 
             },
           );

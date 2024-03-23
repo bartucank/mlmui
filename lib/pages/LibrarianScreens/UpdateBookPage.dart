@@ -298,10 +298,10 @@ class _UpdateBookPage extends State<UpdateBookPage> {
         drawer: const MenuDrawerLibrarian(),
         appBar: AppBar(
           backgroundColor: Constants.mainRedColor,
-          title: Text('Update Book Page'),
+          title: Text('Update Book Page', style: TextStyle(color: Colors.white)),
           centerTitle: false,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: Icon(Icons.arrow_back,color: Colors.white),
             onPressed: () {
               Navigator.pop(context);
             },

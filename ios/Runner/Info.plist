@@ -72,5 +72,7 @@
       <string>sms</string>
       <string>tel</string>
     </array>
+    <key>NFCReaderUsageDescription</key>
+    <string>...</string>
 </dict>
 </plist>

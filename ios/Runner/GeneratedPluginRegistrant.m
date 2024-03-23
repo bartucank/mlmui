@@ -24,6 +24,12 @@
 @import image_picker_ios;
 #endif
 
+#if __has_include(<nfc_manager/NfcManagerPlugin.h>)
+#import <nfc_manager/NfcManagerPlugin.h>
+#else
+@import nfc_manager;
+#endif
+
 #if __has_include(<shared_preferences_foundation/SharedPreferencesPlugin.h>)
 #import <shared_preferences_foundation/SharedPreferencesPlugin.h>
 #else
@@ -42,6 +48,7 @@
   [FilePickerPlugin registerWithRegistrar:[registry registrarForPlugin:@"FilePickerPlugin"]];
   [FlutterSecureStoragePlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterSecureStoragePlugin"]];
   [FLTImagePickerPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTImagePickerPlugin"]];
+  [NfcManagerPlugin registerWithRegistrar:[registry registrarForPlugin:@"NfcManagerPlugin"]];
   [SharedPreferencesPlugin registerWithRegistrar:[registry registrarForPlugin:@"SharedPreferencesPlugin"]];
   [URLLauncherPlugin registerWithRegistrar:[registry registrarForPlugin:@"URLLauncherPlugin"]];
 }

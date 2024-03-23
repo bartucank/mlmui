@@ -10,6 +10,8 @@ RoomDTO _$RoomDTOFromJson(Map<String, dynamic> json) => RoomDTO(
       json['id'] as int?,
       json['imageId'] as int?,
       json['name'] as String?,
+      json['nfc_no'] as String?,
+      json['qrImage'] as int?,
     );
 
 Map<String, dynamic> _$RoomDTOToJson(RoomDTO instance) {
@@ -24,5 +26,7 @@ Map<String, dynamic> _$RoomDTOToJson(RoomDTO instance) {
   writeNotNull('id', instance.id);
   writeNotNull('imageId', instance.imageId);
   writeNotNull('name', instance.name);
+  writeNotNull('nfc_no', instance.nfc_no);
+  writeNotNull('qrImage', instance.qrImage);
   return val;
 }

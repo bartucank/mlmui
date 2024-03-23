@@ -583,6 +583,7 @@ class ApiService {
       throw CustomException("NEED_LOGIN");
     }
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
     return RoomDTOListResponse.fromJson(jsonResponse['data']);
   }
   Future<RoomSlotDTOListResponse> getroomslots(int id) async {
@@ -599,7 +600,27 @@ class ApiService {
       throw CustomException("NEED_LOGIN");
     }
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
     return RoomSlotDTOListResponse.fromJson(jsonResponse['data']);
+  }
+
+
+  Future<Map<String, dynamic>> makeReservation(int id) async {
+    print(id);
+    final jwtToken = await getJwtToken();
+    final response = await http.post(
+      Uri.parse('${Constants.apiBaseUrl}/api/user/makeReservation?roomSlotId=$id'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+    );
+    if (response.statusCode == 401) {
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+    return jsonResponse;
+
   }
 
 }

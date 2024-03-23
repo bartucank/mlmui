@@ -32,6 +32,8 @@ dependencies:
   url_launcher: ^6.2.5
   table_calendar: ^3.1.0
   dynamic_tabbar: ^1.0.6
+  nfc_manager: ^3.4.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:mlmui/models/RoomDTOListResponse.dart';
 import 'package:mlmui/pages/LibrarianScreens/BookQueueDetail.dart';
+import 'package:mlmui/pages/LibrarianScreens/RoomDetailPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
@@ -137,7 +138,17 @@ class _RoomManagementScreenState extends State<RoomManagementScreen> {
                     if (snapshot.hasError) {
                       return Text('Error: ${snapshot.error}');
                     } else {
-                      return RoomItem(base64Image: snapshot.data!, roomDTO: roomDTOList[index],);
+                      return GestureDetector(
+                         onTap: (){
+                           Navigator.push(
+                             context,
+                             MaterialPageRoute(
+                               builder: (context) => RoomDetailPage(roomDTO: roomDTOList[index],),
+                             ),
+                           );
+
+                         },
+                          child: RoomItem(base64Image: snapshot.data!, roomDTO: roomDTOList[index],));
                     }
                   }
                 },

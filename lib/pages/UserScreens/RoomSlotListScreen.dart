@@ -72,15 +72,34 @@ class _RoomSlotListScreenState extends State<RoomSlotListScreen>
       return;
     }
 
+    Map<String, dynamic> result = await apiService.makeReservation(id);
+
+
     if (response.isTapDenyButton) {
-      //todo: apicall!!!
-      ArtSweetAlert.show(
-          context: context,
-          artDialogArgs: ArtDialogArgs(
-              type: ArtSweetAlertType.success,
-              title: "Reserved!"
-          )
-      );
+      if(result['data'] != null && result['data']['statusCode'] == "S"){
+        ArtSweetAlert.show(
+            context: context,
+            artDialogArgs: ArtDialogArgs(
+                type: ArtSweetAlertType.success,
+                title: result['data']['msg'],
+                confirmButtonColor: Constants.mainRedColor,
+                onConfirm: (){
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+              }
+            )
+        );
+      }
+      else{
+        ArtSweetAlert.show(
+            context: context,
+            artDialogArgs: ArtDialogArgs(
+                type: ArtSweetAlertType.warning,
+                title: result['message'],
+                confirmButtonColor: Constants.mainRedColor
+            )
+        );
+      }
       return;
     }
   }
@@ -91,7 +110,6 @@ class _RoomSlotListScreenState extends State<RoomSlotListScreen>
       setState(() {
         roomSlotDTOList.clear();
         roomSlotDTOList.addAll(response.roomSlotDTOList);
-
         List<RoomSlotDTO> first = [];
         List<RoomSlotDTO> second = [];
         List<RoomSlotDTO> third = [];

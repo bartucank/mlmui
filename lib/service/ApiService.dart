@@ -14,6 +14,7 @@ import 'package:mlmui/models/StatisticsDTO.dart';
 import '../models/BookCategoryEnumDTO.dart';
 import '../models/BookCategoryEnumDTOListResponse.dart';
 import '../models/BookDTOListResponse.dart';
+import '../models/RoomDTOListResponse.dart';
 import '../models/MyBooksDTO.dart';
 import '../models/MyBooksDTOListResponse.dart';
 import '../models/OpenLibraryBookDetails.dart';
@@ -520,6 +521,23 @@ class ApiService {
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
     print(response.body);
     return QueueDetailDTO.fromJson(jsonResponse['data']);
+  }
+
+  Future<String> createRoom(dynamic body) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.post(
+      Uri.parse('${Constants.apiBaseUrl}/api/admin/createRoom'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(body),
+    );
+    if (response.statusCode == 401) {
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+    return jsonResponse['data']['statusCode'];
   }
     
 }

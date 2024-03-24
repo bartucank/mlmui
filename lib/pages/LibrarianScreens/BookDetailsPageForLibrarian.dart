@@ -102,12 +102,12 @@ class _BookDetailsPageForLibrarianState extends State<BookDetailsPageForLibraria
                 children: [
 
                   Image.memory(
-                    width: 150,
+                    height: (MediaQuery.of(context).size.height/2.3)/1.4,
                     base64Decode(_base64Image),
                   ),
                   SizedBox(height: 5,),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(0,0,0,0),
+                    padding: const EdgeInsets.fromLTRB(15,0,15,0),
                     child: Text(
                       widget.book.name??'N/A',
                       style: TextStyle(
@@ -116,11 +116,11 @@ class _BookDetailsPageForLibrarianState extends State<BookDetailsPageForLibraria
                         fontWeight: FontWeight.bold,
                       ),
                       overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
+                      maxLines: 1,
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(0,2,0,0),
+                    padding: const EdgeInsets.fromLTRB(15,2,15,0),
                     child: Text(
                       'by ${widget.book.author?.toUpperCase()}'??'',
                       style: TextStyle(

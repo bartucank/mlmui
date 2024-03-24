@@ -14,6 +14,7 @@ import 'package:nfc_manager/nfc_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../components/MenuDrawerLibrarian.dart';
 import '../../models/OpenLibraryBookDetails.dart';
 import '../../service/ApiService.dart';
@@ -50,6 +51,7 @@ class _RoomDetailPage extends State<RoomDetailPage> {
   TextEditingController nfcController = TextEditingController();
 
   int defaultImg = 1;
+  int lastIdForQr = 1;
 
   Future<void> _fetchImage(RoomDTO currentRoom) async {
     try {
@@ -129,6 +131,7 @@ class _RoomDetailPage extends State<RoomDetailPage> {
       }
       setState(() {
         defaultImg = widget.roomDTO.imageId!;
+        lastIdForQr = widget.roomDTO.qrImage!;
       });
       _fetchImage(widget.roomDTO);
   }
@@ -142,14 +145,22 @@ class _RoomDetailPage extends State<RoomDetailPage> {
     return base64Decode(base64String);
   }
 
-
-
   int currentStep = 0;
+
+
+  Future<String> downloadQr() async {
+    try {
+      final Uri _url = Uri.parse("${Constants.apiBaseUrl}/api/admin/downloadImg?id=$lastIdForQr");
+      if (!await launchUrl(_url)) {
+        throw Exception('Could not launch $_url');
+      }
+    } catch (e) {
+    }
+    return "1";
+  }
+
   @override
   Widget build(BuildContext context) {
-
-
-
 
     return Scaffold(
         key: _scaffoldKey,
@@ -161,7 +172,7 @@ class _RoomDetailPage extends State<RoomDetailPage> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back,color: Constants.whiteColor),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(context,"reload");
             },
           ),
         ),
@@ -297,7 +308,8 @@ class _RoomDetailPage extends State<RoomDetailPage> {
               children: [
                 MaterialButton(
                   onPressed: () {
-
+                    print("id:"+widget.roomDTO.qrImage!.toString());
+                    downloadQr();
                   },
                   color: Constants.mainDarkColor,
                   elevation: 0,
@@ -317,8 +329,22 @@ class _RoomDetailPage extends State<RoomDetailPage> {
                   height: 10,
                 ),
                 MaterialButton(
-                  onPressed: () {
-
+                  onPressed: () async {
+                    //
+                    // Map<String, dynamic> result = await apiService.generateNewQr(widget.roomDTO.id!);
+                    // if(result['message'] == 'Success'){
+                    //   showTopSnackBar(
+                    //     Overlay.of(context),
+                    //     const CustomSnackBar.success(
+                    //       message:
+                    //       "Success!",
+                    //       textAlign: TextAlign.left,
+                    //     ),
+                    //   );
+                    //   Navigator.pop(context,"reload");
+                    // }
+                    //
+                    // print(result);
                   },
                   color: Constants.mainRedColor,
                   elevation: 0,
@@ -343,142 +369,119 @@ class _RoomDetailPage extends State<RoomDetailPage> {
 
         ])), // Name, Desc, Publisher, Author, Publish Date
 
+    // Step(
+    //     state: currentStep > 2 ? StepState.complete : StepState.indexed,
+    //     isActive: currentStep >= 2,
+    //     title: Text("NFC Card for Verification"),
+    //     content: Column(children: <Widget>[
+    //       TextField(
+    //         readOnly: true,
+    //         controller: nfcController,
+    //         obscureText: false,
+    //         textAlign: TextAlign.start,
+    //         maxLines: 1,
+    //         style: TextStyle(
+    //           fontWeight: FontWeight.w400,
+    //           fontStyle: FontStyle.normal,
+    //           fontSize: 14,
+    //           color: Constants.mainDarkColor,
+    //         ),
+    //         decoration: InputDecoration(
+    //           disabledBorder: UnderlineInputBorder(
+    //             borderRadius: BorderRadius.circular(4.0),
+    //             borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
+    //           ),
+    //           focusedBorder: UnderlineInputBorder(
+    //             borderRadius: BorderRadius.circular(4.0),
+    //             borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
+    //           ),
+    //           enabledBorder: UnderlineInputBorder(
+    //             borderRadius: BorderRadius.circular(4.0),
+    //             borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
+    //           ),
+    //           labelText: "NFC Code",
+    //           labelStyle: TextStyle(
+    //             fontWeight: FontWeight.w700,
+    //             fontStyle: FontStyle.normal,
+    //             fontSize: 16,
+    //             color: Constants.mainDarkColor,
+    //           ),
+    //           filled: true,
+    //           fillColor: Color(0x00ffffff),
+    //           isDense: false,
+    //           contentPadding:
+    //           EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+    //           prefixIcon:
+    //           Icon(Icons.text_fields, color: Constants.mainDarkColor, size: 18),
+    //         ),
+    //       ),
+    //       Align(
+    //         alignment: Alignment.bottomRight,
+    //         child: MaterialButton(
+    //           onPressed: () async {
+    //             bool isAvailable = await NfcManager.instance.isAvailable();
+    //             print(isAvailable);
+    //             String ok="ok";
+    //             if(!isAvailable){
+    //               nfcController.text="nooo"
+    //             }
+    //
+    //             NfcManager.instance.startSession(
+    //               onDiscovered: (NfcTag tag) async {
+    //                 Ndef? ndef = Ndef.from(tag);
+    //
+    //                 if (ndef != null) {
+    //                   String chipId = ndef.additionalData['identifier']
+    //                       .map((e) => e.toRadixString(16).padLeft(2, '0'))
+    //                       .join(':');
+    //                   setState(() {
+    //                     nfcController.text=chipId;
+    //                   });
+    //                 }
+    //
+    //               },
+    //             );
+    //
+    //           },
+    //           color: Constants.mainDarkColor,
+    //           elevation: 0,
+    //           shape: RoundedRectangleBorder(
+    //             borderRadius: BorderRadius.circular(8.0),
+    //           ),
+    //           padding: EdgeInsets.all(8),
+    //           child: Text(
+    //             "Scan new NFC Tag",
+    //             style: TextStyle(
+    //               fontSize: 16,
+    //               fontWeight: FontWeight.w700,
+    //               fontStyle: FontStyle.normal,
+    //             ),
+    //           ),
+    //           textColor: Color(0xffffffff),
+    //           height: 10,
+    //         ),
+    //       ),
+    //     ])), // Shelf, Image
+
     Step(
         state: currentStep > 2 ? StepState.complete : StepState.indexed,
         isActive: currentStep >= 2,
-        title: Text("NFC Card for Verification"),
-        content: Column(children: <Widget>[
-          TextField(
-            readOnly: true,
-            controller: nfcController,
-            obscureText: false,
-            textAlign: TextAlign.start,
-            maxLines: 1,
-            style: TextStyle(
-              fontWeight: FontWeight.w400,
-              fontStyle: FontStyle.normal,
-              fontSize: 14,
-              color: Constants.mainDarkColor,
-            ),
-            decoration: InputDecoration(
-              disabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
-              ),
-              focusedBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
-              ),
-              enabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
-              ),
-              labelText: "NFC Code",
-              labelStyle: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontStyle: FontStyle.normal,
-                fontSize: 16,
-                color: Constants.mainDarkColor,
-              ),
-              filled: true,
-              fillColor: Color(0x00ffffff),
-              isDense: false,
-              contentPadding:
-              EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-              prefixIcon:
-              Icon(Icons.text_fields, color: Constants.mainDarkColor, size: 18),
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: MaterialButton(
-              onPressed: () async {
-                bool isAvailable = await NfcManager.instance.isAvailable();
-                print(isAvailable);
-                if(!isAvailable){
-                  nfcController.text="nooo";
-                }
-
-                NfcManager.instance.startSession(
-                  onDiscovered: (NfcTag tag) async {
-                    Ndef? ndef = Ndef.from(tag);
-
-                    if (ndef != null) {
-                      String chipId = ndef.additionalData['identifier']
-                          .map((e) => e.toRadixString(16).padLeft(2, '0'))
-                          .join(':');
-                      setState(() {
-                        nfcController.text=chipId;
-                      });
-                    }
-
-                  },
-                );
-
-              },
-              color: Constants.mainDarkColor,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              padding: EdgeInsets.all(8),
-              child: Text(
-                "Scan new NFC Tag",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  fontStyle: FontStyle.normal,
-                ),
-              ),
-              textColor: Color(0xffffffff),
-              height: 10,
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: MaterialButton(
-              onPressed: () async {
-                nfcController.text="clear";
-
-              },
-              color: Constants.mainDarkColor,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              padding: EdgeInsets.all(8),
-              child: Text(
-                "clear",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  fontStyle: FontStyle.normal,
-                ),
-              ),
-              textColor: Color(0xffffffff),
-              height: 10,
-            ),
-          ),
-        ])), // Shelf, Image
-
-    Step(
-        state: currentStep > 3 ? StepState.complete : StepState.indexed,
-        isActive: currentStep >= 3,
         title: Text("Image"),
         content: Column(children: <Widget>[
+
           // if(_base64Image != "-1")
           //   Text("If you want to change image, please add new one. If not, do not upload new image."),
-          // if(_base64Image != "-1")
-          //   Image.memory(
-          //     base64Decode(_base64Image),
-          //     width: 150,
-          //     height: 150,
-          //     fit: BoxFit.cover,
-          //   ),
-          MultiImagePickerView(
-            controller: controller,
-            padding: const EdgeInsets.all(10),
-          ),
+          if(_base64Image != "-1")
+            Image.memory(
+              base64Decode(_base64Image),
+              width: 150,
+              height: 150,
+              fit: BoxFit.cover,
+            ),
+          // MultiImagePickerView(
+          //   controller: controller,
+          //   padding: const EdgeInsets.all(10),
+          // ),
 
         ]))
   ];

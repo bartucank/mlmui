@@ -61,15 +61,7 @@ class _BookCreateByExcelPageState extends State<BookCreateByExcelPage> {
         throw Exception('Could not launch $_url');
       }
     } catch (e) {
-      showTopSnackBar(
-        Overlay.of(context),
-        const CustomSnackBar.error(
-          message:
-              "The Excel file cannot be downloaded. Please contact the system administrator.",
-          textAlign: TextAlign.left,
-        ),
-      );
-      return "-1";
+
     }
     return "1";
   }
@@ -163,15 +155,6 @@ class _BookCreateByExcelPageState extends State<BookCreateByExcelPage> {
               MaterialButton(
                   onPressed: () async {
                     Object a = await downloadExcel();
-                    if(a == "1"){
-                      setState(() {
-                        currentStep+=1;
-                      });
-                    }else{
-                      Navigator.pop(context);
-                    }
-
-
                   },
                   color: Constants.mainRedColor,
                   elevation: 0,

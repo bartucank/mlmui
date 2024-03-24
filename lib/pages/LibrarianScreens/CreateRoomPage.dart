@@ -69,13 +69,10 @@ class _CreateRoomPage extends State<CreateRoomPage>{
         "name": _nameController.text,
       };
       try{
-        print(request);
         String result = await apiService.createRoom(request);
-        print(result);
         setState(() {
           isLoading = false;
         });
-        print(result);
         if(result == "S"){
           showTopSnackBar(
               Overlay.of(context),

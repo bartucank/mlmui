@@ -22,7 +22,7 @@ class CacheManager {
   static Future<UserDTO?> getUserDTOFromCache() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? jsonStr = prefs.getString("userdto");
-
+    print("abiiiiiiiii: $jsonStr");
     if (jsonStr != null) {
       Map<String, dynamic> jsonMap = json.decode(jsonStr);
       return UserDTO.fromJson(jsonMap);

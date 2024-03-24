@@ -639,7 +639,6 @@ class ApiService {
         'Authorization': 'Bearer $jwtToken',
         'Content-Type': 'application/json',
       },
-      body: jsonEncode(body),
 
     );
     if (response.statusCode == 401) {

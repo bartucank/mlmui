@@ -78,6 +78,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Constants.whiteColor,
         leading: IconButton(
@@ -86,103 +87,97 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
             Navigator.pop(context);
           },
         ),
-        actions: [
-          PopupMenuButton<String>(
-            icon: Icon(
-              Icons.more_vert,
-              color: Constants.mainDarkColor,
-            ),
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                value: 'settings',
-                child: Text('Settings'),
-              ),
-              PopupMenuItem(
-                value: 'about',
-                child: Text('About'),
-              ),
-            ],
-            onSelected: (value) {
-              // Handle menu item selection ask
-            },
-          ),
-        ],
       ),
-      body: SafeArea(
-        top: true,
+      body: SingleChildScrollView(
         child: Stack(
           clipBehavior: Clip.none,
           children: [
             Container(
-              height: 400.0,
+              height: MediaQuery.of(context).size.height/2.3,
               color: Constants.whiteColor,
             ),
-            Positioned(
-                top:0,
-                left:75,
-                right: 75,
-                bottom: 120,
-                child: Image.memory(
-                  width: 150,
-                  base64Decode(_base64Image),
-                )
-            ),
-            Positioned(
-                top: 300,
-                left: 75,
-                right: 75,
-                height: 100.0,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(5,0,0,0),
-                      child: Text(
-                        widget.book.name??'N/A',
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 2,
+            Center(
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.center,
+                    child: MaterialButton(
+                      onPressed: () {
+                        if(widget.book.status=='AVAILABLE'){
+                          //popup
+                          showTopSnackBar(
+                            Overlay.of(context),
+                            CustomSnackBar.success(
+                              message: "You can borrow the book by going to the librarian :)",
+                              textAlign: TextAlign.left,
+                            ),
+                          );
+                        }else{
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => QueueUser(
+                                  book: widget.book),
+                            ),
+                          );
+                        }
+                      },
+                      color: Colors.pink.shade100,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0,5,0,0),
                       child: Text(
-                        'by ${widget.book.author?.toUpperCase()}'??'',
+                        widget.book.status=='AVAILABLE'?'Available!':'Click To View Queue',
                         style: TextStyle(
-                          fontSize: 15,
-                          color: Constants.greyColor,
+                          fontSize: 16,
                           fontWeight: FontWeight.w700,
+                          fontStyle: FontStyle.normal,
                         ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1, // Adjust the number of lines as needed
                       ),
+                      textColor: Constants.mainRedColor,
                     ),
-                  ],
-                ),
-            ),
-
-            FutureBuilder<UserDTO?>(
-              future: CacheManager.getUserDTOFromCache(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting ||
-                    snapshot.hasError) {
-                  return Text("");
-                } else if (snapshot.hasData && snapshot.data != null && snapshot.data!.role == "USER") {
-                  return Positioned(
-                    top: 420,
-                    left: 30,
-                    child: Row(
-                      children: [
-                        SizedBox(width: 10),
-                        Icon(
-                          Icons.star_border,
-                          color: Colors.orange,
-                        ),
+                  ),
+                  Image.memory(
+                    width: 150,
+                    base64Decode(_base64Image),
+                  ),
+                  SizedBox(height: 5,),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0,0,0,0),
+                    child: Text(
+                      widget.book.name??'N/A',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0,2,0,0),
+                    child: Text(
+                      'by ${widget.book.author?.toUpperCase()}'??'',
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Constants.greyColor,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1, // Adjust the number of lines as needed
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.star,
+                        color: Constants.yellowColor,
+                      ),
+                      if(widget.book.averagePoint != null)
                         Text(
-                          'by ${widget.book.averagePoint}'??'',
+                          widget.book.averagePoint!.toString(),
                           style: TextStyle(
                             fontSize: 15,
                             color: Constants.mainDarkColor,
@@ -191,101 +186,70 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1, // Adjust the number of lines as needed
                         ),
-                        SizedBox(width: 145),
-                        MaterialButton(
-                          onPressed: () {
-                            if(widget.book.status=='AVAILABLE'){
-                              //popup
-                              showTopSnackBar(
-                                Overlay.of(context),
-                                CustomSnackBar.success(
-                                  message: "You can borrow the book by going to the librarian :)",
-                                  textAlign: TextAlign.left,
-                                ),
-                              );
-                            }else{
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => QueueUser(
-                                      book: widget.book),
-                                ),
-                              );
-                            }
-                          },
-                          color: Colors.pink.shade100,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
+                      if(widget.book.averagePoint == null)
+                        Text(
+                          "-",
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Constants.mainDarkColor,
+                            fontWeight: FontWeight.w700,
                           ),
-                          child: Text(
-                            widget.book.status=='AVAILABLE'?'Available!':'Click To View Queue',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              fontStyle: FontStyle.normal,
-                            ),
-                          ),
-                          textColor: Constants.mainRedColor,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1, // Adjust the number of lines as needed
                         ),
-                        Icon(
-                          Icons.favorite_border,
-                          color: Colors.red,
-                        )
-                      ],
-                    ),
-                  );
-                } else {
-                  return Text("");
-                }
-              },
-            ),
-            Positioned(
-                top:500,
-                left: 20,
-                right: 0,
-                child: Container(
-                  child: Column(
+                    ],
+                  ),
+                  SizedBox(height: 20,),
+                  Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                         child: Stack(
                           children: [
-                            Text(
-                              widget.book.description ?? 'N/A',
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Constants.greyColor,
-                                fontWeight: FontWeight.w700,
-                              ),
-                              overflow: isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
-                              maxLines: isExpanded ? null : 4, // Toggle maxLines based on isExpanded
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              left: 340,
-                              child: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    isExpanded = !isExpanded;
-                                  });
-                                },
-                                child: Text(
-                                  isExpanded ? 'Less' : 'More',
+                            Column(
+                              children: [
+                                Text(
+                                  widget.book.description ?? 'N/A',
                                   style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.red, // Use the theme's primary color
+                                    fontSize: 17,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  overflow: isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
+                                  maxLines: isExpanded ? null : 4, // Toggle maxLines based on isExpanded
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        print("za");
+                                        isExpanded = !isExpanded;
+                                      });
+                                    },
+                                    child: Text(
+                                      isExpanded ? 'Less' : 'More',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red, // Use the theme's primary color
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
+                              ],
                             ),
+
                           ],
                         ),
                       ),
                     ],
-                ),
+                  )
+                ],
               ),
             ),
+
+
           ],
         ),
       )

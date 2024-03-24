@@ -90,9 +90,12 @@ class _RoomManagementScreenState extends State<RoomManagementScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         floatingActionButton: FloatingActionButton(
-            backgroundColor:Constants.mainDarkColor,
-          onPressed: () {
-
+            backgroundColor:Constants.mainRedColor,
+          onPressed: () async {
+              Object? a = await Navigator.pushNamed(context, "/createroom");
+              if(a=="s"){
+                fetchRooms();
+              }
           },
           child: Icon(Icons.add,color: Constants.whiteColor,),
         ),
@@ -139,13 +142,16 @@ class _RoomManagementScreenState extends State<RoomManagementScreen> {
                       return Text('Error: ${snapshot.error}');
                     } else {
                       return GestureDetector(
-                         onTap: (){
-                           Navigator.push(
+                         onTap: () async {
+                           Object a = await Navigator.push(
                              context,
                              MaterialPageRoute(
                                builder: (context) => RoomDetailPage(roomDTO: roomDTOList[index],),
                              ),
                            );
+                           if(a == 'reload'){
+                             fetchRooms();
+                           }
 
                          },
                           child: RoomItem(base64Image: snapshot.data!, roomDTO: roomDTOList[index],));

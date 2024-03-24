@@ -126,7 +126,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                 children: [
 
                   Image.memory(
-                    width: 150,
+                    height: 210,
                     base64Decode(_base64Image),
                   ),
                   SizedBox(height: 5,),

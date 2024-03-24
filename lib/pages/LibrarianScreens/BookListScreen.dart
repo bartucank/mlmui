@@ -36,6 +36,7 @@ import 'package:we_slide/we_slide.dart';
 
 import '../../service/constants.dart';
 import '../UserScreens/BookDetailsPage.dart';
+import 'BookDetailsPageForLibrarian.dart';
 
 class BookListScreen extends StatefulWidget {
   const BookListScreen({Key? key}) : super(key: key);
@@ -834,7 +835,7 @@ class _BookListScreenState extends State<BookListScreen> {
                                   onPressed: (context) => Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => BookDetailsPage(
+                                      builder: (context) => BookDetailsPageForLibrarian(
                                           book: currentbook),
                                     ),
                                   ),

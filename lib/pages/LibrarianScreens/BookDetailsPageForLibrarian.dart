@@ -17,16 +17,16 @@ import '../../models/UserDTO.dart';
 import '../../service/CacheManager.dart';
 import '../../service/constants.dart';
 import '../../mlm_icons_icons.dart';
-class BookDetailsPage extends StatefulWidget {
+class BookDetailsPageForLibrarian extends StatefulWidget {
   final BookDTO book;
 
-  const BookDetailsPage({Key? key, required this.book}) : super(key: key);
+  const BookDetailsPageForLibrarian({Key? key, required this.book}) : super(key: key);
 
   @override
-  State<BookDetailsPage> createState() => _BookDetailsPageState();
+  State<BookDetailsPageForLibrarian> createState() => _BookDetailsPageForLibrarianState();
 }
 
-class _BookDetailsPageState extends State<BookDetailsPage> {
+class _BookDetailsPageForLibrarianState extends State<BookDetailsPageForLibrarian> {
 
   final ApiService apiService = ApiService();
   bool isLoading = false;
@@ -78,31 +78,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: () {
-            if(widget.book.status=='AVAILABLE'){
-              //popup
-              showTopSnackBar(
-                Overlay.of(context),
-                CustomSnackBar.success(
-                  message: "You can borrow the book by going to the librarian :)",
-                  textAlign: TextAlign.left,
-                ),
-              );
-            }else{
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => QueueUser(
-                      book: widget.book),
-                ),
-              );
-            }
-          },
-          label: Text(widget.book.status=='AVAILABLE'?'Available!':'Click To View Queue',style: TextStyle(color: Constants.whiteColor),),
 
-          backgroundColor: Constants.mainRedColor,
-        ),
         backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Constants.whiteColor,

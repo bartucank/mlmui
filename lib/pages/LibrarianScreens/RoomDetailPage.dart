@@ -330,20 +330,20 @@ class _RoomDetailPage extends State<RoomDetailPage> {
                 ),
                 MaterialButton(
                   onPressed: () async {
-                    //
+
                     // Map<String, dynamic> result = await apiService.generateNewQr(widget.roomDTO.id!);
                     // if(result['message'] == 'Success'){
-                    //   showTopSnackBar(
-                    //     Overlay.of(context),
-                    //     const CustomSnackBar.success(
-                    //       message:
-                    //       "Success!",
-                    //       textAlign: TextAlign.left,
-                    //     ),
-                    //   );
-                    //   Navigator.pop(context,"reload");
+                      showTopSnackBar(
+                        Overlay.of(context),
+                        const CustomSnackBar.success(
+                          message:
+                          "Success!",
+                          textAlign: TextAlign.left,
+                        ),
+                      );
+                      Navigator.pop(context,"reload");
                     // }
-                    //
+
                     // print(result);
                   },
                   color: Constants.mainRedColor,

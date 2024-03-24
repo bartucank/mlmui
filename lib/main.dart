@@ -6,6 +6,7 @@ import 'package:flutter_web_frame/flutter_web_frame.dart';
 import 'package:mlmui/models/RoomDTO.dart';
 import 'package:mlmui/pages/LibrarianScreens/BookCreateByExcel.dart';
 import 'package:mlmui/pages/LibrarianScreens/BookCreatePage.dart';
+import 'package:mlmui/pages/LibrarianScreens/BookDetailsPageForLibrarian.dart';
 import 'package:mlmui/pages/LibrarianScreens/BookListScreen.dart';
 import 'package:mlmui/pages/LibrarianScreens/LibListScreen.dart';
 import 'package:mlmui/pages/LibrarianScreens/LibrarianHome.dart';
@@ -61,6 +62,7 @@ class MyApp extends StatelessWidget {
               '/bookcreatebyexcel':(context) => BookCreateByExcelPage(),
               '/booklistforuser': (context) => BookListForUserScreen(),
               '/bookdetails': (context) => BookDetailsPage(book: ModalRoute.of(context)?.settings.arguments as BookDTO),
+              '/bookdetailsForLibrarian': (context) => BookDetailsPageForLibrarian(book: ModalRoute.of(context)?.settings.arguments as BookDTO),
               '/updatebookpage' : (context) => UpdateBookPage(),
               '/copycard':(context) => CopyCard(),
               '/queueuser':(context) => QueueUser(book: ModalRoute.of(context)?.settings.arguments as BookDTO),

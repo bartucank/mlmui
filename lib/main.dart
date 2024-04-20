@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_frame/flutter_web_frame.dart';
 import 'package:mlmui/models/RoomDTO.dart';
+import 'package:mlmui/models/UserDTO.dart';
+import 'package:mlmui/pages/Common/ProfileScreen.dart';
 import 'package:mlmui/pages/LibrarianScreens/BookCreateByExcel.dart';
 import 'package:mlmui/pages/LibrarianScreens/BookCreatePage.dart';
 import 'package:mlmui/pages/LibrarianScreens/BookDetailsPageForLibrarian.dart';
@@ -71,6 +73,7 @@ class MyApp extends StatelessWidget {
 
               '/roomLib':(context) => RoomManagementScreen(),
               '/roomlistuser':(context) => RoomListScreen(),
+              '/profile':(context)=>ProfileScreen(userDTO: ModalRoute.of(context)?.settings.arguments as UserDTO, role: ModalRoute.of(context)?.settings.arguments as String),
               '/RoomDetailPage':(context) => RoomDetailPage(roomDTO: ModalRoute.of(context)?.settings.arguments as RoomDTO)
 
 

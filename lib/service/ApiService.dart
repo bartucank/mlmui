@@ -493,7 +493,7 @@ class ApiService {
 
     return ReceiptHistoryDTOListResponse.fromJson(jsonResponse['data']);
   }
-  
+
   Future<MyBooksDTOListResponse> getMyBooks() async {
     final jwtToken = await getJwtToken();
     final response = await http.get(
@@ -511,7 +511,7 @@ class ApiService {
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
     return MyBooksDTOListResponse.fromJson(jsonResponse['data']);
   }
-      
+
   Future<StatisticsDTO> getStatistics() async {
     final jwtToken = await getJwtToken();
     final response = await http.get(
@@ -570,7 +570,7 @@ class ApiService {
     return QueueDetailDTO.fromJson(jsonResponse['data']);
   }
 
-  
+
     Future<String> createRoom(dynamic body) async {
     final jwtToken = await getJwtToken();
     final response = await http.post(
@@ -582,7 +582,7 @@ class ApiService {
    body: jsonEncode(body),
 
 );
-  
+
   if (response.statusCode == 401) {
       throw CustomException("NEED_LOGIN");
     }
@@ -590,9 +590,9 @@ class ApiService {
 
     return jsonResponse['data']['statusCode'];
   }
-  
-  
- 
+
+
+
   Future<RoomDTOListResponse> getrooms() async {
     final jwtToken = await getJwtToken();
     final response = await http.get(
@@ -646,10 +646,51 @@ class ApiService {
     }
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
 
-  
+
     return jsonResponse;
 
   }
+
+  Future<String> updateRoleOfUser(int userId, String role) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.put(
+      Uri.parse('${Constants.apiBaseUrl}/api/admin/updateRoleOfUser?role=$role&userId=$userId'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode('{}'),
+    );
+    if (response.statusCode == 401) {
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+    return jsonResponse['data']['statusCode'];
+  }
+
+  Future<String> changePass(dynamic body) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.post(
+      Uri.parse('${Constants.apiBaseUrl}/api/user/changePassword'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(body),
+    );
+    if (response.statusCode == 401) {
+      return "-1";
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+    print("json:"+jsonResponse.toString());
+    if(response.statusCode == 200){
+      await saveJwtToken(jsonResponse['data']['jwt']);
+      return "ok";
+    }
+    return "-1";
+  }
+
+
 
 }
 

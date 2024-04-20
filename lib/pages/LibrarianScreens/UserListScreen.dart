@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mlmui/models/UserDTO.dart';
 import 'package:mlmui/models/UserDTOListResponse.dart';
+import 'package:mlmui/pages/Common/ProfileScreen.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
@@ -168,10 +169,10 @@ class _UserListScreenState extends State<UserListScreen> {
         drawer: const MenuDrawerLibrarian(),
         appBar: AppBar(
           backgroundColor: Constants.mainRedColor,
-          title: Text('User List'),
+          title: Text('User List',style: TextStyle(color: Constants.whiteColor),),
           centerTitle: false,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: Icon(Icons.arrow_back,color: Constants.whiteColor,),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -420,12 +421,22 @@ class _UserListScreenState extends State<UserListScreen> {
                 itemBuilder: (context2, index) {
                   if (index < userDTOList.length) {
                     UserDTO currentuser = userDTOList[index];
-                    return Container(
-                      decoration: BoxDecoration(
-                        border: Border(bottom: BorderSide()),
-                      ),
-                      child: ListTile(
-                        title: UserCard(user: currentuser),
+                    return GestureDetector(
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProfileScreen(userDTO: currentuser,role: "lib",),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border(bottom: BorderSide()),
+                        ),
+                        child: ListTile(
+                          title: UserCard(user: currentuser),
+                        ),
                       ),
                     );
                   } else {

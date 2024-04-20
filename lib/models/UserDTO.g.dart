@@ -14,6 +14,7 @@ UserDTO _$UserDTOFromJson(Map<String, dynamic> json) => UserDTO(
       json['username'] as String,
       json['verified'] as bool,
       json['email'] as String,
+      json['department'] as String,
     )
       ..debt = (json['debt'] as num?)?.toDouble()
       ..copyCardDTO = json['copyCardDTO'] == null
@@ -30,4 +31,5 @@ Map<String, dynamic> _$UserDTOToJson(UserDTO instance) => <String, dynamic>{
       'email': instance.email,
       'debt': instance.debt,
       'copyCardDTO': instance.copyCardDTO?.toJson(),
+      'department': instance.department,
     };

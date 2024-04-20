@@ -10,6 +10,7 @@ import '../../service/ApiService.dart';
 import 'package:we_slide/we_slide.dart';
 
 import '../../service/constants.dart';
+import '../Common/ProfileScreen.dart';
 
 class LibListScreen extends StatefulWidget {
   const LibListScreen({Key? key}) : super(key: key);
@@ -168,10 +169,10 @@ class _LibListScreenState extends State<LibListScreen> {
         drawer: const MenuDrawerLibrarian(),
         appBar: AppBar(
           backgroundColor: Constants.mainRedColor,
-          title: Text('Librarian List'),
+          title: Text('Librarian List',style: TextStyle(color: Constants.whiteColor),),
           centerTitle: false,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: Icon(Icons.arrow_back,color:Constants.whiteColor),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -420,12 +421,22 @@ class _LibListScreenState extends State<LibListScreen> {
                 itemBuilder: (context2, index) {
                   if (index < userDTOList.length) {
                     UserDTO currentuser = userDTOList[index];
-                    return Container(
-                      decoration: BoxDecoration(
-                        border: Border(bottom: BorderSide()),
-                      ),
-                      child: ListTile(
-                        title: UserCard(user: currentuser),
+                    return GestureDetector(
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProfileScreen(userDTO: currentuser,role: "lib",),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border(bottom: BorderSide()),
+                        ),
+                        child: ListTile(
+                          title: UserCard(user: currentuser),
+                        ),
                       ),
                     );
                   } else {

@@ -38,14 +38,21 @@ class MenuDrawerLibrarian extends StatelessWidget {
                   snapshot.hasError) {
                 return Text("");
               } else if (snapshot.hasData && snapshot.data != null) {
-                return Padding(
-                  padding: EdgeInsets.fromLTRB(0, 10, 0, 25),
-                  child: Center(
-                    child: Text(snapshot.data!.fullName != null &&
-                            snapshot.data!.fullName != ""
-                        ? "Welcome ${snapshot.data!.fullName}"
-                        : "Welcome ${snapshot.data!.username}"),
-                  ),
+                return ExpansionTile(
+                  leading: const Icon(Icons.person),
+                  title: Text(snapshot.data!.fullName != null &&
+                      snapshot.data!.fullName != ""
+                      ? "Welcome ${snapshot.data!.fullName}"
+                      : "Welcome ${snapshot.data!.username}"),
+                  children: [
+                    ListTile(
+                      leading: const Icon(Icons.person),
+                      title: const Text("Profile"),
+                      onTap: () {
+                        Navigator.pushNamed(context, '/userlist');
+                      },
+                    ),
+                  ],
                 );
               } else {
                 return Text("");
@@ -94,6 +101,15 @@ class MenuDrawerLibrarian extends StatelessWidget {
               Navigator.pushNamed(context, '/roomLib');
             },
           ),
+
+          ListTile(
+            leading: const Icon(Icons.credit_card),
+            title: const Text("Copy Card Management"),
+            onTap: () {
+              Navigator.pushNamed(context, '/roomLib');
+            },
+          ),
+
           const Divider(color: Constants.mainDarkColor),
           ListTile(
             leading: const Icon(Icons.logout_outlined),

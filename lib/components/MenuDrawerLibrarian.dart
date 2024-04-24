@@ -106,7 +106,7 @@ class MenuDrawerLibrarian extends StatelessWidget {
             leading: const Icon(Icons.credit_card),
             title: const Text("Copy Card Management"),
             onTap: () {
-              Navigator.pushNamed(context, '/roomLib');
+              Navigator.pushNamed(context, '/copycardmanagement');
             },
           ),
 

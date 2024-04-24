@@ -10,6 +10,7 @@ import 'package:mlmui/pages/LibrarianScreens/BookCreateByExcel.dart';
 import 'package:mlmui/pages/LibrarianScreens/BookCreatePage.dart';
 import 'package:mlmui/pages/LibrarianScreens/BookDetailsPageForLibrarian.dart';
 import 'package:mlmui/pages/LibrarianScreens/BookListScreen.dart';
+import 'package:mlmui/pages/LibrarianScreens/CopyCardManagement.dart';
 import 'package:mlmui/pages/LibrarianScreens/LibListScreen.dart';
 import 'package:mlmui/pages/LibrarianScreens/LibrarianHome.dart';
 import 'package:mlmui/pages/LibrarianScreens/RoomDetailPage.dart';
@@ -67,6 +68,7 @@ class MyApp extends StatelessWidget {
               '/bookdetailsForLibrarian': (context) => BookDetailsPageForLibrarian(book: ModalRoute.of(context)?.settings.arguments as BookDTO),
               '/updatebookpage' : (context) => UpdateBookPage(),
               '/copycard':(context) => CopyCard(),
+              '/copycardmanagement':(context) => CopyCardManagement(),
               '/queueuser':(context) => QueueUser(book: ModalRoute.of(context)?.settings.arguments as BookDTO),
               '/mybookspage':(context) => MyBooksPage(),
               '/createroom':(context) => CreateRoomPage(),

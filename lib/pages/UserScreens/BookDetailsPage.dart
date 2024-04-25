@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
 
+import 'package:animated_rating_stars/animated_rating_stars.dart';
 import 'package:flutter/material.dart';
 import 'package:mlmui/models/BookDTO.dart';
 import 'package:mlmui/pages/UserScreens/Queue.dart';
@@ -9,14 +9,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
-import '../../models/BookCategoryEnumDTO.dart';
-import '../../models/ShelfDTO.dart';
 import 'package:http/http.dart' as http;
 
-import '../../models/UserDTO.dart';
-import '../../service/CacheManager.dart';
+import '../../models/BookReviewDTO.dart';
 import '../../service/constants.dart';
-import '../../mlm_icons_icons.dart';
 class BookDetailsPage extends StatefulWidget {
   final BookDTO book;
 
@@ -28,13 +24,22 @@ class BookDetailsPage extends StatefulWidget {
 
 class _BookDetailsPageState extends State<BookDetailsPage> {
 
+  double _currentRating = 0.0;
+  String _comment = '';
+  final _formKey = GlobalKey<FormState>();
   final ApiService apiService = ApiService();
   bool isLoading = false;
   late String _base64Image;
+  List<BookReviewDTO> reviews = [];
+  List<BookReviewDTO> allReviews = [];
+  List<BookReviewDTO> visibleReviews = [];
+  int displayCount = 1;
+
   @override
   void initState() {
     super.initState();
     _fetchImage();
+    fetchReviews();
   }
   bool isExpanded = false;
 
@@ -52,6 +57,119 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
       }
     } catch (error) {
       print("Error fetching image: $error");
+    }
+  }
+
+  void fetchReviews() async {
+    try {
+      List<BookReviewDTO> review = await apiService.getBookReviewsByBookId(widget.book.id!);
+      setState(() {
+        allReviews = review;
+        visibleReviews = allReviews.take(displayCount).toList();
+      });
+    } catch (e) {
+
+      String err = e.toString() ?? "Unexpected error!";
+      showTopSnackBar(
+        Overlay.of(context),
+        CustomSnackBar.error(
+          message: "err",
+          textAlign: TextAlign.left,
+        ),
+      );
+      print("Error! $e");
+    }
+  }
+
+  void showMoreReviews() {
+    setState(() {
+      int newCount = visibleReviews.length + displayCount;
+      visibleReviews = allReviews.take(newCount).toList();
+    });
+  }
+
+  void addFavorite()async{
+    setState(() {
+      isLoading = true;
+    });
+    try{
+      String result = await apiService.addToFavorite(widget.book.id!);
+      setState(() {
+        isLoading = false;
+      });
+      if(result == "S"){
+        showTopSnackBar(Overlay.of(context),
+          const CustomSnackBar.success(
+            message: "Success!",
+            textAlign: TextAlign.center,
+          ),
+
+        );
+        fetchReviews();
+        Navigator.pop(context,"s");
+      }else{
+        showTopSnackBar(Overlay.of(context),
+          const CustomSnackBar.success(message: "Error",
+            textAlign: TextAlign.center,
+          ),
+        );
+      }
+    }catch(e){
+      print(e);
+      setState(() {
+        isLoading = false;
+      });
+      showTopSnackBar(Overlay.of(context),
+          const CustomSnackBar.error(message: "Unexpected Error. Please contact system administrator.",
+            textAlign: TextAlign.left,
+          )
+      );
+    }
+  }
+
+
+  void saveReview()async{//Burdan saveledik cekerken user isticez
+    setState(() {
+      isLoading = true;
+    });
+    Map<String,dynamic> request = {
+      "bookId": widget.book.id,
+      "comment": _comment,
+      "star": _currentRating,
+    };
+
+    try{
+      String result = await apiService.makeReview(request);
+      setState(() {
+        isLoading = false;
+      });
+      if(result == "S"){
+        showTopSnackBar(Overlay.of(context),
+          const CustomSnackBar.success(
+            message: "Success!",
+            textAlign: TextAlign.center,
+          ),
+
+        );
+        fetchReviews();
+        Navigator.pop(context,"s");
+      }else{
+        showTopSnackBar(Overlay.of(context),
+          const CustomSnackBar.success(message: "Error",
+            textAlign: TextAlign.center,
+          ),
+        );
+      }
+    }catch(e){
+      print(e);
+      setState(() {
+        isLoading = false;
+      });
+      showTopSnackBar(Overlay.of(context),
+          const CustomSnackBar.error(message: "Unexpected Error. Please contact system administrator.",
+            textAlign: TextAlign.left,
+          )
+      );
     }
   }
 
@@ -84,7 +202,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
               //popup
               showTopSnackBar(
                 Overlay.of(context),
-                CustomSnackBar.success(
+                const CustomSnackBar.success(
                   message: "You can borrow the book by going to the librarian :)",
                   textAlign: TextAlign.left,
                 ),
@@ -99,7 +217,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
               );
             }
           },
-          label: Text(widget.book.status=='AVAILABLE'?'Available!':'Click To View Queue',style: TextStyle(color: Constants.whiteColor),),
+          label: Text(widget.book.status=='AVAILABLE'?'Available!':'Click To View Queue',style: const TextStyle(color: Constants.whiteColor),),
 
           backgroundColor: Constants.mainRedColor,
         ),
@@ -107,18 +225,32 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
       appBar: AppBar(
         backgroundColor: Constants.whiteColor,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
+            child: IconButton(
+                icon: const Icon(
+                    Icons.favorite,
+                    color: Colors.red,
+                    size: 34.0),
+                onPressed: () {
+                  addFavorite();
+                }
+            ),
+          )
+        ],
       ),
       body: SingleChildScrollView(
         child: Stack(
           clipBehavior: Clip.none,
           children: [
             Container(
-              height: MediaQuery.of(context).size.height/2.3,
+              height: MediaQuery.of(context).size.height/2.1,
               color: Constants.whiteColor,
             ),
             Center(
@@ -129,12 +261,12 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                     height: (MediaQuery.of(context).size.height/2.3)/1.4,
                     base64Decode(_base64Image),
                   ),
-                  SizedBox(height: 5,),
+                  const SizedBox(height: 5,),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(15,0,15,0),
                     child: Text(
                       widget.book.name??'N/A',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 20,
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -147,7 +279,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                     padding: const EdgeInsets.fromLTRB(15,2,15,0),
                     child: Text(
                       'by ${widget.book.author?.toUpperCase()}'??'',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 15,
                         color: Constants.greyColor,
                         fontWeight: FontWeight.w700,
@@ -156,38 +288,118 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                       maxLines: 1, // Adjust the number of lines as needed
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.star,
-                        color: Constants.yellowColor,
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
                       ),
-                      if(widget.book.averagePoint != null)
-                        Text(
-                          widget.book.averagePoint!.toString(),
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: Constants.mainDarkColor,
-                            fontWeight: FontWeight.w700,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1, // Adjust the number of lines as needed
-                        ),
-                      if(widget.book.averagePoint == null)
-                        Text(
-                          "-",
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: Constants.mainDarkColor,
-                            fontWeight: FontWeight.w700,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1, // Adjust the number of lines as needed
-                        ),
-                    ],
+                    ),
+                    onPressed: () async {
+                      await showDialog<void>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            content: SingleChildScrollView(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Stack(
+                                    clipBehavior: Clip.none,
+                                    children: [
+                                      Positioned(
+                                        top: 50,
+                                        left: 0,
+                                        right: 0,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              width: 50,
+                                              height: 50,
+                                              child: InkResponse(
+                                                onTap: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Form(
+                                        key: _formKey,
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            Padding(
+                                              padding: const EdgeInsets.all(5),
+                                              child: AnimatedRatingStars (
+                                                initialRating: 0.0,
+                                                minRating: 0.0,
+                                                maxRating: 5.0,
+                                                filledColor: Colors.amber,
+                                                emptyColor: Colors.grey,
+                                                filledIcon: Icons.star,
+                                                halfFilledIcon: Icons.star_half,
+                                                emptyIcon: Icons.star_border,
+                                                onChanged: (double rating) {
+                                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                    setState(() {
+                                                      _currentRating = rating;
+                                                    });
+                                                    print('Rating: $_currentRating');
+                                                  });
+                                                },
+                                                displayRatingValue: true,
+                                                interactiveTooltips: true,
+                                                customFilledIcon: Icons.star,
+                                                customHalfFilledIcon: Icons.star_half,
+                                                customEmptyIcon: Icons.star_border,
+                                                starSize: 10.0,
+                                                animationDuration: const Duration(milliseconds: 300),
+                                                animationCurve: Curves.easeInOut,
+                                                readOnly: false,
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.all(8),
+                                              child: TextFormField(
+                                                onSaved: (val){
+                                                  _comment = (val ?? '');
+                                                  print('Comment: $_comment');
+                                                },
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.all(8),
+                                              child: ElevatedButton(
+                                                child: const Text('Submit'),
+                                                onPressed: () {
+                                                  if (_formKey.currentState!.validate()) {
+                                                    _formKey.currentState!.save();
+                                                    saveReview();
+                                                  }
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.star,
+                      color: Constants.yellowColor,
+                    ),
+                    label: const Text('Rate'),
                   ),
-                  SizedBox(height: 20,),
+                  const SizedBox(height: 20,),
                   Column(
                     children: [
                       Padding(
@@ -198,7 +410,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                               children: [
                                 Text(
                                   widget.book.description ?? 'N/A',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 17,
                                     color: Colors.black,
                                     fontWeight: FontWeight.w400,
@@ -216,7 +428,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                                     },
                                     child: Text(
                                       isExpanded ? 'Less' : 'More',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.red, // Use the theme's primary color
@@ -231,12 +443,81 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                         ),
                       ),
                     ],
-                  )
+                  ),
+                  Text(
+                    'Reviews',
+                    style: TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold
+                    ),
+                  ),
+                  ListView.builder(
+                    itemCount: visibleReviews.length + 1,
+                    itemBuilder: (context, index) {
+                      if (index == visibleReviews.length) {
+                        return (visibleReviews.length < allReviews.length)
+                            ? Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: SizedBox(
+                            width: 20,
+                            height: 70,
+                            child: ElevatedButton(
+                              onPressed: showMoreReviews,
+                              child: Text(
+                                  "Show More Reviews",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.red,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                ),
+                                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                              ),
+                            ),
+                          ),
+                        )
+                            : Container();
+                      } else {
+                        var review = visibleReviews[index];
+                        return Container(
+                          margin: const EdgeInsets.all(1.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(50),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 1,
+                                blurRadius: 5,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: ListTile(
+                            title: Text(
+                                "User ID: ${review.userId}",
+                                style: TextStyle(
+                                  fontSize: 10
+                                ),
+                            ),
+                            subtitle: Text(review.comment ?? "No comment",
+                              style: TextStyle(
+                                  fontSize: 10
+                              ),),
+                            trailing: Text("Stars: ${review.star ?? 0}",
+                              style: TextStyle(
+                                  fontSize: 10
+                              ),),
+                          ),
+                        );
+                      }
+                    },
+                  ),
                 ],
               ),
             ),
-
-
           ],
         ),
       )

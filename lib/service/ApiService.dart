@@ -1,11 +1,10 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:mlmui/models/BookReviewDTO.dart';
 import 'package:mlmui/models/ReceiptHistoryDTOListResponse.dart';
 import 'package:mlmui/models/RoomDTOListResponse.dart';
 import 'package:mlmui/models/ShelfDTOListResponse.dart';
@@ -14,24 +13,19 @@ import 'package:mlmui/models/UserDTO.dart';
 import 'package:mlmui/models/UserDTOListResponse.dart';
 import 'package:mlmui/models/UserNamesDTOListResponse.dart';
 import 'package:mlmui/models/StatisticsDTO.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../models/BookCategoryEnumDTO.dart';
 import '../models/BookCategoryEnumDTOListResponse.dart';
+import '../models/BookDTO.dart';
 import '../models/BookDTOListResponse.dart';
-import '../models/RoomDTOListResponse.dart';
-import '../models/MyBooksDTO.dart';
 import '../models/MyBooksDTOListResponse.dart';
 import '../models/OpenLibraryBookDetails.dart';
 import '../models/QueueDetailDTO.dart';
 import '../models/RoomSlotDTOListResponse.dart';
-import 'CacheManager.dart';
 import 'constants.dart';
 
-import 'package:dio/dio.dart';
 import 'package:multi_image_picker_view/multi_image_picker_view.dart';
 
 class ApiService {
-  final FlutterSecureStorage storage = FlutterSecureStorage();
+  final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   Future<String?> getJwtToken() async {
     try {
@@ -610,6 +604,7 @@ class ApiService {
 
     return RoomDTOListResponse.fromJson(jsonResponse['data']);
   }
+
   Future<RoomSlotDTOListResponse> getroomslots(int id) async {
     final jwtToken = await getJwtToken();
     final response = await http.get(
@@ -650,6 +645,71 @@ class ApiService {
     return jsonResponse;
 
   }
+
+  Future<String> makeReview(dynamic body) async{
+    final jwtToken = await getJwtToken();
+    final response = await http.post(
+      Uri.parse('${Constants.apiBaseUrl}/api/user/addReview'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(body)
+    );
+    print("Yolladik gibi");
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+    return jsonResponse['data']['statusCode'];
+  }
+
+  Future<List<BookReviewDTO>> getBookReviewsByBookId(int bookId)async{
+    final jwtToken = await getJwtToken();
+    final response = await http.get(
+      Uri.parse('${Constants.apiBaseUrl}/api/user/book/getBookReviewsByBookId?id=$bookId'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      }
+    );
+
+    print("Response Body: ${response.body}");
+
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+
+    if(response.statusCode == 500){
+      Map<String,dynamic> jsonResponse = jsonDecode(response.body);
+      throw CustomException(jsonResponse['message']);
+    }
+
+    List<dynamic> data = jsonDecode(response.body)['data'];
+    return data.map<BookReviewDTO>((json) => BookReviewDTO.fromJson(json)).toList();
+  }
+
+  Future<String> addToFavorite(int bookid) async{
+    final jwtToken = await getJwtToken();
+    final response = await http.post(
+        Uri.parse('${Constants.apiBaseUrl}/api/user/favorite/addToFavorite?bookId=$bookid'),
+        headers: {
+          'Authorization': 'Bearer $jwtToken',
+          'Content-Type': 'application/json',
+        },
+
+    );
+    print("Yolladik gibi");
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+    return jsonResponse['data']['statusCode'];
+  }
+
+
 
 }
 

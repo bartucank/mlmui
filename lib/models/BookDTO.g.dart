@@ -22,6 +22,12 @@ BookDTO _$BookDTOFromJson(Map<String, dynamic> json) => BookDTO(
       json['status'] as String?,
       json['statusStr'] as String?,
       (json['averagePoint'] as num?)?.toDouble(),
+      json['reviewDTO'] == null
+          ? null
+          : BookReviewDTO.fromJson(json['reviewDTO'] as Map<String, dynamic>),
+      (json['allReviews'] as List<dynamic>?)
+          ?.map((e) => BookReviewDTO.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$BookDTOToJson(BookDTO instance) {
@@ -48,5 +54,7 @@ Map<String, dynamic> _$BookDTOToJson(BookDTO instance) {
   writeNotNull('status', instance.status);
   writeNotNull('statusStr', instance.statusStr);
   writeNotNull('averagePoint', instance.averagePoint);
+  writeNotNull('reviewDTO', instance.reviewDTO);
+  writeNotNull('allReviews', instance.allReviews);
   return val;
 }

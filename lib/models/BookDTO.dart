@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mlmui/models/BookReviewDTO.dart';
 part 'BookDTO.g.dart';
 @JsonSerializable(includeIfNull: false)
 class BookDTO {
@@ -17,6 +18,9 @@ class BookDTO {
   String? status;
   String? statusStr;
   double? averagePoint;
+  BookReviewDTO? reviewDTO;
+  List<BookReviewDTO>? allReviews;
+
 
   BookDTO(
       this.id,
@@ -32,7 +36,11 @@ class BookDTO {
       this.category,
       this.categoryStr,
       this.status,
-      this.statusStr, this.averagePoint);
+      this.statusStr,
+      this.averagePoint,
+      this.reviewDTO,
+      this.allReviews
+      );
 
 
   factory BookDTO.fromJson(Map<String,dynamic> data) => _$BookDTOFromJson(data);

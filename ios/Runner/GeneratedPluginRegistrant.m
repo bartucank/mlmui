@@ -6,6 +6,12 @@
 
 #import "GeneratedPluginRegistrant.h"
 
+#if __has_include(<animated_rating_stars/AnimatedRatingStarsPlugin.h>)
+#import <animated_rating_stars/AnimatedRatingStarsPlugin.h>
+#else
+@import animated_rating_stars;
+#endif
+
 #if __has_include(<file_picker/FilePickerPlugin.h>)
 #import <file_picker/FilePickerPlugin.h>
 #else
@@ -45,6 +51,7 @@
 @implementation GeneratedPluginRegistrant
 
 + (void)registerWithRegistry:(NSObject<FlutterPluginRegistry>*)registry {
+  [AnimatedRatingStarsPlugin registerWithRegistrar:[registry registrarForPlugin:@"AnimatedRatingStarsPlugin"]];
   [FilePickerPlugin registerWithRegistrar:[registry registrarForPlugin:@"FilePickerPlugin"]];
   [FlutterSecureStoragePlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterSecureStoragePlugin"]];
   [FLTImagePickerPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTImagePickerPlugin"]];

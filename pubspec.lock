@@ -25,6 +25,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.2"
+  animated_rating_stars:
+    dependency: "direct main"
+    description:
+      name: animated_rating_stars
+      sha256: "0d64350a874be1fe5ce88ff87d36e035c7c7bd867106b6439995a21d7a0fac55"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   args:
     dependency: transitive
     description:
@@ -177,6 +185,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.18.0"
+  comment_box:
+    dependency: "direct main"
+    description:
+      name: comment_box
+      sha256: "6a0d9cc8d181435b123cc4249c567bd8bdf1bde8d714691b069b942e3e7d4fbb"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.18"
   convert:
     dependency: transitive
     description:

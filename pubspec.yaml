@@ -34,6 +34,8 @@ dependencies:
   table_calendar: ^3.1.0
   dynamic_tabbar: ^1.0.6
   nfc_manager: ^3.4.0
+  animated_rating_stars: ^1.0.1
+  comment_box: ^0.0.18
 dev_dependencies:
   flutter_test:
     sdk: flutter

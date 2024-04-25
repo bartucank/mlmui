@@ -12,6 +12,8 @@ ReceiptHistoryDTOListResponse _$ReceiptHistoryDTOListResponseFromJson(
       (json['receiptHistoryDTOList'] as List<dynamic>)
           .map((e) => ReceiptHistoryDTO.fromJson(e as Map<String, dynamic>))
           .toList(),
+      json['totalPage'] as int,
+      json['totalResult'] as int,
     );
 
 Map<String, dynamic> _$ReceiptHistoryDTOListResponseToJson(
@@ -19,4 +21,6 @@ Map<String, dynamic> _$ReceiptHistoryDTOListResponseToJson(
     <String, dynamic>{
       'receiptHistoryDTOList':
           instance.receiptHistoryDTOList.map((e) => e.toJson()).toList(),
+      'totalPage': instance.totalPage,
+      'totalResult': instance.totalResult,
     };

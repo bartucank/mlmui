@@ -70,7 +70,7 @@ class _UserHomeState extends State<UserHome> {
       drawer: const MenuDrawer(),
       appBar: AppBar(
         backgroundColor: Constants.mainRedColor,
-        title: Text(
+        title: const Text(
             'MLM',
           style: TextStyle(
             fontSize: 25,
@@ -79,7 +79,7 @@ class _UserHomeState extends State<UserHome> {
         ),
         centerTitle: false,
         leading: IconButton(
-          icon: Icon(
+          icon: const Icon(
               Icons.menu,
               color: Colors.white,
           ),
@@ -89,33 +89,32 @@ class _UserHomeState extends State<UserHome> {
         ),
         actions: [
           IconButton(
-              icon: Icon(
+              icon: const Icon(
                   Icons.search,
                   color: Colors.white,
                   size: 34.0),
               onPressed: (){}
           ),
           IconButton(
-              icon: Icon(
+              icon: const Icon(
                   Icons.favorite,
                   color: Colors.white,
                   size: 34.0),
               onPressed: (){
-                Navigator.pushNamed(context, '/mybookspage');
-
+                Navigator.pushNamed(context, '/FavoriteListScreen');
               }
           ),
           PopupMenuButton<String>(
-            icon: Icon(
+            icon: const Icon(
               Icons.more_vert,
               color: Colors.white,
             ),
             itemBuilder: (context) => [
-              PopupMenuItem(
+              const PopupMenuItem(
                 value: 'settings',
                 child: Text('Settings'),
               ),
-              PopupMenuItem(
+              const PopupMenuItem(
                 value: 'about',
                 child: Text('About'),
               ),
@@ -135,27 +134,27 @@ class _UserHomeState extends State<UserHome> {
               future: userFuture,
               builder: (context2, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return const CircularProgressIndicator();
                 } else if (snapshot.hasError) {
                   if (snapshot.error is CustomException) {
                     CustomException customException = snapshot.error as CustomException;
                     if (customException.message == 'NEED_LOGIN') {
-                      WidgetsBinding.instance!.addPostFrameCallback((_) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
                         showTopSnackBar(
                           Overlay.of(context),
-                          CustomSnackBar.error(
+                          const CustomSnackBar.error(
                             message: "Session experied.",
                             textAlign: TextAlign.center,
                           ),
                         );
                         Navigator.pushReplacementNamed(context2, '/login');
                       });
-                      return Text('');
+                      return const Text('');
                     } else {
-                      return Text('');
+                      return const Text('');
                     }
                   } else {
-                    return Text('');
+                    return const Text('');
                   }
                 } else {
                   final user = snapshot.data;
@@ -163,7 +162,7 @@ class _UserHomeState extends State<UserHome> {
                     children: [
                       Text(
                           'Welcome, ${user?.username}!',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 20.0,
                             fontWeight: FontWeight.bold,
                           ),
@@ -180,27 +179,27 @@ class _UserHomeState extends State<UserHome> {
               future: userFuture,
               builder: (context2, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return const CircularProgressIndicator();
                 } else if (snapshot.hasError) {
                   if (snapshot.error is CustomException) {
                     CustomException customException = snapshot.error as CustomException;
                     if (customException.message == 'NEED_LOGIN') {
-                      WidgetsBinding.instance!.addPostFrameCallback((_) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
                         showTopSnackBar(
                           Overlay.of(context),
-                          CustomSnackBar.error(
+                          const CustomSnackBar.error(
                             message: "Session experied.",
                             textAlign: TextAlign.center,
                           ),
                         );
                         Navigator.pushReplacementNamed(context2, '/login');
                       });
-                      return Text('');
+                      return const Text('');
                     } else {
-                      return Text('');
+                      return const Text('');
                     }
                   } else {
-                    return Text('');
+                    return const Text('');
                   }
                 } else {
                   final user = snapshot.data;
@@ -210,8 +209,8 @@ class _UserHomeState extends State<UserHome> {
                         padding: const EdgeInsets.fromLTRB(30.0,0,0,0),
                         child: Row(
                           children: <Widget>[
-                            if(user!.debt != null && user!.debt! > 0)
-                              Text(
+                            if(user!.debt != null && user.debt! > 0)
+                              const Text(
                                 'Debt:',
                                 style: TextStyle(
                                   color: Constants.mainRedColor,
@@ -219,10 +218,10 @@ class _UserHomeState extends State<UserHome> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            if(user!.debt != null && user!.debt! > 0)
+                            if(user.debt != null && user.debt! > 0)
                               Text(
-                                '${user?.debt} ₺',//${user?.dept}
-                                style: TextStyle(
+                                '${user.debt} ₺',//${user?.dept}
+                                style: const TextStyle(
                                   color: Constants.mainDarkColor,
                                   fontSize: 15.0,
                                   fontWeight: FontWeight.bold,
@@ -286,14 +285,14 @@ class _UserHomeState extends State<UserHome> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text(
+                  const Text(
                     'Books',
                     style: TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Spacer(),
+                  const Spacer(),
                   TextButton(
                     style: TextButton.styleFrom(
                       textStyle: const TextStyle(
@@ -304,7 +303,7 @@ class _UserHomeState extends State<UserHome> {
                     onPressed: () {
                       Navigator.pushNamed(context, '/booklistforuser');
                     },
-                    child: Text(
+                    child: const Text(
                       'MORE',
                       style: TextStyle(
                         color: Colors.red,
@@ -329,9 +328,9 @@ class _UserHomeState extends State<UserHome> {
                             future: BookCard.getImageBase64(currentbook.imageId!),
                             builder: (context, snapshot){
                               if (snapshot.connectionState == ConnectionState.waiting) {
-                                return CircularProgressIndicator();
+                                return const CircularProgressIndicator();
                               } else if (snapshot.hasError) {
-                                return Text('');
+                                return const Text('');
                               } else {
                                 String base64Image = snapshot.data!;
                                 return GestureDetector(
@@ -347,11 +346,11 @@ class _UserHomeState extends State<UserHome> {
                                   child: Container(
                                     height: 140,
                                     width: 110,
-                                    margin: EdgeInsets.symmetric(horizontal: 2.0),
+                                    margin: const EdgeInsets.symmetric(horizontal: 2.0),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(10),
                                       child: SizedBox.fromSize(
-                                        size: Size.fromRadius(10), // Image radius
+                                        size: const Size.fromRadius(10), // Image radius
                                         child: Stack(
                                           alignment: Alignment.bottomCenter,
                                           children: <Widget>[
@@ -370,12 +369,12 @@ class _UserHomeState extends State<UserHome> {
                                             Align(
                                                 alignment: Alignment.bottomLeft,
                                                 child: Padding(
-                                                  padding: EdgeInsets.fromLTRB(5, 0, 0, 5),
+                                                  padding: const EdgeInsets.fromLTRB(5, 0, 0, 5),
                                                   child: Stack(
                                                     children: <Widget>[
                                                       Text(
-                                                        currentbook.name!.length<10?currentbook.name!:currentbook.name!.substring(0,10)+"...",
-                                                        style: TextStyle(
+                                                        currentbook.name!.length<10?currentbook.name!:"${currentbook.name!.substring(0,10)}...",
+                                                        style: const TextStyle(
                                                             fontSize: 16,
                                                             color:Colors.white
                                                         ),
@@ -394,6 +393,7 @@ class _UserHomeState extends State<UserHome> {
                             }
                         );
                       }
+                      return null;
                     }
                 ),
               ),
@@ -403,14 +403,14 @@ class _UserHomeState extends State<UserHome> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text(
+                  const Text(
                     'Licenced Softwares',
                     style: TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Spacer(),
+                  const Spacer(),
                   TextButton(
                     style: TextButton.styleFrom(
                       textStyle: const TextStyle(
@@ -421,7 +421,7 @@ class _UserHomeState extends State<UserHome> {
                     onPressed: () {
                       print('More Button Pressed for Licenced Softwares');
                     },
-                    child: Text(
+                    child: const Text(
                       'MORE',
                       style: TextStyle(
                         color: Colors.red,
@@ -443,7 +443,7 @@ class _UserHomeState extends State<UserHome> {
                     itemBuilder: (context, index) {
                       return Container(
                         width: 180,
-                        margin: EdgeInsets.symmetric(horizontal: 5.0),
+                        margin: const EdgeInsets.symmetric(horizontal: 5.0),
                         child: Card(
                           clipBehavior: Clip.antiAlias, // Ensures the image corners are also clipped
                           shape: RoundedRectangleBorder(
@@ -460,7 +460,7 @@ class _UserHomeState extends State<UserHome> {
                                   fit: BoxFit.cover, // Covers the space, maintaining aspect ratio
                                 ),
                               ),
-                              Padding(
+                              const Padding(
                                 padding: EdgeInsets.all(10), // Padding for the text inside the card
                                 child: Text(
                                   'Digital Library', // Replace with your title text
@@ -470,7 +470,7 @@ class _UserHomeState extends State<UserHome> {
                                   ),
                                 ),
                               ),
-                              Padding(
+                              const Padding(
                                 padding: EdgeInsets.only(left: 10, right: 10, bottom: 10), // Padding for the subtitle text
                                 child: Text(
                                   'ACM', // Replace with your subtitle text

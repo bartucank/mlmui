@@ -856,6 +856,79 @@ class ApiService {
     return jsonResponse['data']['statusCode'];
   }
 
+  Future<List<BookDTO>> getFavoriteBooks() async {
+    final jwtToken = await getJwtToken();
+    final response = await http.get(
+      Uri.parse('${Constants.apiBaseUrl}/api/user/favorite/getFavorites'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 401) {
+      throw CustomException("NEED_LOGIN");
+    } else if (response.statusCode == 500) {
+      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      throw CustomException(jsonResponse['message']);
+    } else if (response.statusCode == 200) {
+      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      if (jsonResponse.containsKey('data') && jsonResponse['data'].containsKey('bookDTOList')) {
+        List<dynamic> books = jsonResponse['data']['bookDTOList'];
+        return books.map<BookDTO>((json) => BookDTO.fromJson(json)).toList();
+      } else {
+        throw Exception('Invalid data structure');
+      }
+    } else {
+      throw Exception('Failed to load favorite books with status code: ${response.statusCode}');
+    }
+  }
+
+  Future<String> removeFavorite(int bookid) async{
+    final jwtToken = await getJwtToken();
+    final response = await http.delete(
+      Uri.parse('${Constants.apiBaseUrl}/api/user/favorite/removeFavorite?bookId=$bookid'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+
+    );
+    print("Yolladik gibi");
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+    return jsonResponse['data']['statusCode'];
+  }
+
+  Future<bool> isFavorite(int bookid) async{
+    final jwtToken = await getJwtToken();
+    final response = await http.get(
+      Uri.parse('${Constants.apiBaseUrl}/api/user/favorite/isFavorited?bookId=$bookid'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+
+    );
+
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+    else if (response.statusCode == 200) {
+      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      bool isFavorited = jsonResponse['data'];
+      return isFavorited;
+    } else {
+      throw Exception('Failed to check favorite status with HTTP status ${response.statusCode}');
+    }
+  }
+
+
+
+
 }
 
 class CustomException implements Exception {

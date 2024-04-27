@@ -30,6 +30,7 @@ import 'package:mlmui/pages/LibrarianScreens/CreateRoomPage.dart';
 import 'models/BookDTO.dart';
 import 'pages/Onboarding/RegisterScreen.dart';
 import 'package:mlmui/pages/UserScreens/MyBooksPage.dart';
+import 'package:mlmui/pages/UserScreens/FavoriteListScreen.dart';
 
 
 Future<void> main() async {
@@ -69,6 +70,8 @@ class MyApp extends StatelessWidget {
               '/updatebookpage' : (context) => UpdateBookPage(),
               '/copycard':(context) => CopyCard(),
               '/copycardmanagement':(context) => CopyCardManagement(),
+              '/updatebookpage' : (context) => const UpdateBookPage(),
+              '/copycard':(context) => const CopyCard(),
               '/queueuser':(context) => QueueUser(book: ModalRoute.of(context)?.settings.arguments as BookDTO),
               '/mybookspage':(context) => MyBooksPage(),
               '/createroom':(context) => CreateRoomPage(),
@@ -78,6 +81,12 @@ class MyApp extends StatelessWidget {
               '/profile':(context)=>ProfileScreen(userDTO: ModalRoute.of(context)?.settings.arguments as UserDTO, role: ModalRoute.of(context)?.settings.arguments as String),
               '/RoomDetailPage':(context) => RoomDetailPage(roomDTO: ModalRoute.of(context)?.settings.arguments as RoomDTO)
 
+              '/mybookspage':(context) => const MyBooksPage(),
+              '/createroom':(context) => const CreateRoomPage(),
+              '/roomLib':(context) => const RoomManagementScreen(),
+              '/roomlistuser':(context) => const RoomListScreen(),
+              '/RoomDetailPage':(context) => RoomDetailPage(roomDTO: ModalRoute.of(context)?.settings.arguments as RoomDTO),
+              '/FavoriteListScreen':(context) => const FavoriteListScreen(),
 
             },
           );

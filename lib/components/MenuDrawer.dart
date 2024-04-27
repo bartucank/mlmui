@@ -66,13 +66,37 @@ class MenuDrawer extends StatelessWidget {
               Navigator.pushNamed(context, '/booklistforuser');
             },
           ),
-          ListTile(
-            leading: const Icon(Icons.meeting_room_rounded),
-            title: const Text("Room Reservations"),
-            onTap: () {
-              Navigator.pushNamed(context, '/roomlistuser');
+
+          FutureBuilder<UserDTO?>(
+            future: CacheManager.getUserDTOFromCache(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting ||
+                  snapshot.hasError) {
+                return Text("aaa");
+              } else if (snapshot.hasData && snapshot.data != null) {
+                if(snapshot.data!.role == "USER"){
+                  return ListTile(
+                    leading: const Icon(Icons.meeting_room_rounded),
+                    title: const Text("Room Reservations"),
+                    onTap: () {
+                      Navigator.pushNamed(context, '/roomlistuser');
+                    },
+                  );
+                }
+                return ListTile(
+                  leading: const Icon(Icons.meeting_room_rounded),
+                  title: const Text("Course Management"),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/roomlistuser');
+                  },
+                );
+              } else {
+                return Text("");
+              }
             },
           ),
+
+
           ListTile(
             leading: const Icon(Icons.logout_outlined),
             title: const Text("Log out"),

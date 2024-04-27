@@ -68,10 +68,10 @@ class _LoginScreenState extends State<LoginScreen> {
     userFuture = apiService.getUserDetails();
     userFuture.then((user) {
       CacheManager.saveUserDTOToCache(user);
-      if(user.role=='USER'){
-        Navigator.pushReplacementNamed(context, '/userHome');
-      }else{
+      if(user.role=='LIB'){
         Navigator.pushReplacementNamed(context, '/libHome');
+      }else {
+        Navigator.pushReplacementNamed(context, '/userHome');
       }
     }).catchError((error) {
     });

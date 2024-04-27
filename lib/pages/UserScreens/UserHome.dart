@@ -209,24 +209,25 @@ class _UserHomeState extends State<UserHome> {
                         padding: const EdgeInsets.fromLTRB(30.0,0,0,0),
                         child: Row(
                           children: <Widget>[
-                            if(user!.debt != null && user.debt! > 0)
-                              const Text(
-                                'Debt:',
-                                style: TextStyle(
-                                  color: Constants.mainRedColor,
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.bold,
+                            if(user!.role == "USER")
+                              if(user!.debt != null && user.debt! > 0)
+                                const Text(
+                                  'Debt:',
+                                  style: TextStyle(
+                                    color: Constants.mainRedColor,
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                            if(user.debt != null && user.debt! > 0)
-                              Text(
-                                '${user.debt} ₺',//${user?.dept}
-                                style: const TextStyle(
-                                  color: Constants.mainDarkColor,
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              )
+                              if(user.debt != null && user.debt! > 0)
+                                Text(
+                                  '${user.debt} ₺',//${user?.dept}
+                                  style: const TextStyle(
+                                    color: Constants.mainDarkColor,
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )
                           ],
                         ),
                       ),

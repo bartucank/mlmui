@@ -779,6 +779,72 @@ class ApiService {
     }
   }
 
+  /*Future<List<changeDTO>> getCourseById(int id) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.get(
+      Uri.parse('${Constants.apiBaseUrl}/api/user/course/getCourseById?id=$id'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 401) {
+      throw CustomException("NEED_LOGIN");
+    } else if (response.statusCode == 500) {
+      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      throw CustomException(jsonResponse['message']);
+    } else if (response.statusCode == 200) {
+      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      if (jsonResponse.containsKey('data') && jsonResponse['data'].containsKey('bookDTOList')) {
+        List<dynamic> books = jsonResponse['data']['bookDTOList'];
+        return books.map<BookDTO>((json) => BookDTO.fromJson(json)).toList();
+      } else {
+        throw Exception('Invalid data structure');
+      }
+    } else {
+      throw Exception('Failed to load favorite books with status code: ${response.statusCode}');
+    }
+  }*/
+
+  /*
+  * Future<String> getMaterialById(int id) async{
+    final jwtToken = await getJwtToken();
+    final response = await http.post(
+      Uri.parse('${Constants.apiBaseUrl}/api/user/course/getCourseMaterialById?=$id'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(body)
+    );
+    print("Yolladik gibi");
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+    return jsonResponse['data']['statusCode'];
+  }*/
+  /*Future<String> getCoursesForUser(dynamic body) async{//probably needs to change
+    final jwtToken = await getJwtToken();
+    final response = await http.post(
+      Uri.parse('${Constants.apiBaseUrl}/api/user/course/getCoursesForUser'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(body)
+    );
+    print("Yolladik gibi");
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+    return jsonResponse['data']['statusCode'];
+  }*/
+
 
 
 

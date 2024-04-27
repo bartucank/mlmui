@@ -8,17 +8,17 @@ part of 'StatisticsDTO.dart';
 
 StatisticsDTO _$StatisticsDTOFromJson(Map<String, dynamic> json) =>
     StatisticsDTO(
-      json['totalUserCount'] as int,
-      json['totalBookCount'] as int,
-      json['availableBookCount'] as int,
-      json['unavailableBookCount'] as int,
-      (json['sumOfBalance'] as num).toDouble(),
-      (json['sumOfDebt'] as num).toDouble(),
-      json['queueCount'] as int,
+      json['totalUserCount'] as int?,
+      json['totalBookCount'] as int?,
+      json['availableBookCount'] as int?,
+      json['unavailableBookCount'] as int?,
+      (json['sumOfBalance'] as num?)?.toDouble(),
+      (json['sumOfDebt'] as num?)?.toDouble(),
+      json['queueCount'] as int?,
       json['day'] as String?,
       json['dayDesc'] as String?,
-      json['dayInt'] as int,
-      json['id'] as int,
+      json['dayInt'] as int?,
+      json['id'] as int?,
     );
 
 Map<String, dynamic> _$StatisticsDTOToJson(StatisticsDTO instance) =>

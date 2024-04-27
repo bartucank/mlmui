@@ -57,7 +57,7 @@ class _CopyCardManagementState extends State<CopyCardManagement> {
 
   GlobalKey<ArtDialogState> _artDialogKey = GlobalKey<ArtDialogState>();
   bool isLoading = false;
-
+  bool approved = false;
 
   @override
   void initState() {
@@ -69,21 +69,11 @@ class _CopyCardManagementState extends State<CopyCardManagement> {
         fetchMoreReceipt();
       }
     });
-    ///_dropdownItemsForUsers.insert(0, UserNamesDTO("Select a user", -1));
-    fetchUsers();
+
   }
 
 
-  void fetchUsers() async {
-    try {
-      UserNamesDTOListResponse response =
-      await apiService.getUserNamesDTOListResponse();
-      setState(() {
-        ///_dropdownItemsForUsers.addAll(response.dtoList);
-      });
-    } catch (e) {
-    }
-  }
+
 
   @override
   void dispose() {
@@ -111,7 +101,7 @@ class _CopyCardManagementState extends State<CopyCardManagement> {
       return;
     }
     globalFilterRequest['page'] = globalFilterRequest['page'] + 1;
-    globalFilterRequest['isApproved'] = false;
+    globalFilterRequest['isApproved'] = approved;
 
     try {
       lastList.clear();
@@ -139,7 +129,7 @@ class _CopyCardManagementState extends State<CopyCardManagement> {
     }
 
     Map<String, dynamic> request = {
-      'isApproved': false,
+      'isApproved': approved,
       "page": page + 1,
       "size": size,
     };
@@ -183,7 +173,7 @@ class _CopyCardManagementState extends State<CopyCardManagement> {
     });
 
     Map<String, dynamic> request = {
-      'isApproved': false,
+      'isApproved': approved,
       "page": page + 1, "size": size
     };
 
@@ -258,6 +248,16 @@ class _CopyCardManagementState extends State<CopyCardManagement> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        floatingActionButton: FloatingActionButton(
+          backgroundColor:Constants.mainRedColor,
+          onPressed: () async {
+            setState(() {
+              approved = !approved;
+              refresh();
+            });
+          },
+          child: Icon(approved?Icons.not_interested:Icons.check,color: Constants.whiteColor,),
+        ),
         key: _scaffoldKey,
         drawer: const MenuDrawerLibrarian(),
         appBar: AppBar(

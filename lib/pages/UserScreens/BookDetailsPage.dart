@@ -183,7 +183,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
 
             );
             fetchReviews();
-            Navigator.pop(context,"s");
+            // Navigator.pop(context,"s");
           }else{
             showTopSnackBar(Overlay.of(context),
               const CustomSnackBar.success(message: "Error",
@@ -219,7 +219,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
 
             );
             fetchReviews();
-            Navigator.pop(context,"s");
+            // Navigator.pop(context,"s");
           }else{
             showTopSnackBar(Overlay.of(context),
               const CustomSnackBar.success(message: "Error",
@@ -408,7 +408,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                                                   customFilledIcon: Icons.star,
                                                   customHalfFilledIcon: Icons.star_half,
                                                   customEmptyIcon: Icons.star_border,
-                                                  starSize: 10.0,
+                                                  starSize: 40.0,
                                                   animationDuration: const Duration(milliseconds: 300),
                                                   animationCurve: Curves.easeInOut,
                                                   readOnly: false,
@@ -417,6 +417,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                                               Padding(
                                                 padding: const EdgeInsets.all(8),
                                                 child: TextFormField(
+                                                    maxLines:3,
                                                   onSaved: (val){
                                                     _comment = (val ?? '');
                                                     print('Comment: $_comment');
@@ -500,6 +501,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                     ),
                     Column(
                       children: [
+                        Divider(height: 20,),
                         Text(
                           'Reviews',
                           style: TextStyle(
@@ -538,7 +540,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                           } else {
                             var review = visibleReviews[index];
                             return ListTile(
-                              title: Text("User ID: ${review.userId}"),
+                              title: Text("Anonymous User"),
                               subtitle: Text(review.comment ?? "No comment"),
                               trailing: Text("Stars: ${review.star ?? 0}"),
                             );

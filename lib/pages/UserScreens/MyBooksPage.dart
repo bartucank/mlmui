@@ -74,10 +74,10 @@ class _MyBooksPage extends State<MyBooksPage> {
         drawer: const MenuDrawerLibrarian(),
         appBar: AppBar(
           backgroundColor: Constants.mainRedColor,
-          title: Text('My Books'),
+          title: Text('My Books',style: TextStyle(color: Constants.whiteColor),),
           centerTitle: false,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: Icon(Icons.arrow_back,color: Constants.whiteColor,),
             onPressed: () {
               Navigator.pop(context);
             },

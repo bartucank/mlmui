@@ -207,6 +207,7 @@ class _LibrarianHomeState extends State<LibrarianHome> {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return CircularProgressIndicator();
                       } else if (snapshot.hasError) {
+                        print(snapshot.error);
                         if (snapshot.error is CustomException) {
                           CustomException customException = snapshot.error as CustomException;
                           if (customException.message == 'NEED_LOGIN') {
@@ -239,7 +240,7 @@ class _LibrarianHomeState extends State<LibrarianHome> {
                                     children: <Widget>[
                                       InfoCard(
                                         title: "Total Users:",
-                                        value: statistics!.totalUserCount,
+                                        value: statistics!.totalUserCount ?? 0,
                                         onTap: () {
                                           // showReceiptHistoryPopup(context);
                                         },
@@ -248,7 +249,7 @@ class _LibrarianHomeState extends State<LibrarianHome> {
                                       const SizedBox( width: 10,), // Space b/w Cards
                                       InfoCard(
                                         title: "Total Books:",
-                                        value: statistics.totalBookCount,
+                                        value: statistics.totalBookCount ?? 0,
                                         topColor: Colors.lightGreen,
                                         onTap: () {},
                                       ),
@@ -258,7 +259,7 @@ class _LibrarianHomeState extends State<LibrarianHome> {
                                     children: <Widget>[
                                       InfoCard(
                                         title: "Total Books at the Library:",
-                                        value: statistics.availableBookCount,
+                                        value: statistics.availableBookCount ?? 0,
                                         //value: statistics['data']['availableBookCount'],
                                         topColor: Colors.redAccent,
                                         onTap: () {},
@@ -266,7 +267,7 @@ class _LibrarianHomeState extends State<LibrarianHome> {
                                       const SizedBox( width: 10,), // Space b/w Cards
                                       InfoCard(
                                         title: "Total Books out of Library:",
-                                        value: statistics.unavailableBookCount,
+                                        value: statistics.unavailableBookCount ?? 0,
                                         //value: statistics['data']['unavailableBookCount'],
                                         onTap: () {},
                                       ),
@@ -276,14 +277,14 @@ class _LibrarianHomeState extends State<LibrarianHome> {
                                     children: <Widget>[
                                       InfoCard(
                                         title: "Total CopyCard Balance:",
-                                        value: statistics.sumOfBalance,
+                                        value: statistics.sumOfBalance ?? 0,
                                         onTap: () {},
                                         topColor: Colors.yellow,
                                       ),
                                       const SizedBox( width: 10,), // Space b/w Cards
                                       InfoCard(
                                         title: "Total Debt:",
-                                        value: statistics.sumOfDebt,
+                                        value: statistics.sumOfDebt ?? 0,
                                         topColor: Colors.blue,
                                         onTap: () {},
                                       ),
@@ -293,7 +294,7 @@ class _LibrarianHomeState extends State<LibrarianHome> {
                                     children: <Widget>[
                                       InfoCard(
                                         title: "Total Queue:",
-                                        value: statistics.queueCount,
+                                        value: statistics.queueCount ?? 0,
                                         onTap: () {},
                                         topColor: Colors.greenAccent,
                                       ),

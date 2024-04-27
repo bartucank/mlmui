@@ -3,17 +3,17 @@ part 'StatisticsDTO.g.dart';
 //includeIfNull: false
 @JsonSerializable(explicitToJson: true)
 class StatisticsDTO{
-  int totalUserCount;
-  int totalBookCount;
-  int availableBookCount;
-  int unavailableBookCount;
-  double sumOfBalance;
-  double sumOfDebt;
-  int queueCount;
+  int? totalUserCount;
+  int? totalBookCount;
+  int? availableBookCount;
+  int? unavailableBookCount;
+  double? sumOfBalance;
+  double? sumOfDebt;
+  int? queueCount;
   String? day;
   String? dayDesc;
-  int dayInt;
-  int id;
+  int? dayInt;
+  int? id;
 
   StatisticsDTO(
       this.totalUserCount,

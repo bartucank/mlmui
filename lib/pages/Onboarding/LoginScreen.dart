@@ -233,7 +233,22 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+                          padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
+                          child: GestureDetector(
+                            onTap: (){
+                              print("clicked");
+                            },
+                            child: Align(
+                              alignment: Alignment.bottomRight,
+                              child: Text("Forgot Password?",style: TextStyle(
+                                color: Constants.mainRedColor,
+                                fontWeight: FontWeight.w800
+                              ),),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
                           child: MaterialButton(
                             onPressed: () async {
                               await _login();

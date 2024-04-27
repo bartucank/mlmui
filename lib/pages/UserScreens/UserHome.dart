@@ -116,25 +116,7 @@ class _UserHomeState extends State<UserHome> {
                 Navigator.pushNamed(context, '/FavoriteListScreen');
               }
           ),
-          PopupMenuButton<String>(
-            icon: const Icon(
-              Icons.more_vert,
-              color: Colors.white,
-            ),
-            itemBuilder: (context) => [
-              const PopupMenuItem(
-                value: 'settings',
-                child: Text('Settings'),
-              ),
-              const PopupMenuItem(
-                value: 'about',
-                child: Text('About'),
-              ),
-            ],
-            onSelected: (value) {
-              // Handle menu item selection ask
-            },
-          ),
+
         ],
       ),
       body: Padding(

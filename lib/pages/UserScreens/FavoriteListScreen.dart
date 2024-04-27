@@ -87,10 +87,10 @@ class _FavoriteListScreen extends State<FavoriteListScreen> {
         drawer: const MenuDrawerLibrarian(),
         appBar: AppBar(
           backgroundColor: Constants.mainRedColor,
-          title: const Text('My Books'),
+          title: const Text('Favorite List', style: TextStyle(color: Constants.whiteColor),),
           centerTitle: false,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back,color: Constants.whiteColor,),
             onPressed: () {
               Navigator.pop(context);
             },

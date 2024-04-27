@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../models/UserDTO.dart';
+import '../pages/Common/ProfileScreen.dart';
 import '../service/CacheManager.dart';
 import '../service/constants.dart';
 
 class MenuDrawer extends StatelessWidget {
   const MenuDrawer({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) => Drawer(
         child: SingleChildScrollView(
@@ -49,7 +49,13 @@ class MenuDrawer extends StatelessWidget {
                       leading: const Icon(Icons.person),
                       title: const Text("Profile"),
                       onTap: () {
-                        Navigator.pushNamed(context, '/booklistforuser');
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProfileScreen(userDTO: snapshot.data!,role: "user",),
+                          ),
+                        );
                       },
                     ),
                   ],

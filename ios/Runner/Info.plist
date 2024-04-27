@@ -97,5 +97,10 @@
             <string>D2760000850101</string>
             <string>00000000000000</string>
         </array>
+    <key>NSCameraUsageDescription</key>
+    <string>This app needs camera access to scan QR codes</string>
+
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>This app needs photos access to get QR code from photo library</string>
 </dict>
 </plist>

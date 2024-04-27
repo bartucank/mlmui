@@ -1,4 +1,8 @@
+import 'package:ai_barcode_scanner/ai_barcode_scanner.dart';
+import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:mlmui/models/BookDTO.dart';
@@ -33,19 +37,27 @@ class _UserHomeState extends State<UserHome> {
     'assets/images/logo.png',
     'assets/images/mail.png',
   ];//Dummy code just to show licenced softwares
-
+  late Future<bool> reservationFlag;
   int size = 6;
   late Future<BookDTOListResponse> bookDTOListResponseFuture;
   List<BookDTO> bookDTOList = [];
-
+  final _qrBarCodeScannerDialogPlugin = QrBarCodeScannerDialog();
+  String? code;
 
   @override
   void initState() {
     super.initState();
     fetchBooks();
     userFuture = apiService.getUserDetails();
+    reservationFlag = apiService.checkReservationIsExists();
   }
 
+  refresh()  {
+    setState(() {
+
+    reservationFlag = apiService.checkReservationIsExists();
+    });
+  }
 
   void fetchBooks() async{
     Map<String, dynamic> request = {
@@ -260,27 +272,144 @@ class _UserHomeState extends State<UserHome> {
                 )
               ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                OutlinedButtons(
-                  buttonLabel: 'Room Res.',
-                  buttonIcon: Icons.schedule,
-                  onPressed: (){
-                    Navigator.pushNamed(context, '/roomlistuser');
-                  },
-                  color: Constants.mainDarkColor,
-                ),
-                OutlinedButtons(
-                    buttonLabel: 'Room Con.',
-                    buttonIcon: Icons.check_circle,
-                    onPressed: () {
-                      print('Room Con. pressed');
-                    },
-                    color: Colors.green,
-                )
-              ],
-            ),
+
+            FutureBuilder<bool>(
+              future: reservationFlag,
+              builder: (context2, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Text('');
+                } else if (snapshot.hasError) {
+                  print(snapshot.hasError);
+                  if (snapshot.error is CustomException) {
+                    CustomException customException = snapshot.error as CustomException;
+                    if (customException.message == 'NEED_LOGIN') {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        showTopSnackBar(
+                          Overlay.of(context),
+                          const CustomSnackBar.error(
+                            message: "Session experied.",
+                            textAlign: TextAlign.center,
+                          ),
+                        );
+                        Navigator.pushReplacementNamed(context2, '/login');
+                      });
+
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          OutlinedButtons(
+                            buttonLabel: 'Room Res.',
+                            buttonIcon: Icons.schedule,
+                            onPressed: (){
+                              Navigator.pushNamed(context, '/roomlistuser');
+                            },
+                            color: Constants.mainDarkColor,
+                          ),
+                        ],
+                      );
+
+
+                    } else {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          OutlinedButtons(
+                            buttonLabel: 'Room Res.',
+                            buttonIcon: Icons.schedule,
+                            onPressed: (){
+                              Navigator.pushNamed(context, '/roomlistuser');
+                            },
+                            color: Constants.mainDarkColor,
+                          ),
+                        ],
+                      );
+                    }
+                  } else {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        OutlinedButtons(
+                          buttonLabel: 'Room Res.',
+                          buttonIcon: Icons.schedule,
+                          onPressed: (){
+                            Navigator.pushNamed(context, '/roomlistuser');
+                          },
+                          color: Constants.mainDarkColor,
+                        ),
+                      ],
+                    );
+                  }
+                }else if(snapshot.data! == true){
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      OutlinedButtons(
+                        buttonLabel: 'Room Res.',
+                        buttonIcon: Icons.schedule,
+                        onPressed: () async{
+                          Object? a = await Navigator.pushNamed(context, '/roomlistuser');
+                          if (a == "s") {
+                            refresh();
+                          }
+                        },
+                        color: Constants.mainDarkColor,
+                      ),
+                      OutlinedButtons(
+                        buttonLabel: 'Room Con.',
+                        buttonIcon: Icons.check_circle,
+                        onPressed: () async {
+                          await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => AiBarcodeScanner(
+
+                                canPop: false,
+                                onScan: (String value) {
+                                  debugPrint(value);
+                                  setState(() {
+                                    code = value;
+                                  });
+                                },
+                                onDetect: (p0) {
+                                  Navigator.pop(context);
+                                },
+                                onDispose: () {
+                                  debugPrint("Barcode scanner disposed!");
+                                },
+                                controller: MobileScannerController(
+                                  detectionSpeed: DetectionSpeed.noDuplicates,
+                                ),
+                              ),
+                            ),
+                          );
+                          print('Room Con. pressed');
+
+                        },
+                        color: Colors.green,
+                      )
+                    ],
+                  );
+
+
+
+                }else{
+                  print(snapshot.data);
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      OutlinedButtons(
+                        buttonLabel: 'Room Res.',
+                        buttonIcon: Icons.schedule,
+                        onPressed: (){
+                          Navigator.pushNamed(context, '/roomlistuser');
+                        },
+                        color: Constants.mainDarkColor,
+                      ),
+
+                    ],
+                  );
+                }
+              }),
+
             Padding(
               padding: const EdgeInsets.fromLTRB(8.0, 8.0, 0, 0),
               child: Row(

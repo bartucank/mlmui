@@ -75,6 +75,7 @@ class _RoomDetailPage extends State<RoomDetailPage> {
     if (base64Image != null) {
       return base64Image;
     } else {
+      print(imageId);
       final response = await http.get(Uri.parse('${Constants.apiBaseUrl}/api/user/getImageBase64ById?id=$imageId'));
 
       if (response.statusCode == 200) {

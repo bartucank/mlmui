@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/UserDTO.dart';
+import '../pages/Common/ProfileScreen.dart';
 import '../service/CacheManager.dart';
 import '../service/constants.dart';
 
@@ -49,7 +50,12 @@ class MenuDrawerLibrarian extends StatelessWidget {
                       leading: const Icon(Icons.person),
                       title: const Text("Profile"),
                       onTap: () {
-                        Navigator.pushNamed(context, '/userlist');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProfileScreen(userDTO: snapshot.data!,role: "user",),
+                          ),
+                        );
                       },
                     ),
                   ],

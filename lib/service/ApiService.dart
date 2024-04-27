@@ -922,7 +922,29 @@ class ApiService {
       bool isFavorited = jsonResponse['data'];
       return isFavorited;
     } else {
-      throw Exception('Failed to check favorite status with HTTP status ${response.statusCode}');
+      return false;
+    }
+  }
+  Future<bool> checkReservationIsExists() async{
+    final jwtToken = await getJwtToken();
+    final response = await http.get(
+      Uri.parse('${Constants.apiBaseUrl}/api/user/checkNowReservationExists'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+
+    );
+
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+    else if (response.statusCode == 200) {
+      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      bool isFavorited = jsonResponse['data'];
+      return isFavorited;
+    } else {
+      return false;
     }
   }
 

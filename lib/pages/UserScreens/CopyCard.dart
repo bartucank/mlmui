@@ -425,24 +425,7 @@ class _CopyCardState extends State<CopyCard> {
                   } else {
                     final user = snapshot.data;
                     if(user != null && user!.copyCardDTO != null ){
-                      if(user!.copyCardDTO!.nfcCode == null || user!.copyCardDTO!.nfcCode == ""){
-                        WidgetsBinding.instance!.addPostFrameCallback((_) {
-                          showTopSnackBar(
-                            Overlay.of(context),
-                            CustomSnackBar.error(
-                              textStyle:  const TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                                color: Colors.white,
-                              ),
-                              maxLines:10,
-                              message: "You have not yet obtained a physical card. To use copy card privileges, please contact the library and obtain a physical card.",
-                              textAlign: TextAlign.left,
-                            ),
-                          );
 
-                        });
-                    }
 
 
                       }else{

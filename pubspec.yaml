@@ -36,6 +36,9 @@ dependencies:
   nfc_manager: ^3.4.0
   animated_rating_stars: ^1.0.1
   comment_box: ^0.0.18
+  qr_bar_code_scanner_dialog: ^0.0.5
+  mobile_scanner: ^4.0.1
+  ai_barcode_scanner: ^3.4.3
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -501,7 +501,7 @@ class _BookDetailsPageForLibrarian extends State<BookDetailsPageForLibrarian> {
                                   ),
                                 ),
                                 style: ElevatedButton.styleFrom(
-                                  primary: Colors.red,
+                                  backgroundColor: Colors.red,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(5.0),
                                   ),

@@ -528,7 +528,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                                   ),
                                 ),
                                 style: ElevatedButton.styleFrom(
-                                  primary: Colors.red,
+                                  backgroundColor: Colors.red,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(5.0),
                                   ),

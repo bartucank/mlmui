@@ -105,7 +105,7 @@ class _ReceiptPopUpState extends State<ReceiptPopUp> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Image.memory(
-            height: (MediaQuery.of(context).size.height/1.3)/1.4,
+            height: (MediaQuery.of(context).size.height/1.3)/2.1,
             base64Decode(_base64Image),
           ),
           SizedBox(height: 16),

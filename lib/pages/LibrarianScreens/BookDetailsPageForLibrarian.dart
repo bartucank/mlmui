@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:mlmui/models/BookDTO.dart';
+import 'package:mlmui/models/EbookDTO.dart';
 import 'package:mlmui/service/ApiService.dart';
 import 'package:mlmui/models/UserDTO.dart';
 import 'package:mlmui/models/BookReviewDTO.dart';
@@ -14,6 +15,7 @@ import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:comment_box/comment/comment.dart';
 
 import '../../service/constants.dart';
+import 'EbookDetailsPageForLibrarian.dart';
 class BookDetailsPageForLibrarian extends StatefulWidget {
   final BookDTO book;
 
@@ -413,6 +415,53 @@ class _BookDetailsPageForLibrarianState extends State<BookDetailsPageForLibraria
                         ),
                     ],
                   ),*/
+
+
+                  // For Ebook button
+                  (widget.book.ebookId != null) ?
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                      onPressed: () async {
+                        EbookDTO result_ebook = await apiService.getEbook(widget
+                            .book.ebookId as int);
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                EbookDetailsPageForLibrarian(
+                                  ebook: result_ebook,),
+                          ),
+                        );
+                      },
+                      icon: const Icon(
+                        Icons.book_online,
+                        color: Constants.yellowColor,
+                      ),
+                      label: const Text('EBook'),
+                    )
+                      :
+                    // If ebook==null
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                      onPressed: null,
+                      icon: const Icon(
+                        Icons.book_online,
+                        color: Constants.yellowColor,
+                      ),
+                      label: const Text('EBook'),
+                    )
+                    /*SizedBox(height: 0,) || Text('EBook not found!')*/
+                  ,
+
                   const SizedBox(height: 20,),
                   Column(
                     children: [

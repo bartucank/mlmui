@@ -9,6 +9,7 @@ import 'package:mlmui/pages/Common/ProfileScreen.dart';
 import 'package:mlmui/pages/LibrarianScreens/BookCreateByExcel.dart';
 import 'package:mlmui/pages/LibrarianScreens/BookCreatePage.dart';
 import 'package:mlmui/pages/LibrarianScreens/BookDetailsPageForLibrarian.dart';
+import 'package:mlmui/pages/LibrarianScreens/EbookDetailsPageForLibrarian.dart';
 import 'package:mlmui/pages/LibrarianScreens/BookListScreen.dart';
 import 'package:mlmui/pages/LibrarianScreens/CopyCardManagement.dart';
 import 'package:mlmui/pages/LibrarianScreens/LibListScreen.dart';
@@ -25,9 +26,11 @@ import 'package:mlmui/pages/UserScreens/UserHome.dart';
 import 'package:mlmui/pages/LibrarianScreens/UserListScreen.dart';
 import 'package:mlmui/pages/Onboarding/VerifyScreen.dart';
 import 'package:mlmui/pages/UserScreens/BookDetailsPage.dart';
+import 'package:mlmui/pages/UserScreens/EbookDetailsPage.dart';
 import 'package:mlmui/pages/LibrarianScreens/UpdateBookPage.dart';
 import 'package:mlmui/pages/LibrarianScreens/CreateRoomPage.dart';
 import 'models/BookDTO.dart';
+import 'models/EbookDTO.dart';
 import 'pages/Onboarding/RegisterScreen.dart';
 import 'package:mlmui/pages/UserScreens/MyBooksPage.dart';
 
@@ -67,6 +70,8 @@ class MyApp extends StatelessWidget {
               '/bookdetails': (context) => BookDetailsPage(book: ModalRoute.of(context)?.settings.arguments as BookDTO),
               '/bookdetailsForLibrarian': (context) => BookDetailsPageForLibrarian(book: ModalRoute.of(context)?.settings.arguments as BookDTO),
               '/updatebookpage' : (context) => UpdateBookPage(),
+              '/ebookdetails': (context) => EbookDetailsPage(ebook: ModalRoute.of(context)?.settings.arguments as EbookDTO),
+              '/ebookdetailsForLibrarian': (context) => EbookDetailsPageForLibrarian(ebook: ModalRoute.of(context)?.settings.arguments as EbookDTO),
               '/copycard':(context) => CopyCard(),
               '/copycardmanagement':(context) => CopyCardManagement(),
               '/queueuser':(context) => QueueUser(book: ModalRoute.of(context)?.settings.arguments as BookDTO),

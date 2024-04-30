@@ -10,6 +10,7 @@ BookDTO _$BookDTOFromJson(Map<String, dynamic> json) => BookDTO(
       json['id'] as int?,
       json['shelfId'] as int?,
       json['imageId'] as int?,
+      json['ebookId'] as int?,
       json['isbn'] as String?,
       json['publisher'] as String?,
       json['name'] as String?,
@@ -42,6 +43,7 @@ Map<String, dynamic> _$BookDTOToJson(BookDTO instance) {
   writeNotNull('id', instance.id);
   writeNotNull('shelfId', instance.shelfId);
   writeNotNull('imageId', instance.imageId);
+  writeNotNull('ebookId', instance.ebookId);
   writeNotNull('isbn', instance.isbn);
   writeNotNull('publisher', instance.publisher);
   writeNotNull('name', instance.name);

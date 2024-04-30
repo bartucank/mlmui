@@ -12,7 +12,9 @@ import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:http/http.dart' as http;
 
 import '../../models/BookReviewDTO.dart';
+import '../../models/EbookDTO.dart';
 import '../../service/constants.dart';
+import '../UserScreens/EbookDetailsPage.dart';
 class BookDetailsPage extends StatefulWidget {
   final BookDTO book;
 
@@ -399,6 +401,50 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                     ),
                     label: const Text('Rate'),
                   ),
+                  
+                  // For Ebook button
+                  (widget.book.ebookId != null) ?
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    onPressed: () async {
+                      EbookDTO result_ebook = await apiService.getEbook(widget
+                          .book.ebookId as int);
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              EbookDetailsPage(
+                                ebook: result_ebook,),
+                        ),
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.book_online,
+                      color: Constants.yellowColor,
+                    ),
+                    label: const Text('EBook'),
+                  )
+                      :
+                  // If ebook==null
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    onPressed: null,
+                    icon: const Icon(
+                      Icons.book_online,
+                      color: Constants.yellowColor,
+                    ),
+                    label: const Text('EBook'),
+                  ),
+
                   const SizedBox(height: 20,),
                   Column(
                     children: [

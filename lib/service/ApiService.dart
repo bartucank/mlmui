@@ -6,8 +6,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:mlmui/models/BookReviewDTO.dart';
 import 'package:mlmui/models/ReceiptHistoryDTOListResponse.dart';
-import 'package:mlmui/models/ReceiptHistoryDTOListResponse.dart';
 import 'package:mlmui/models/RoomDTOListResponse.dart';
+import 'package:mlmui/models/CourseDTOListResponse.dart';
 import 'package:mlmui/models/ShelfDTOListResponse.dart';
 import 'package:mlmui/models/StatisticsDTOListResponse.dart';
 import 'package:mlmui/models/UserDTO.dart';
@@ -948,6 +948,48 @@ class ApiService {
     }
   }
 
+  Future<String> createCourse(dynamic body) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.post(
+      Uri.parse('${Constants.apiBaseUrl}/api/lecturer/course/create'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+
+      },
+        body: jsonEncode(body),
+    );
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+    return jsonResponse['data']['statusCode'];
+  }
+
+
+  Future<CourseDTOListResponse> getCourseForLecturer() async {
+    final jwtToken = await getJwtToken();
+    final response = await http.get(
+      Uri.parse(
+          '${Constants.apiBaseUrl}/api/lecturer/course/getCoursesForLecturer'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+    );
+    if (response.statusCode == 401) {
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+    return CourseDTOListResponse.fromJson(jsonResponse['data']);
+  }
+
+
+
   /*Future<List<changeDTO>> getCourseById(int id) async {
     final jwtToken = await getJwtToken();
     final response = await http.get(
@@ -995,6 +1037,7 @@ class ApiService {
 
     return jsonResponse['data']['statusCode'];
   }*/
+
   /*Future<String> getCoursesForUser(dynamic body) async{//probably needs to change
     final jwtToken = await getJwtToken();
     final response = await http.post(

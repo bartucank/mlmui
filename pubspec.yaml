@@ -39,6 +39,7 @@ dependencies:
   qr_bar_code_scanner_dialog: ^0.0.5
   mobile_scanner: ^4.0.1
   ai_barcode_scanner: ^3.4.3
+  epub_view: ^3.2.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

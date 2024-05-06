@@ -6,6 +6,7 @@ class BookDTO {
   int? id;
   int? shelfId;
   int? imageId;
+  int? ebookId;
   String? isbn;
   String? publisher;
   String? name;
@@ -26,6 +27,7 @@ class BookDTO {
       this.id,
       this.shelfId,
       this.imageId,
+      this.ebookId,
       this.isbn,
       this.publisher,
       this.name,

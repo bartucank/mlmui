@@ -17,6 +17,7 @@ import 'package:mlmui/models/StatisticsDTO.dart';
 import '../models/BookCategoryEnumDTOListResponse.dart';
 import '../models/BookDTO.dart';
 import '../models/BookDTOListResponse.dart';
+import '../models/EbookDTO.dart';
 import '../models/MyBooksDTOListResponse.dart';
 import '../models/OpenLibraryBookDetails.dart';
 import '../models/QueueDetailDTO.dart';
@@ -856,6 +857,43 @@ class ApiService {
     return jsonResponse['data']['statusCode'];
   }
 
+  Future<String> addEbook(int bookId, dynamic body) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.post(
+      Uri.parse(
+          '${Constants.apiBaseUrl}/api/admin/ebook/addEbook?bookId=$bookId'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(body),
+    );
+    if (response.statusCode == 401) {
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+    return jsonResponse['data']['statusCode'];
+  }
+
+  Future<EbookDTO> getEbook(int id) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.get(
+      Uri.parse(
+          '${Constants.apiBaseUrl}/api/user/ebook/getEbook?id=$id'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+    );
+    if (response.statusCode == 401) {
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+    return EbookDTO.fromJson(jsonResponse['data']);
+  }
+
+
   Future<List<BookDTO>> getFavoriteBooks() async {
     final jwtToken = await getJwtToken();
     final response = await http.get(
@@ -957,7 +995,7 @@ class ApiService {
         'Content-Type': 'application/json',
 
       },
-        body: jsonEncode(body),
+      body: jsonEncode(body),
     );
     print('Response status: ${response.statusCode}');
     print('Response body: ${response.body}');
@@ -990,7 +1028,7 @@ class ApiService {
 
 
 
-  /*Future<List<changeDTO>> getCourseById(int id) async {
+/*Future<List<changeDTO>> getCourseById(int id) async {
     final jwtToken = await getJwtToken();
     final response = await http.get(
       Uri.parse('${Constants.apiBaseUrl}/api/user/course/getCourseById?id=$id'),
@@ -1018,7 +1056,7 @@ class ApiService {
     }
   }*/
 
-  /*
+/*
   * Future<String> getMaterialById(int id) async{
     final jwtToken = await getJwtToken();
     final response = await http.post(
@@ -1038,7 +1076,7 @@ class ApiService {
     return jsonResponse['data']['statusCode'];
   }*/
 
-  /*Future<String> getCoursesForUser(dynamic body) async{//probably needs to change
+/*Future<String> getCoursesForUser(dynamic body) async{//probably needs to change
     final jwtToken = await getJwtToken();
     final response = await http.post(
       Uri.parse('${Constants.apiBaseUrl}/api/user/course/getCoursesForUser'),
@@ -1056,9 +1094,6 @@ class ApiService {
 
     return jsonResponse['data']['statusCode'];
   }*/
-
-
-
 
 }
 

@@ -3,14 +3,13 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:mlmui/models/RoomDTOListResponse.dart';
+import 'package:mlmui/pages/LecturerScreens/CourseDetailPage.dart';
 import 'package:mlmui/pages/LibrarianScreens/RoomDetailPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../components/MenuDrawerLibrarian.dart';
-
-import '../../components/RoomItem.dart';
-
-import '../../models/RoomDTO.dart';
+import '../../models/CourseDTO.dart';
+import '../../components/CourseItem.dart';
+import 'package:mlmui/models/CourseDTOListResponse.dart';
 import '../../service/ApiService.dart';
 
 
@@ -27,7 +26,7 @@ class _AddCourseScreen extends State<AddCourseScreen> {
 
   final ApiService apiService = ApiService();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  List<RoomDTO> roomDTOList = [];
+  List<CourseDTO> courseDTOList = [];
 
   static Future<String> getImageBase64(int imageId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -48,13 +47,13 @@ class _AddCourseScreen extends State<AddCourseScreen> {
       }
     }
   }
-  void fetchRooms() async {
+  void fetchCourse() async {
     try {
-      RoomDTOListResponse response = await apiService.getrooms();
+      CourseDTOListResponse response = await apiService.getCourseForLecturer();
       print(response);
       setState(() {
-        roomDTOList.clear();
-        roomDTOList.addAll(response.roomDTOList);
+        courseDTOList.clear();
+        courseDTOList.addAll(response.courseDTOList);
       });
     } catch (e) {
     }
@@ -63,7 +62,7 @@ class _AddCourseScreen extends State<AddCourseScreen> {
   @override
   void initState() {
     super.initState();
-    fetchRooms();
+    fetchCourse();
   }
 
 
@@ -83,9 +82,9 @@ class _AddCourseScreen extends State<AddCourseScreen> {
         floatingActionButton: FloatingActionButton(
           backgroundColor:Constants.mainRedColor,
           onPressed: () async {
-            Object? a = await Navigator.pushNamed(context, "/createroom");
+            Object? a = await Navigator.pushNamed(context, "/coursedetailpage");
             if(a=="s"){
-              fetchRooms();
+              fetchCourse();
             }
           },
           child: const Icon(Icons.add,color: Constants.whiteColor,),
@@ -96,7 +95,7 @@ class _AddCourseScreen extends State<AddCourseScreen> {
         drawer: const MenuDrawerLibrarian(),
         appBar: AppBar(
           backgroundColor: Constants.mainRedColor,
-          title: const Text('Room Management', style: TextStyle(
+          title: const Text('Course Management', style: TextStyle(
               color: Constants.whiteColor
           ),),
           centerTitle: false,
@@ -115,7 +114,7 @@ class _AddCourseScreen extends State<AddCourseScreen> {
             shrinkWrap: true,
             scrollDirection: Axis.vertical,
             physics: const ClampingScrollPhysics(),
-            itemCount: roomDTOList.length,
+            itemCount: courseDTOList.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               crossAxisSpacing: 16,
@@ -124,7 +123,7 @@ class _AddCourseScreen extends State<AddCourseScreen> {
             ),
             itemBuilder: (BuildContext context, int index) {
               return FutureBuilder<String>(
-                future: getImageBase64(roomDTOList[index].imageId!),
+                future: getImageBase64(courseDTOList[index].imageId!),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
@@ -137,15 +136,15 @@ class _AddCourseScreen extends State<AddCourseScreen> {
                             Object a = await Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => RoomDetailPage(roomDTO: roomDTOList[index],),
+                                builder: (context) => CourseDetailPage(/*courseDTO: courseDTOList[index],*/),
                               ),
                             );
                             if(a == 'reload'){
-                              fetchRooms();
+                              fetchCourse();
                             }
 
                           },
-                          child: RoomItem(base64Image: snapshot.data!, roomDTO: roomDTOList[index],));
+                          child: CourseItem(base64Image: snapshot.data!, courseDTO: courseDTOList[index],));
                     }
                   }
                 },

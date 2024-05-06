@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_frame/flutter_web_frame.dart';
+import 'package:mlmui/models/CourseDTO.dart';
 import 'package:mlmui/models/RoomDTO.dart';
 import 'package:mlmui/models/UserDTO.dart';
 import 'package:mlmui/pages/Common/ProfileScreen.dart';
@@ -31,7 +32,9 @@ import 'models/BookDTO.dart';
 import 'pages/Onboarding/RegisterScreen.dart';
 import 'package:mlmui/pages/UserScreens/MyBooksPage.dart';
 import 'package:mlmui/pages/UserScreens/FavoriteListScreen.dart';
-
+import 'package:mlmui/pages/LecturerScreens/AddCourseScreen.dart';
+import 'package:mlmui/pages/LecturerScreens/CreateCourse.dart';
+import 'package:mlmui/pages/LecturerScreens/CourseDetailPage.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -78,7 +81,9 @@ class MyApp extends StatelessWidget {
               '/profile':(context)=>ProfileScreen(userDTO: ModalRoute.of(context)?.settings.arguments as UserDTO, role: ModalRoute.of(context)?.settings.arguments as String),
               '/RoomDetailPage':(context) => RoomDetailPage(roomDTO: ModalRoute.of(context)?.settings.arguments as RoomDTO),
               '/FavoriteListScreen':(context) => const FavoriteListScreen(),
-
+              '/AddCourseScreen':(context) => AddCourseScreen(),
+              '/createCourse':(context) => CreateCourse(),
+              '/coursedetailpage':(context) => CourseDetailPage(/*courseDTO: ModalRoute.of(context)?.settings.arguments as CourseDTO*/),
             },
           );
         },

@@ -73,14 +73,7 @@ class _BookDetailsPageForLibrarian extends State<BookDetailsPageForLibrarian> {
       });
     } catch (e) {
 
-      String err = e.toString() ?? "Unexpected error!";
-      showTopSnackBar(
-        Overlay.of(context),
-        CustomSnackBar.error(
-          message: "err",
-          textAlign: TextAlign.left,
-        ),
-      );
+
       print("Error! $e");
     }
   }
@@ -264,17 +257,7 @@ class _BookDetailsPageForLibrarian extends State<BookDetailsPageForLibrarian> {
             },
           ),
           actions: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
-              child: IconButton(
-                icon: Icon(
-                    isFavorite ? Icons.favorite : Icons.favorite_border, // Toggle icons
-                    color: Colors.red,
-                    size: 34.0
-                ),
-                onPressed: toggleFavorite, // Use toggleFavorite now
-              ),
-            )
+
           ],
         ),
         body: SingleChildScrollView(
@@ -319,162 +302,164 @@ class _BookDetailsPageForLibrarian extends State<BookDetailsPageForLibrarian> {
                         maxLines: 1, // Adjust the number of lines as needed
                       ),
                     ),
-                    ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                      ),
-                      onPressed: () async {
-                        await showDialog<void>(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              content: SingleChildScrollView( // Make the dialog content scrollable
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Stack(
-                                      clipBehavior: Clip.none,
-                                      children: [
-                                        Positioned(
-                                          top: 50,
-                                          left: 0,
-                                          right: 0,
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              Container(
-                                                width: 50,
-                                                height: 50,
-                                                child: InkResponse(
-                                                  onTap: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Form(
-                                          key: _formKey,
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
-                                              Padding(
-                                                padding: const EdgeInsets.all(5),
-                                                child: AnimatedRatingStars (
-                                                  initialRating: 0.0,
-                                                  minRating: 0.0,
-                                                  maxRating: 5.0,
-                                                  filledColor: Colors.amber,
-                                                  emptyColor: Colors.grey,
-                                                  filledIcon: Icons.star,
-                                                  halfFilledIcon: Icons.star_half,
-                                                  emptyIcon: Icons.star_border,
-                                                  onChanged: (double rating) {
-                                                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                      setState(() {
-                                                        _currentRating = rating;
-                                                      });
-                                                      print('Rating: $_currentRating');
-                                                    });
-                                                  },
-                                                  displayRatingValue: true,
-                                                  interactiveTooltips: true,
-                                                  customFilledIcon: Icons.star,
-                                                  customHalfFilledIcon: Icons.star_half,
-                                                  customEmptyIcon: Icons.star_border,
-                                                  starSize: 10.0,
-                                                  animationDuration: const Duration(milliseconds: 300),
-                                                  animationCurve: Curves.easeInOut,
-                                                  readOnly: false,
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.all(8),
-                                                child: TextFormField(
-                                                  onSaved: (val){
-                                                    _comment = (val ?? '');
-                                                    print('Comment: $_comment');
-                                                  },
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.all(8),
-                                                child: ElevatedButton(
-                                                  child: const Text('Submit'),
-                                                  onPressed: () {
-                                                    if (_formKey.currentState!.validate()) {
-                                                      _formKey.currentState!.save();
-                                                      saveReview();
-                                                    }
-                                                  },
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                      icon: const Icon(
-                        Icons.star,
-                        color: Constants.yellowColor,
-                      ),
-                      label: const Text('Rate'),
-                    ),
+                   Row(
+                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                     children: [
+                       ElevatedButton.icon(
+                         style: ElevatedButton.styleFrom(
+                           shape: RoundedRectangleBorder(
+                             borderRadius: BorderRadius.circular(10.0),
+                           ),
+                         ),
+                         onPressed: () async {
+                           await showDialog<void>(
+                             context: context,
+                             builder: (BuildContext context) {
+                               return AlertDialog(
+                                 content: SingleChildScrollView( // Make the dialog content scrollable
+                                   child: Column(
+                                     mainAxisSize: MainAxisSize.min,
+                                     children: [
+                                       Stack(
+                                         clipBehavior: Clip.none,
+                                         children: [
+                                           Positioned(
+                                             top: 50,
+                                             left: 0,
+                                             right: 0,
+                                             child: Row(
+                                               mainAxisAlignment: MainAxisAlignment.center,
+                                               children: [
+                                                 Container(
+                                                   width: 50,
+                                                   height: 50,
+                                                   child: InkResponse(
+                                                     onTap: () {
+                                                       Navigator.of(context).pop();
+                                                     },
+                                                   ),
+                                                 ),
+                                               ],
+                                             ),
+                                           ),
+                                           Form(
+                                             key: _formKey,
+                                             child: Column(
+                                               mainAxisSize: MainAxisSize.min,
+                                               children: <Widget>[
+                                                 Padding(
+                                                   padding: const EdgeInsets.all(5),
+                                                   child: AnimatedRatingStars (
+                                                     initialRating: 0.0,
+                                                     minRating: 0.0,
+                                                     maxRating: 5.0,
+                                                     filledColor: Colors.amber,
+                                                     emptyColor: Colors.grey,
+                                                     filledIcon: Icons.star,
+                                                     halfFilledIcon: Icons.star_half,
+                                                     emptyIcon: Icons.star_border,
+                                                     onChanged: (double rating) {
+                                                       WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                         setState(() {
+                                                           _currentRating = rating;
+                                                         });
+                                                         print('Rating: $_currentRating');
+                                                       });
+                                                     },
+                                                     displayRatingValue: true,
+                                                     interactiveTooltips: true,
+                                                     customFilledIcon: Icons.star,
+                                                     customHalfFilledIcon: Icons.star_half,
+                                                     customEmptyIcon: Icons.star_border,
+                                                     starSize: 10.0,
+                                                     animationDuration: const Duration(milliseconds: 300),
+                                                     animationCurve: Curves.easeInOut,
+                                                     readOnly: false,
+                                                   ),
+                                                 ),
+                                                 Padding(
+                                                   padding: const EdgeInsets.all(8),
+                                                   child: TextFormField(
+                                                     onSaved: (val){
+                                                       _comment = (val ?? '');
+                                                       print('Comment: $_comment');
+                                                     },
+                                                   ),
+                                                 ),
+                                                 Padding(
+                                                   padding: const EdgeInsets.all(8),
+                                                   child: ElevatedButton(
+                                                     child: const Text('Submit'),
+                                                     onPressed: () {
+                                                       if (_formKey.currentState!.validate()) {
+                                                         _formKey.currentState!.save();
+                                                         saveReview();
+                                                       }
+                                                     },
+                                                   ),
+                                                 ),
+                                               ],
+                                             ),
+                                           ),
+                                         ],
+                                       ),
+                                     ],
+                                   ),
+                                 ),
+                               );
+                             },
+                           );
+                         },
+                         icon: const Icon(
+                           Icons.star,
+                           color: Constants.yellowColor,
+                         ),
+                         label: const Text('Rate'),
+                       ),
+                       // For Ebook button
+                       (widget.book.ebookId != null) ?
+                       ElevatedButton.icon(
+                         style: ElevatedButton.styleFrom(
+                           shape: RoundedRectangleBorder(
+                             borderRadius: BorderRadius.circular(10.0),
+                           ),
+                         ),
+                         onPressed: () async {
+                           EbookDTO result_ebook = await apiService.getEbook(widget
+                               .book.ebookId as int);
 
-                    // For Ebook button
-                    (widget.book.ebookId != null) ?
-                    ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                      ),
-                      onPressed: () async {
-                        EbookDTO result_ebook = await apiService.getEbook(widget
-                            .book.ebookId as int);
-
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                EbookDetailsPageForLibrarian(
-                                  ebook: result_ebook,),
-                          ),
-                        );
-                      },
-                      icon: const Icon(
-                        Icons.book_online,
-                        color: Constants.yellowColor,
-                      ),
-                      label: const Text('EBook'),
-                    )
-                        :
-                    // If ebook==null
-                    ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                      ),
-                      onPressed: null,
-                      icon: const Icon(
-                        Icons.book_online,
-                        color: Constants.yellowColor,
-                      ),
-                      label: const Text('EBook'),
-                    )
-                    /*SizedBox(height: 0,) || Text('EBook not found!')*/
-                    ,
+                           Navigator.push(
+                             context,
+                             MaterialPageRoute(
+                               builder: (context) =>
+                                   EbookDetailsPageForLibrarian(
+                                     ebook: result_ebook,),
+                             ),
+                           );
+                         },
+                         icon: const Icon(
+                           Icons.book_online,
+                           color: Constants.yellowColor,
+                         ),
+                         label: const Text('EBook'),
+                       )
+                           :
+                       // If ebook==null
+                       ElevatedButton.icon(
+                         style: ElevatedButton.styleFrom(
+                           shape: RoundedRectangleBorder(
+                             borderRadius: BorderRadius.circular(10.0),
+                           ),
+                         ),
+                         onPressed: null,
+                         icon: const Icon(
+                           Icons.book_online,
+                           color: Constants.yellowColor,
+                         ),
+                         label: const Text('EBook'),
+                       ),
+                     ],
+                   ),
 
                     const SizedBox(height: 20,),
                     Column(
@@ -500,7 +485,6 @@ class _BookDetailsPageForLibrarian extends State<BookDetailsPageForLibrarian> {
                                     child: InkWell(
                                       onTap: () {
                                         setState(() {
-                                          print("za");
                                           isExpanded = !isExpanded;
                                         });
                                       },
@@ -521,6 +505,7 @@ class _BookDetailsPageForLibrarian extends State<BookDetailsPageForLibrarian> {
                         ),
                       ],
                     ),
+                    Divider(height: 5,),
                     Column(
                       children: [
                         Text(

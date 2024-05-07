@@ -35,6 +35,13 @@ class _UpdateBookPage extends State<UpdateBookPage> {
     withReadStream: true,
     images: <ImageFile>[],
   );
+  MultiImagePickerController ebookcontroller = MultiImagePickerController(
+    maxImages: 1,
+    allowedImageTypes: ['epub', 'pdf'],
+    withData: true,
+    withReadStream: true,
+    images: <ImageFile>[],
+  );
   late File selectedImage;
 
   late Uint8List? image;
@@ -93,6 +100,18 @@ class _UpdateBookPage extends State<UpdateBookPage> {
   }
 
   void updateBook() async {
+    if(ebookcontroller.images.length>0){
+      int value = await apiService.uploadEbook(controller.images.first,bookId);
+      if (value == -1) {
+        showTopSnackBar(
+          Overlay.of(context),
+          const CustomSnackBar.info(
+            message: "EBook cannot be uploaded. Book updating process will continue.",
+            textAlign: TextAlign.left,
+          ),
+        );
+      }
+    }
     if(controller.images.length>0) {
       int value = await apiService.uploadImage(controller.images.first);
       if (value == -1) {
@@ -587,8 +606,8 @@ class _UpdateBookPage extends State<UpdateBookPage> {
             ])), // Name, Desc, Publisher, Author, Publish Date
 
         Step(
-            state: currentStep > 2 ? StepState.complete : StepState.indexed,
-            isActive: currentStep >= 2,
+            state: currentStep > 1 ? StepState.complete : StepState.indexed,
+            isActive: currentStep >= 1,
             title: Text("Shelf and Category"),
             content: Column(children: <Widget>[
               DropdownButtonFormField<ShelfDTO>(
@@ -722,8 +741,21 @@ class _UpdateBookPage extends State<UpdateBookPage> {
 
             ])),
         Step(
-            state: currentStep > 1 ? StepState.complete : StepState.indexed,
-            isActive: currentStep >= 1,
+            state: currentStep > 2 ? StepState.complete : StepState.indexed,
+            isActive: currentStep >= 2,
+            title: Text("EBook"),
+            content: Column(children: <Widget>[
+              Text("You can add ebook! Please note that, if you upload it, you may override existing one."),
+              MultiImagePickerView(
+                addButtonTitle: "Upload EBook",
+                controller: ebookcontroller,
+                padding: const EdgeInsets.all(10),
+              ),
+
+            ])),
+        Step(
+            state: currentStep > 3 ? StepState.complete : StepState.indexed,
+            isActive: currentStep >= 3,
             title: Text("Image"),
             content: Column(children: <Widget>[
               Text("If you want to change image, please add new one. If not, do not upload new image."),

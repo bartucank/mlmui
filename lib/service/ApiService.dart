@@ -287,6 +287,47 @@ class ApiService {
     }
   }
 
+  Future<int> uploadEbook(ImageFile imageFile, int bookid) async {
+    try {
+      final jwtToken = await getJwtToken();
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse('${Constants.apiBaseUrl}/api/admin/ebook/addEbook?bookId=$bookid'),
+      );
+      Map<String, String> headers = {
+        "Authorization": "Bearer $jwtToken",
+        "Content-type": "multipart/form-data"
+      };
+      if (imageFile.bytes != null) {
+        request.files.add(
+          http.MultipartFile.fromBytes(
+            'file',
+            imageFile.bytes!, // Image bytes
+            filename: '${imageFile.name}.${imageFile.extension}',
+          ),
+        );
+      } else if (imageFile.path != null) {
+        File file = File(imageFile.path!);
+        List<int> imageBytes = await file.readAsBytes();
+        request.files.add(
+          http.MultipartFile.fromBytes(
+            'file',
+            imageBytes, // Image bytes
+            filename: '${imageFile.name}.${imageFile.extension}',
+          ),
+        );
+      }
+      request.headers.addAll(headers);
+      var res = await request.send();
+      if (res.statusCode == 200) {
+        return 1;
+      }
+      return -1;
+    } catch (e) {
+      return -1;
+    }
+  }
+
 
   Future<String> uploadExcelForBook(File file) async {
     try {

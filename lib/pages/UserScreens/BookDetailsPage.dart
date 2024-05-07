@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:animated_rating_stars/animated_rating_stars.dart';
 import 'package:flutter/material.dart';
 import 'package:mlmui/models/BookDTO.dart';
+import 'package:mlmui/models/EbookDTO.dart';
 import 'package:mlmui/pages/UserScreens/Queue.dart';
 import 'package:mlmui/service/ApiService.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,6 +14,7 @@ import 'package:http/http.dart' as http;
 
 import '../../models/BookReviewDTO.dart';
 import '../../service/constants.dart';
+import '../UserScreens/EbookDetailsPage.dart';
 class BookDetailsPage extends StatefulWidget {
   final BookDTO book;
 
@@ -454,6 +456,50 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                       ),
                       label: const Text('Rate'),
                     ),
+
+                    // For Ebook button
+                    (widget.book.ebookId != null) ?
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                      onPressed: () async {
+                        EbookDTO result_ebook = await apiService.getEbook(widget
+                            .book.ebookId as int);
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                EbookDetailsPage(
+                                  ebook: result_ebook,),
+                          ),
+                        );
+                      },
+                      icon: const Icon(
+                        Icons.book_online,
+                        color: Constants.yellowColor,
+                      ),
+                      label: const Text('EBook'),
+                    )
+                        :
+                    // If ebook==null
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                      onPressed: null,
+                      icon: const Icon(
+                        Icons.book_online,
+                        color: Constants.yellowColor,
+                      ),
+                      label: const Text('EBook'),
+                    ),
+
                     const SizedBox(height: 20,),
                     Column(
                       children: [

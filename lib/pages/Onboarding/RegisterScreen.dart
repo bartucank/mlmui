@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
+import '../../models/DepartmentDTOListResponse.dart';
 import '../../service/ApiService.dart';
 import '../../service/constants.dart';
 
@@ -17,9 +19,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController _nameSurnameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+  TextEditingController _studentNumberController = TextEditingController();
   bool _loading = false;
-
+  List<String> _dropdownItems2 = [];
+  String _selectedValue2 = "";
   final ApiService apiService = ApiService();
+
+  void fetchDeps() async {
+    try {
+      DepartmentDTOListResponse response = await apiService.getDepartmentDTOList();
+      setState(() {
+        response.departmentDTOList.forEach((element) {
+          _dropdownItems2.add(element.departmentString!);
+        });
+        _selectedValue2 = "CNG";
+      });
+    } catch (e) {
+      print("Error! $e");
+    }
+  }
+
   Future<void> _register() async {
     FocusScope.of(context).unfocus();
     setState(() {
@@ -30,11 +49,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final nameSurname = _nameSurnameController.text;
     final email = _emailController.text;
     final password = _passwordController.text;
+    final student = _studentNumberController.text;
     Map<String, dynamic> body = {
       'username': username,
       'pass': password,
       'nameSurname': nameSurname,
-      'email':email
+      'email':email,
+      'studentNumber':student,
+      'department':_selectedValue2
     };
     apiService.registerRequest(body).then((value) => {
       if (value['message'] == "Success")
@@ -76,7 +98,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
       });
     });
   }
-
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      fetchDeps();
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -128,7 +156,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
+                          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                           child: Text(
                             "Sign up to continue",
                             textAlign: TextAlign.start,
@@ -142,7 +170,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+                          padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
                           child: TextField(
                             controller: _nameSurnameController,
                             obscureText: false,
@@ -187,6 +215,124 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                           ),
                         ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                          child: TextField(
+                            keyboardType: TextInputType.number,
+                            controller: _studentNumberController,
+                            obscureText: false,
+                            textAlign: TextAlign.start,
+                            maxLines: 1,
+                            maxLength: 7,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              fontStyle: FontStyle.normal,
+                              fontSize: 14,
+                              color: Constants.mainDarkColor,
+                            ),
+                            decoration: InputDecoration(
+
+                              counterText: "",
+                              disabledBorder: UnderlineInputBorder(
+                                borderRadius: BorderRadius.circular(4.0),
+                                borderSide: BorderSide(
+                                    color: Constants.mainDarkColor, width: 1),
+                              ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderRadius: BorderRadius.circular(4.0),
+                                borderSide: BorderSide(
+                                    color: Constants.mainDarkColor, width: 1),
+                              ),
+                              enabledBorder: UnderlineInputBorder(
+                                borderRadius: BorderRadius.circular(4.0),
+                                borderSide: BorderSide(
+                                    color: Constants.mainDarkColor, width: 1),
+                              ),
+                              labelText: "Student Number",
+                              labelStyle: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontStyle: FontStyle.normal,
+                                fontSize: 16,
+                                color: Constants.mainDarkColor,
+                              ),
+                              filled: true,
+                              fillColor: Color(0x00ffffff),
+                              isDense: false,
+                              contentPadding: EdgeInsets.symmetric(
+                                  vertical: 8, horizontal: 12),
+                              prefixIcon: Icon(Icons.numbers,
+                                  color: Constants.mainDarkColor, size: 18),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                          child: DropdownButtonFormField<String>(
+                            value: _selectedValue2,
+                            items: _dropdownItems2.map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(
+                                  value,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    fontStyle: FontStyle.normal,
+                                    fontSize: 14,
+                                    color: Constants.mainDarkColor,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                _selectedValue2 = newValue!;
+                              });
+                            },
+                            decoration: InputDecoration(
+                              disabledBorder: UnderlineInputBorder(
+                                borderRadius: BorderRadius.circular(4.0),
+                                borderSide: BorderSide(
+                                  color: Constants.mainDarkColor,
+                                  width: 1,
+                                ),
+                              ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderRadius: BorderRadius.circular(4.0),
+                                borderSide: BorderSide(
+                                  color: Constants.mainDarkColor,
+                                  width: 1,
+                                ),
+                              ),
+                              enabledBorder: UnderlineInputBorder(
+                                borderRadius: BorderRadius.circular(4.0),
+                                borderSide: BorderSide(
+                                  color: Constants.mainDarkColor,
+                                  width: 1,
+                                ),
+                              ),
+                              labelText: "Department",
+                              labelStyle: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontStyle: FontStyle.normal,
+                                fontSize: 16,
+                                color: Constants.mainDarkColor,
+                              ),
+                              filled: true,
+                              fillColor: Color(0x00ffffff),
+                              isDense: false,
+                              contentPadding: EdgeInsets.symmetric(
+                                vertical: 8,
+                                horizontal: 12,
+                              ),
+                              prefixIcon: Icon(
+                                Icons.collections_bookmark_rounded,
+                                color: Constants.mainDarkColor,
+                                size: 18,
+                              ),
+                            ),
+                          ),
+                        ),
+
                         Padding(
                           padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
                           child: TextField(
@@ -238,6 +384,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           child: TextField(
                             controller: _emailController,
                             obscureText: false,
+                            keyboardType: TextInputType.emailAddress,
                             textAlign: TextAlign.start,
                             maxLines: 1,
                             style: TextStyle(
@@ -282,8 +429,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         Padding(
                           padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
                           child: TextField(
+                            obscureText: true,
+                            enableSuggestions: false,
+                            autocorrect: false,
                             controller: _passwordController,
-                            obscureText: false,
                             textAlign: TextAlign.start,
                             maxLines: 1,
                             style: TextStyle(

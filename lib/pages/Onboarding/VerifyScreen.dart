@@ -25,7 +25,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
         textAlign: TextAlign.left,
       ),
     );
-    Navigator.pushReplacementNamed(context, "/userHome");
+    Navigator.pushReplacementNamed(context, "/login");
   }
   Future<void> _verify(String code) async {
 

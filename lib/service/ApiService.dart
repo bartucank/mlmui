@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:mlmui/models/BookReviewDTO.dart';
+import 'package:mlmui/models/DepartmentDTOListResponse.dart';
 import 'package:mlmui/models/ReceiptHistoryDTOListResponse.dart';
 import 'package:mlmui/models/RoomDTOListResponse.dart';
 import 'package:mlmui/models/CourseDTOListResponse.dart';
@@ -189,6 +190,18 @@ class ApiService {
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
 
     return BookCategoryEnumDTOListResponse.fromJson(jsonResponse['data']);
+  }
+
+  Future<DepartmentDTOListResponse>  getDepartmentDTOList() async {
+    final response = await http.get(
+      Uri.parse('${Constants.apiBaseUrl}/api/auth/getDeps'),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+    return DepartmentDTOListResponse.fromJson(jsonResponse['data']);
   }
 
   Future<UserNamesDTOListResponse> getUserNamesDTOListResponse() async {

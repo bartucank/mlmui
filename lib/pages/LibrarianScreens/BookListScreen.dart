@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:art_sweetalert/art_sweetalert.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -174,7 +175,7 @@ class _BookListScreenState extends State<BookListScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   int page = -1;
-  int size =kIsWeb?10:6;
+  int size =kIsWeb?10:10;
   int totalSize = 0;
   int totalPage = 1000;
   late Future<BookDTOListResponse> bookDTOListResponseFuture;
@@ -190,6 +191,8 @@ class _BookListScreenState extends State<BookListScreen> {
 
   GlobalKey<ArtDialogState> _artDialogKey = GlobalKey<ArtDialogState>();
   bool isLoading = false;
+
+  bool _switchValue = false;
 
   Future<String> borrowPopup(BuildContext context, BookDTO book) async {
     Completer<String> completer = Completer<String>();
@@ -393,7 +396,7 @@ class _BookListScreenState extends State<BookListScreen> {
       bookDTOList.clear();
     });
     page = -1;
-    size = 6;
+    size = 10;
     fetchFirstBooks();
   }
 
@@ -463,11 +466,12 @@ class _BookListScreenState extends State<BookListScreen> {
     _titleController.text = "";
     _categoryController.text = "";
     _authorController.text = "";
+    _switchValue = false;
     setState(() {
       lastList.clear();
       bookDTOList.clear();
       page = -1;
-      size = 7;
+      size = 10;
       weSlideController.hide();
       FocusScope.of(context).unfocus();
     });
@@ -499,7 +503,7 @@ class _BookListScreenState extends State<BookListScreen> {
       lastList.clear();
       bookDTOList.clear();
       page = -1;
-      size = 7;
+      size = 10;
       weSlideController.hide();
       FocusScope.of(context).unfocus();
     });
@@ -519,6 +523,12 @@ class _BookListScreenState extends State<BookListScreen> {
       request['category'] = _selectedValue?.enumValue;
     }
 
+    print(_switchValue);
+    if(_switchValue != null && _switchValue == true){
+      request['ebookAvailable'] = true;
+    }else{
+      request['ebookAvailable'] = false;
+    }
     try {
       BookDTOListResponse response =
           await apiService.getBooksBySpecification(request);
@@ -712,6 +722,31 @@ class _BookListScreenState extends State<BookListScreen> {
                             ),
                           );
                         }).toList(),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(15, 15, 0, 0),
+                      child:  Row(
+                        children: [
+                          Expanded(
+                            child: Text("EBook Available",style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontStyle: FontStyle.normal,
+                              fontSize: 16,
+                              color: Constants.mainDarkColor,
+                            ),),
+                          ),
+                          CupertinoCheckbox(
+                            activeColor: Constants.mainRedColor,
+                            focusColor: Constants.mainRedColor,
+                            value: _switchValue,
+                            onChanged: (value) {
+                              setState(() {
+                                _switchValue = value!;
+                              });
+                            },
+                          )
+                        ],
                       ),
                     ),
                     Padding(

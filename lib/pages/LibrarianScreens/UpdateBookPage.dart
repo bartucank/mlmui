@@ -37,7 +37,7 @@ class _UpdateBookPage extends State<UpdateBookPage> {
   );
   MultiImagePickerController ebookcontroller = MultiImagePickerController(
     maxImages: 1,
-    allowedImageTypes: ['epub', 'pdf'],
+    allowedImageTypes: ['epub'],
     withData: true,
     withReadStream: true,
     images: <ImageFile>[],
@@ -64,6 +64,9 @@ class _UpdateBookPage extends State<UpdateBookPage> {
   late String _base64Image;
   int defaultImg = 1;
   int bookId = 1;
+  bool ebookAvailable = false;
+  bool ebookdeleted = false;
+  int currentEbookId = -1;
 
   Future<void> _fetchImage(BookDTO currentbook) async {
     try {
@@ -100,8 +103,12 @@ class _UpdateBookPage extends State<UpdateBookPage> {
   }
 
   void updateBook() async {
+    if(ebookdeleted && currentEbookId != 0){
+      await apiService.deleteEbook(bookId);
+    }
     if(ebookcontroller.images.length>0){
-      int value = await apiService.uploadEbook(controller.images.first,bookId);
+
+      int value = await apiService.uploadEbook(ebookcontroller.images.first,bookId);
       if (value == -1) {
         showTopSnackBar(
           Overlay.of(context),
@@ -294,6 +301,10 @@ class _UpdateBookPage extends State<UpdateBookPage> {
     //We can create a function that catch the current information for dropdown items
     //with using currentbook.shelfId and others but right now this is enough.
     _selectedValue2.str = currentbook.categoryStr!;
+    setState(() {
+      ebookAvailable = currentbook.ebookId != null;
+      currentEbookId = currentbook.ebookId!;
+    });
     //print(_selectedValue.id);
     //print(_selectedValue2.str);
 
@@ -745,12 +756,45 @@ class _UpdateBookPage extends State<UpdateBookPage> {
             isActive: currentStep >= 2,
             title: Text("EBook"),
             content: Column(children: <Widget>[
-              Text("You can add ebook! Please note that, if you upload it, you may override existing one."),
-              MultiImagePickerView(
+              if(!ebookAvailable)
+                Text("Please select epub file."),
+              if(!ebookAvailable)
+                MultiImagePickerView(
                 addButtonTitle: "Upload EBook",
                 controller: ebookcontroller,
                 padding: const EdgeInsets.all(10),
               ),
+              if(ebookAvailable)
+                Text("This book already has an ebook! You can delete and add new one."),
+              if(ebookAvailable)
+                Padding(
+                  padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                  child: MaterialButton(
+                    onPressed: () async {
+                      setState(() {
+                        ebookdeleted = true;
+                        ebookAvailable=false;
+                      });
+                    },
+                    color: Constants.mainRedColor,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    padding: EdgeInsets.all(16),
+                    child: Text(
+                      "Delete EBook",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        fontStyle: FontStyle.normal,
+                      ),
+                    ),
+                    textColor: Color(0xffffffff),
+                    height: 45,
+                    minWidth: MediaQuery.of(context).size.width,
+                  ),
+                ),
 
             ])),
         Step(

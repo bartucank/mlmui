@@ -31,7 +31,7 @@ class _DynamicFilterResultPageState extends State<DynamicFilterResultPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool isLoading = false;
   int page = -1;
-  int size = kIsWeb?10:6;
+  int size = kIsWeb?10:10;
   int totalSize = 0;
   int totalPage = 1000;
   late Future<BookDTOListResponse> bookDTOListResponseFuture;

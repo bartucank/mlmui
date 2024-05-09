@@ -89,6 +89,16 @@ class MenuDrawerLibrarian extends StatelessWidget {
                   },
                 ),
               ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(25, 0, 0, 0),
+                child: ListTile(
+                  leading: const Icon(Icons.people_alt),
+                  title: const Text("Lecturer List"),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/leclist');
+                  },
+                ),
+              ),
             ],
           ),
 

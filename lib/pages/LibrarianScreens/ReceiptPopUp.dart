@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
+import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:mlmui/models/ReceiptHistoryDTO.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -33,6 +34,9 @@ class _ReceiptPopUpState extends State<ReceiptPopUp> {
     super.initState();
     _fetchImage();
     _balanceController.addListener(_validateBalance);
+    if(widget.receipt.approved!){
+      _balanceController.text=widget.receipt.balance.toString()+" ₺";
+    }
   }
   bool isExpanded = false;
 
@@ -104,21 +108,42 @@ class _ReceiptPopUpState extends State<ReceiptPopUp> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Image.memory(
-            height: (MediaQuery.of(context).size.height/1.3)/2.1,
-            base64Decode(_base64Image),
-          ),
-          SizedBox(height: 16),
-          TextField(
-            controller: _balanceController,
-            decoration: InputDecoration(
-              hintText: 'Enter balance',
-              errorText: _isBalanceValid ? null : 'Please enter a positive integer',
+          SizedBox(
+            width: 100,
+            height: 140,
+            child: InstaImageViewer(
+              child: Image(
+                image: Image.memory(base64Decode(_base64Image)).image,
+              ),
             ),
-            keyboardType: TextInputType.number,
-            ///keyboardType: TextInputType.numberWithOptions(decimal: true),
           ),
-          SizedBox(height: 16),
+          Center(child: Text("You can click to zoom",style: TextStyle(fontSize: 10),)),
+          if(widget.receipt.approved!)
+            TextField(
+              controller: _balanceController,
+              readOnly: widget.receipt.approved!,
+              decoration: InputDecoration(
+                labelText: widget.receipt.approved!?"Approved Balance":"",
+              ),
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              ///keyboardType: TextInputType.numberWithOptions(decimal: true),
+            ),
+          if(!widget.receipt.approved!)
+            TextField(
+              controller: _balanceController,
+              readOnly: widget.receipt.approved!,
+
+              decoration: InputDecoration(
+                hintText: 'Enter balance',
+                errorText: _isBalanceValid ? null : 'Please enter a positive integer',
+              ),
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              ///keyboardType: TextInputType.numberWithOptions(decimal: true),
+            ),
+
+            SizedBox(height: 16),
+
+          if(!widget.receipt.approved!)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

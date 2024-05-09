@@ -29,7 +29,7 @@ class _UserListScreenState extends State<UserListScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   int page = -1;
-  int size = 7;
+  int size = 15;
   int totalPage = 1000;
   late Future<UserDTOListResponse> userDTOListResponseFuture;
   List<UserDTO> userDTOList = [];

@@ -38,7 +38,7 @@ class _UserHomeState extends State<UserHome> {
     'assets/images/mail.png',
   ];//Dummy code just to show licenced softwares
   late Future<bool> reservationFlag;
-  int size = 6;
+  int size = 10;
   late Future<BookDTOListResponse> bookDTOListResponseFuture;
   List<BookDTO> bookDTOList = [];
   final _qrBarCodeScannerDialogPlugin = QrBarCodeScannerDialog();
@@ -100,13 +100,6 @@ class _UserHomeState extends State<UserHome> {
           },
         ),
         actions: [
-          IconButton(
-              icon: const Icon(
-                  Icons.search,
-                  color: Colors.white,
-                  size: 34.0),
-              onPressed: (){}
-          ),
           IconButton(
               icon: const Icon(
                   Icons.favorite,

@@ -40,6 +40,7 @@ dependencies:
   mobile_scanner: ^4.0.1
   ai_barcode_scanner: ^3.4.3
   epub_view: ^3.2.0
+  insta_image_viewer: ^1.0.4
 dev_dependencies:
   flutter_test:
     sdk: flutter

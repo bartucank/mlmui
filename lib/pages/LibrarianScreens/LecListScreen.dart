@@ -12,14 +12,14 @@ import 'package:we_slide/we_slide.dart';
 import '../../service/constants.dart';
 import '../Common/ProfileScreen.dart';
 
-class LibListScreen extends StatefulWidget {
-  const LibListScreen({Key? key}) : super(key: key);
+class LecListScreen extends StatefulWidget {
+  const LecListScreen({Key? key}) : super(key: key);
 
   @override
-  State<LibListScreen> createState() => _LibListScreenState();
+  State<LecListScreen> createState() => _LecListScreenState();
 }
 
-class _LibListScreenState extends State<LibListScreen> {
+class _LecListScreenState extends State<LecListScreen> {
   final listcontroller = ScrollController();
   TextEditingController _nameSurnameController = TextEditingController();
   TextEditingController _usernameController = TextEditingController();
@@ -65,7 +65,7 @@ class _LibListScreenState extends State<LibListScreen> {
       return;
     }
     Map<String, dynamic> request = {
-      "role": "LIB",
+      "role": "LEC",
       "page": page + 1,
       "size": size,
     };

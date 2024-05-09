@@ -299,7 +299,24 @@ class ApiService {
       return -1;
     }
   }
+  Future<String> deleteEbook(int bookid) async{
+    final jwtToken = await getJwtToken();
+    print(bookid);
+    final response = await http.delete(
+      Uri.parse('${Constants.apiBaseUrl}/api/admin/ebook/deleteEbook?bookId=$bookid'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
 
+    );
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+    print(jsonResponse);
+    return jsonResponse['data']['statusCode'];
+  }
   Future<int> uploadEbook(ImageFile imageFile, int bookid) async {
     try {
       final jwtToken = await getJwtToken();

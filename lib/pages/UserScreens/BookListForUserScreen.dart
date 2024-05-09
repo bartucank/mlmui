@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -31,7 +32,7 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool isLoading = false;
   int page = -1;
-  int size = kIsWeb?10:6;
+  int size = kIsWeb?10:10;
   int totalSize = 0;
   int totalPage = 1000;
   late Future<BookDTOListResponse> bookDTOListResponseFuture;
@@ -40,6 +41,7 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
   List<BookCategoryEnumDTO> _dropdownItems = [];
   BookCategoryEnumDTO? _selectedValue;
   Map<String, dynamic> globalFilterRequest = {};
+  bool _switchValue = false;
   void fetchCategories() async {
     try {
       BookCategoryEnumDTOListResponse response =
@@ -142,6 +144,7 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
     _titleController.text = "";
     _categoryController.text = "";
     _authorController.text = "";
+    _switchValue = false;
     setState(() {
       lastList.clear();
       bookDTOList.clear();
@@ -195,6 +198,11 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
     if (_selectedValue != null && _selectedValue?.enumValue != "ANY") {
       // Include category parameter only if a specific category is chosen
       request['category'] = _selectedValue?.enumValue;
+    }
+    if(_switchValue != null && _switchValue == true){
+      request['ebookAvailable'] = true;
+    }else{
+      request['ebookAvailable'] = false;
     }
 
     try {
@@ -388,6 +396,31 @@ class _BookListForUserScreenState extends State<BookListForUserScreen> {
                           ),
                         );
                       }).toList(),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(15, 15, 0, 0),
+                    child:  Row(
+                      children: [
+                        Expanded(
+                          child: Text("EBook Available",style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontStyle: FontStyle.normal,
+                            fontSize: 16,
+                            color: Constants.mainDarkColor,
+                          ),),
+                        ),
+                        CupertinoCheckbox(
+                          activeColor: Constants.mainRedColor,
+                          focusColor: Constants.mainRedColor,
+                          value: _switchValue,
+                          onChanged: (value) {
+                            setState(() {
+                              _switchValue = value!;
+                            });
+                          },
+                        )
+                      ],
                     ),
                   ),
                   Padding(

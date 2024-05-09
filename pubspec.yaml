@@ -1,8 +1,7 @@
----
 name: mlmui
 description: MLM UI
 publish_to: none
-version: 1.0.19+19
+version: 1.0.20+20
 environment:
   sdk: ">=3.0.6 <4.0.0"
 dependencies:
@@ -41,12 +40,20 @@ dependencies:
   ai_barcode_scanner: ^3.4.3
   epub_view: ^3.2.0
   insta_image_viewer: ^1.0.4
+  flutter_launcher_icons: ^0.11.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
   build_runner: ^2.4.6
   json_serializable: ^6.7.1
+  flutter_launcher_icons: ^0.11.0
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/icon.png"
+
 flutter:
   uses-material-design: true
   assets:

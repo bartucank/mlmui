@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:mlmui/models/BookDTO.dart';
 import 'package:mlmui/models/BookCategoryEnumDTO.dart';
 import 'package:mlmui/models/BookCategoryEnumDTOListResponse.dart';
@@ -10,7 +9,6 @@ import 'package:mlmui/models/RoomDTO.dart';
 import 'package:mlmui/models/ShelfDTO.dart';
 import 'package:mlmui/models/ShelfDTOListResponse.dart';
 import 'package:multi_image_picker_view/multi_image_picker_view.dart';
-import 'package:nfc_manager/nfc_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';

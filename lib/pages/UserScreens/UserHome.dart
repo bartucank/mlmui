@@ -1,8 +1,7 @@
+
 import 'package:ai_barcode_scanner/ai_barcode_scanner.dart';
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:mlmui/models/BookDTO.dart';
@@ -41,7 +40,6 @@ class _UserHomeState extends State<UserHome> {
   int size = 10;
   late Future<BookDTOListResponse> bookDTOListResponseFuture;
   List<BookDTO> bookDTOList = [];
-  final _qrBarCodeScannerDialogPlugin = QrBarCodeScannerDialog();
   String? code;
 
   @override
@@ -254,7 +252,7 @@ class _UserHomeState extends State<UserHome> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Text('');
                 } else if (snapshot.hasError) {
-                  print(snapshot.hasError);
+                  print("error mu"+snapshot.hasError.toString());
                   if (snapshot.error is CustomException) {
                     CustomException customException = snapshot.error as CustomException;
                     if (customException.message == 'NEED_LOGIN') {

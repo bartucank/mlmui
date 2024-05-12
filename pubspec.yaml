@@ -9,16 +9,12 @@ dependencies:
     sdk: flutter
   http: ^1.1.0
   flutter_secure_storage: ^8.0.0
-  pretty_http_logger: ^1.0.2
   shared_preferences: ^2.2.2
   top_snackbar_flutter: ^3.1.0
-  cupertino_icons: ^1.0.2
   flutter_otp_text_field: ^1.1.1
   we_slide: ^2.4.0
   flutter_slidable: ^3.0.1
-  image_picker: ^1.0.4
   multi_image_picker_view: ^0.0.17
-  dio: ^5.4.0
   art_sweetalert: ^0.0.5
   lazy_data_table_plus: ^1.0.0
   flutter_web_frame: ^1.0.0
@@ -30,14 +26,10 @@ dependencies:
   infinite_scroll_pagination: ^4.0.0
   file_picker: ^5.5.0
   url_launcher: ^6.2.5
-  table_calendar: ^3.1.0
   dynamic_tabbar: ^1.0.6
-  nfc_manager: ^3.4.0
   animated_rating_stars: ^1.0.1
-  comment_box: ^0.0.18
-  qr_bar_code_scanner_dialog: ^0.0.5
-  mobile_scanner: ^4.0.1
-  ai_barcode_scanner: ^3.4.3
+  mobile_scanner: ^3.0.0-beta.1
+  ai_barcode_scanner: ^0.0.1
   epub_view: ^3.2.0
   insta_image_viewer: ^1.0.4
   flutter_launcher_icons: ^0.11.0

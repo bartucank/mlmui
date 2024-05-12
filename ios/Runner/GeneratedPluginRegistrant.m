@@ -24,34 +24,10 @@
 @import flutter_secure_storage;
 #endif
 
-#if __has_include(<image_picker_ios/FLTImagePickerPlugin.h>)
-#import <image_picker_ios/FLTImagePickerPlugin.h>
-#else
-@import image_picker_ios;
-#endif
-
 #if __has_include(<mobile_scanner/MobileScannerPlugin.h>)
 #import <mobile_scanner/MobileScannerPlugin.h>
 #else
 @import mobile_scanner;
-#endif
-
-#if __has_include(<nfc_manager/NfcManagerPlugin.h>)
-#import <nfc_manager/NfcManagerPlugin.h>
-#else
-@import nfc_manager;
-#endif
-
-#if __has_include(<qr_bar_code_scanner_dialog/QrBarCodeScannerDialogPlugin.h>)
-#import <qr_bar_code_scanner_dialog/QrBarCodeScannerDialogPlugin.h>
-#else
-@import qr_bar_code_scanner_dialog;
-#endif
-
-#if __has_include(<qr_code_scanner/FlutterQrPlugin.h>)
-#import <qr_code_scanner/FlutterQrPlugin.h>
-#else
-@import qr_code_scanner;
 #endif
 
 #if __has_include(<shared_preferences_foundation/SharedPreferencesPlugin.h>)
@@ -72,11 +48,7 @@
   [AnimatedRatingStarsPlugin registerWithRegistrar:[registry registrarForPlugin:@"AnimatedRatingStarsPlugin"]];
   [FilePickerPlugin registerWithRegistrar:[registry registrarForPlugin:@"FilePickerPlugin"]];
   [FlutterSecureStoragePlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterSecureStoragePlugin"]];
-  [FLTImagePickerPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTImagePickerPlugin"]];
   [MobileScannerPlugin registerWithRegistrar:[registry registrarForPlugin:@"MobileScannerPlugin"]];
-  [NfcManagerPlugin registerWithRegistrar:[registry registrarForPlugin:@"NfcManagerPlugin"]];
-  [QrBarCodeScannerDialogPlugin registerWithRegistrar:[registry registrarForPlugin:@"QrBarCodeScannerDialogPlugin"]];
-  [FlutterQrPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterQrPlugin"]];
   [SharedPreferencesPlugin registerWithRegistrar:[registry registrarForPlugin:@"SharedPreferencesPlugin"]];
   [URLLauncherPlugin registerWithRegistrar:[registry registrarForPlugin:@"URLLauncherPlugin"]];
 }

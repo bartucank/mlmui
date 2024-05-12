@@ -151,6 +151,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
   }
 
   void checkIfFavorite() async {
+    print("sdfasdf");
     try {
       bool favStatus = await apiService.isFavorite(widget.book.id!);
       setState(() {

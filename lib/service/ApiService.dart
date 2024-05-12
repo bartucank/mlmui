@@ -911,6 +911,7 @@ class ApiService {
 
   Future<String> addToFavorite(int bookid) async{
     final jwtToken = await getJwtToken();
+    print(bookid);
     final response = await http.post(
       Uri.parse('${Constants.apiBaseUrl}/api/user/favorite/addToFavorite?bookId=$bookid'),
       headers: {
@@ -924,7 +925,7 @@ class ApiService {
       throw CustomException("NEED_LOGIN");
     }
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-
+    print(jsonResponse);
     return jsonResponse['data']['statusCode'];
   }
 
@@ -1022,12 +1023,13 @@ class ApiService {
       },
 
     );
-
+    print(jsonDecode(response.body));
     if(response.statusCode == 401){
       throw CustomException("NEED_LOGIN");
     }
     else if (response.statusCode == 200) {
       Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      print(jsonResponse);
       bool isFavorited = jsonResponse['data'];
       return isFavorited;
     } else {
@@ -1051,6 +1053,7 @@ class ApiService {
     else if (response.statusCode == 200) {
       Map<String, dynamic> jsonResponse = jsonDecode(response.body);
       bool isFavorited = jsonResponse['data'];
+      print("AAAAA:"+jsonResponse['data']);
       return isFavorited;
     } else {
       return false;

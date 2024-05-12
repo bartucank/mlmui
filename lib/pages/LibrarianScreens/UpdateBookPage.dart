@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:mlmui/models/BookDTO.dart';
 import 'package:mlmui/models/BookCategoryEnumDTO.dart';
 import 'package:mlmui/models/BookCategoryEnumDTOListResponse.dart';

@@ -4,15 +4,12 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:mlmui/pages/LecturerScreens/CourseDetailPage.dart';
-import 'package:mlmui/pages/LibrarianScreens/RoomDetailPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../components/MenuDrawerLibrarian.dart';
 import '../../models/CourseDTO.dart';
 import '../../components/CourseItem.dart';
 import 'package:mlmui/models/CourseDTOListResponse.dart';
 import '../../service/ApiService.dart';
-
-
 import '../../service/constants.dart';
 
 class AddCourseScreen extends StatefulWidget {
@@ -31,13 +28,11 @@ class _AddCourseScreen extends State<AddCourseScreen> {
   static Future<String> getImageBase64(int imageId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? base64Image = prefs.getString(imageId.toString());
-
     if (base64Image != null) {
       return base64Image;
     } else {
       final response = await http.get(Uri.parse(
           '${Constants.apiBaseUrl}/api/user/getImageBase64ById?id=$imageId'));
-
       if (response.statusCode == 200) {
         String base64 = base64Encode(response.bodyBytes);
         prefs.setString(imageId.toString(), base64);
@@ -47,15 +42,17 @@ class _AddCourseScreen extends State<AddCourseScreen> {
       }
     }
   }
+
   void fetchCourse() async {
     try {
       CourseDTOListResponse response = await apiService.getCourseForLecturer();
-      print(response);
       setState(() {
         courseDTOList.clear();
         courseDTOList.addAll(response.courseDTOList);
       });
-    } catch (e) {
+    } catch (e, stacktrace) {
+      print("Error fetching courses: $e");
+      print("Stacktrace: $stacktrace");
     }
   }
 
@@ -66,13 +63,10 @@ class _AddCourseScreen extends State<AddCourseScreen> {
   }
 
 
-
   @override
   void dispose() {
     super.dispose();
   }
-
-
 
 
 
@@ -82,7 +76,7 @@ class _AddCourseScreen extends State<AddCourseScreen> {
         floatingActionButton: FloatingActionButton(
           backgroundColor:Constants.mainRedColor,
           onPressed: () async {
-            Object? a = await Navigator.pushNamed(context, "/coursedetailpage");
+            Object? a = await Navigator.pushNamed(context, "/createCourse");
             if(a=="s"){
               fetchCourse();
             }
@@ -95,9 +89,11 @@ class _AddCourseScreen extends State<AddCourseScreen> {
         drawer: const MenuDrawerLibrarian(),
         appBar: AppBar(
           backgroundColor: Constants.mainRedColor,
-          title: const Text('Course Management', style: TextStyle(
+          title: const Text('Course Management',
+            style: TextStyle(
               color: Constants.whiteColor
-          ),),
+            ),
+          ),
           centerTitle: false,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back,color: Constants.whiteColor,),
@@ -109,7 +105,6 @@ class _AddCourseScreen extends State<AddCourseScreen> {
         body: SizedBox(
           width: double.infinity,
           child: GridView.builder(
-
             padding: const EdgeInsets.all(16),
             shrinkWrap: true,
             scrollDirection: Axis.vertical,
@@ -136,13 +131,12 @@ class _AddCourseScreen extends State<AddCourseScreen> {
                             Object a = await Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => CourseDetailPage(/*courseDTO: courseDTOList[index],*/),
+                                builder: (context) => CourseDetailPage(courseDTO: courseDTOList[index],),
                               ),
                             );
                             if(a == 'reload'){
                               fetchCourse();
                             }
-
                           },
                           child: CourseItem(base64Image: snapshot.data!, courseDTO: courseDTOList[index],));
                     }

@@ -10,8 +10,8 @@ CourseStudentDTO _$CourseStudentDTOFromJson(Map<String, dynamic> json) =>
     CourseStudentDTO(
       json['id'] as int?,
       json['studentNumber'] as String?,
-      json['studentId'] as String?,
-      json['studentNmae'] as String?,
+      json['studentId'] as int?,
+      json['studentName'] as String?,
     );
 
 Map<String, dynamic> _$CourseStudentDTOToJson(CourseStudentDTO instance) {
@@ -26,6 +26,6 @@ Map<String, dynamic> _$CourseStudentDTOToJson(CourseStudentDTO instance) {
   writeNotNull('id', instance.id);
   writeNotNull('studentNumber', instance.studentNumber);
   writeNotNull('studentId', instance.studentId);
-  writeNotNull('studentNmae', instance.studentNmae);
+  writeNotNull('studentName', instance.studentName);
   return val;
 }

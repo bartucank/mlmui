@@ -285,22 +285,24 @@ class _CourseDetailPage extends State<CourseDetailPage> {
                 onPressed: () async {
                   pickedFile = await FilePicker.platform.pickFiles(
                     type: FileType.custom,
-                    allowedExtensions: ['pdf', 'epub'],
+                    allowedExtensions: ['epub'],
                   );
                   if (pickedFile != null) {
                     print("File selected: ${pickedFile?.files.single.name}");
                   }
                 },
-                child: Text("Select PDF/EPUB"),
+                child: Text("Select EPUB"),
               ),
             ],
           ),
           actions: <Widget>[
             TextButton(
                 onPressed: () {
-                  saveMaterial();
-                  _materialNameController.clear();
-                  Navigator.of(context).pop();
+                 Object a = saveMaterial();
+                 if(a != -1){
+                   _materialNameController.clear();
+                   Navigator.of(context).pop();
+                 }
                 },
                 child: Text("Add")
             ),
@@ -317,7 +319,18 @@ class _CourseDetailPage extends State<CourseDetailPage> {
     );
   }
 
-  void saveMaterial() async {
+  Future<int> saveMaterial() async {
+    if(_materialNameController.text.isEmpty){
+      showTopSnackBar(
+        Overlay.of(context),
+        const CustomSnackBar.error(
+          message:
+          "Material name cannot be empty.",
+          textAlign: TextAlign.left,
+        ),
+      );
+      return -1;
+    }
     setState(() {
       isLoading = true;
     });
@@ -378,6 +391,7 @@ class _CourseDetailPage extends State<CourseDetailPage> {
         ),
       );
     }
+    return 1;
   }
 
 

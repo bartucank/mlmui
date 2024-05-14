@@ -39,6 +39,20 @@ class _CreateCourse extends State<CreateCourse>{
   late bool _choice;
 
   void saveCourse() async{
+    if(_nameController.text.isEmpty){
+      showTopSnackBar(
+        Overlay.of(context),
+        const CustomSnackBar.error(
+          message:
+          "Course Name cannot be empty.",
+          textAlign: TextAlign.left,
+        ),
+      );
+      setState(() {
+        currentStep = 0;
+      });
+    return;
+    }
     setState(() {
       isLoading = true;
     });
@@ -269,7 +283,7 @@ class _CreateCourse extends State<CreateCourse>{
     Step(
         state: currentStep > 0 ? StepState.complete : StepState.indexed,
         isActive: currentStep >= 0,
-        title: Text("Course Code"),
+        title: Text("Course Name"),
         content: Column(children: <Widget>[
           TextField(
             controller: _nameController,
@@ -295,7 +309,7 @@ class _CreateCourse extends State<CreateCourse>{
                 borderRadius: BorderRadius.circular(4.0),
                 borderSide: BorderSide(color: Constants.mainDarkColor, width: 1),
               ),
-              labelText: "Course Code",
+              labelText: "Course Name",
               labelStyle: TextStyle(
                 fontWeight: FontWeight.w700,
                 fontStyle: FontStyle.normal,

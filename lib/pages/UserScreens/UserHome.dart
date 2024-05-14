@@ -146,7 +146,7 @@ class _UserHomeState extends State<UserHome> {
                   return Row(
                     children: [
                       Text(
-                          'Welcome, ${user?.username}!',
+                          'Welcome, ${user?.fullName}',
                           style: const TextStyle(
                             fontSize: 20.0,
                             fontWeight: FontWeight.bold,

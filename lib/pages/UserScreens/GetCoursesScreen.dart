@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:mlmui/pages/LecturerScreens/CourseDetailPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../components/MenuDrawerLibrarian.dart';
 import '../../models/CourseDTO.dart';
@@ -12,14 +11,14 @@ import 'package:mlmui/models/CourseDTOListResponse.dart';
 import '../../service/ApiService.dart';
 import '../../service/constants.dart';
 
-class AddCourseScreen extends StatefulWidget {
-  const AddCourseScreen({Key? key}) : super(key: key);
+class GetCoursesScreen extends StatefulWidget {
+  const GetCoursesScreen({Key? key}) : super(key: key);
 
   @override
-  State<AddCourseScreen> createState() => _AddCourseScreen();
+  State<GetCoursesScreen> createState() => _GetCoursesScreen();
 }
 
-class _AddCourseScreen extends State<AddCourseScreen> {
+class _GetCoursesScreen extends State<GetCoursesScreen> {
 
   final ApiService apiService = ApiService();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -45,7 +44,7 @@ class _AddCourseScreen extends State<AddCourseScreen> {
 
   void fetchCourse() async {
     try {
-      CourseDTOListResponse response = await apiService.getCourseForLecturer();
+      CourseDTOListResponse response = await apiService.getCourseForUser();
       setState(() {
         courseDTOList.clear();
         courseDTOList.addAll(response.courseDTOList);
@@ -73,17 +72,7 @@ class _AddCourseScreen extends State<AddCourseScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        floatingActionButton: FloatingActionButton(
-          backgroundColor:Constants.mainRedColor,
-          onPressed: () async {
-            Object? a = await Navigator.pushNamed(context, "/createCourse");
-            if(a=="s"){
-              fetchCourse();
-            }
-          },
-          child: const Icon(Icons.add,color: Constants.whiteColor,),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+
         key: _scaffoldKey,
         backgroundColor: Constants.mainBackgroundColor,
         drawer: const MenuDrawerLibrarian(),
@@ -128,15 +117,15 @@ class _AddCourseScreen extends State<AddCourseScreen> {
                     } else {
                       return GestureDetector(
                           onTap: () async {
-                            Object a = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => CourseDetailPage(courseId: courseDTOList[index].id!,),
-                              ),
-                            );
-                            if(a == 'reload'){
-                              fetchCourse();
-                            }
+                            // Object a = await Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => CourseDetailPage(courseId: courseDTOList[index].id!,),
+                            //   ),
+                            // );
+                            // if(a == 'reload'){
+                            //   fetchCourse();
+                            // }
                           },
                           child: CourseItem(base64Image: snapshot.data!, courseDTO: courseDTOList[index],));
                     }

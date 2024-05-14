@@ -19,8 +19,8 @@ import 'package:file_picker/file_picker.dart';
 
 
 class CourseDetailPage extends StatefulWidget {
-  final CourseDTO courseDTO;
-  const CourseDetailPage({Key? key, required this.courseDTO}) : super(key: key);
+  final int courseId;
+  const CourseDetailPage({Key? key, required this.courseId}) : super(key: key);
 
   @override
   State<CourseDetailPage> createState() => _CourseDetailPage();
@@ -51,7 +51,7 @@ class _CourseDetailPage extends State<CourseDetailPage> {
   bool isLoading = false;
   String? name;
 
-
+  CourseDTO courseDTO = new CourseDTO(1, "", 1, "", true, 1, [], []);
 
 
 
@@ -66,12 +66,12 @@ class _CourseDetailPage extends State<CourseDetailPage> {
             child: ListBody(
               children: <Widget>[
                 DropdownButton<int?>(
-                  value: selectedStudentId,
+                  value: courseDTO.courseStudentDTOList?.first.id,
                   hint: Text("Select a student"),
                   onChanged: (int? newValue) {
                     setState(() {
                       selectedStudentId = newValue;
-                      var selectedStudent = widget.courseDTO.courseStudentDTOList?.firstWhere(
+                      var selectedStudent = courseDTO.courseStudentDTOList?.firstWhere(
                               (s) => s.id == newValue
                       );
                       if (selectedStudent != null) {
@@ -81,7 +81,7 @@ class _CourseDetailPage extends State<CourseDetailPage> {
                       }
                     });
                   },
-                  items: widget.courseDTO.courseStudentDTOList?.map((student) {
+                  items: courseDTO.courseStudentDTOList?.map((student) {
                     return DropdownMenuItem<int>(
                       value: student.id,
                       child: Text("${student.studentName} (${student.studentNumber})"),
@@ -105,6 +105,7 @@ class _CourseDetailPage extends State<CourseDetailPage> {
                   await removeStudent(selectedStudentId);
                   _studentIdController.clear();
                   Navigator.of(context).pop();
+                  fetchCourse();
                 },
                 child: Text("Yes")
             ),
@@ -138,7 +139,7 @@ class _CourseDetailPage extends State<CourseDetailPage> {
     });
 
     try {
-      String result = await apiService.removeStudentFromCourse(widget.courseDTO.id!, studentId);
+      String result = await apiService.removeStudentFromCourse(courseDTO.id!, studentId);
       setState(() {
         isLoading = false;
       });
@@ -172,9 +173,9 @@ class _CourseDetailPage extends State<CourseDetailPage> {
         ),
       );
     }
+
+    fetchCourse();
   }
-
-
 
   void _showAddStudentDialog(BuildContext context) {
     showDialog(
@@ -202,7 +203,8 @@ class _CourseDetailPage extends State<CourseDetailPage> {
                 onPressed: () {
                   saveStudent();
                   _studentIdController.clear();
-                  Navigator.of(context).pop();
+
+                  fetchCourse();
                 },
                 child: Text("Add")
             ),
@@ -218,13 +220,12 @@ class _CourseDetailPage extends State<CourseDetailPage> {
     );
   }
 
-
   void saveStudent() async{
     setState(() {
       isLoading = true;
     });
     Map<String, dynamic> request = {
-      "courseId": widget.courseDTO.id,
+      "courseId": courseDTO.id,
       "studentNumber": _studentIdController.text,
     };
     try{
@@ -265,6 +266,8 @@ class _CourseDetailPage extends State<CourseDetailPage> {
         ),
       );
     }
+
+    fetchCourse();
   }
 
   void _showAddMaterialDialog(BuildContext context) {
@@ -285,7 +288,7 @@ class _CourseDetailPage extends State<CourseDetailPage> {
                 onPressed: () async {
                   pickedFile = await FilePicker.platform.pickFiles(
                     type: FileType.custom,
-                    allowedExtensions: ['epub'],
+                    allowedExtensions: ['epub','EPUB'],
                   );
                   if (pickedFile != null) {
                     print("File selected: ${pickedFile?.files.single.name}");
@@ -301,6 +304,8 @@ class _CourseDetailPage extends State<CourseDetailPage> {
                  Object a = saveMaterial();
                  if(a != -1){
                    _materialNameController.clear();
+
+                   fetchCourse();
                    Navigator.of(context).pop();
                  }
                 },
@@ -310,6 +315,8 @@ class _CourseDetailPage extends State<CourseDetailPage> {
                 onPressed: () {
                   _materialNameController.clear();
                   Navigator.of(context).pop();
+
+                  fetchCourse();
                 },
                 child: Text("Cancel")
             ),
@@ -340,8 +347,8 @@ class _CourseDetailPage extends State<CourseDetailPage> {
 
       try {
         String uploadResult = await apiService.uploadCourseMaterial(
-            name!,
-            widget.courseDTO.id!,
+            _materialNameController.text,
+            courseDTO.id!,
             filePath
         );
 
@@ -349,7 +356,7 @@ class _CourseDetailPage extends State<CourseDetailPage> {
           isLoading = false;
         });
 
-        if (uploadResult == "S") {
+        if (uploadResult != "-1") {
           showTopSnackBar(
             Overlay.of(context),
             const CustomSnackBar.success(
@@ -357,8 +364,8 @@ class _CourseDetailPage extends State<CourseDetailPage> {
               textAlign: TextAlign.left,
             ),
           );
-          Navigator.pop(context, "s");
         } else {
+
           showTopSnackBar(
             Overlay.of(context),
             const CustomSnackBar.error(
@@ -368,6 +375,7 @@ class _CourseDetailPage extends State<CourseDetailPage> {
           );
         }
       } catch (e) {
+        print(e.toString());
         setState(() {
           isLoading = false;
         });
@@ -391,9 +399,10 @@ class _CourseDetailPage extends State<CourseDetailPage> {
         ),
       );
     }
+
+    fetchCourse();
     return 1;
   }
-
 
   void _showRemoveMaterialDialog(BuildContext context) {
     showDialog(
@@ -408,13 +417,13 @@ class _CourseDetailPage extends State<CourseDetailPage> {
                 children: <Widget>[
                   Text("Select a material to remove:"),
                   DropdownButton<int>(
-                    value: currentSelectedMaterialId,
+                    value: courseDTO.courseMaterialDTOList!.first.id,
                     onChanged: (int? newValue) {
                       setState(() {
                         currentSelectedMaterialId = newValue;
                       });
                     },
-                    items: widget.courseDTO.courseMaterialDTOList!.map((material) {
+                    items: courseDTO.courseMaterialDTOList!.map((material) {
                       return DropdownMenuItem<int>(
                         value: material.id,
                         child: Text(material.name!),
@@ -430,6 +439,8 @@ class _CourseDetailPage extends State<CourseDetailPage> {
                       String result = await apiService.deleteCourseMaterial(currentSelectedMaterialId!);
                       Navigator.of(context).pop();
                       if (result == "S") {
+
+                        fetchCourse();
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Material deleted successfully")));
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Failed to delete material")));
@@ -452,8 +463,6 @@ class _CourseDetailPage extends State<CourseDetailPage> {
     );
   }
 
-
-
   void _finishTerm(BuildContext context) {
 
     showDialog(
@@ -465,8 +474,9 @@ class _CourseDetailPage extends State<CourseDetailPage> {
           actions: [
             TextButton(
                 onPressed: () async{
-                  await apiService.finishCourseTerm(widget.courseDTO.id!);
+                  await apiService.finishCourseTerm(courseDTO.id!);
                   Navigator.of(context).pop();
+                  fetchCourse();
                 },
                 child: Text("Yes")
             ),
@@ -492,6 +502,7 @@ class _CourseDetailPage extends State<CourseDetailPage> {
             TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
+                  fetchCourse();
                 },
                 child: Text("Yes")
             ),
@@ -505,10 +516,17 @@ class _CourseDetailPage extends State<CourseDetailPage> {
     );
   }
 
+  void fetchCourse() async{
+    CourseDTO courseDTO2 = await apiService.getCourseByIdForLecturer(widget.courseId);
+    setState(()  {
+      courseDTO = courseDTO2 ;
+    });
+
+  }
   @override
   void initState() {
     super.initState();
-
+    fetchCourse();
     setState(() {});
   }
   @override
@@ -521,8 +539,8 @@ class _CourseDetailPage extends State<CourseDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    int numberOfStudents = widget.courseDTO.courseStudentDTOList?.length ?? 0;
-    int numberOfMaterials = widget.courseDTO.courseMaterialDTOList?.length ?? 0;
+    int numberOfStudents = courseDTO.courseStudentDTOList?.length ?? 0;
+    int numberOfMaterials = courseDTO.courseMaterialDTOList?.length ?? 0;
     return Scaffold(
         key: _scaffoldKey,
         drawer: const MenuDrawerLibrarian(),
@@ -547,7 +565,7 @@ class _CourseDetailPage extends State<CourseDetailPage> {
                   child: Padding(
                     padding: const EdgeInsets.only(top: 10),
                     child: Text(
-                      widget.courseDTO.name ?? 'N/A',
+                      courseDTO.name ?? 'N/A',
                       style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -572,114 +590,182 @@ class _CourseDetailPage extends State<CourseDetailPage> {
           SizedBox(width: 100,height: 100),
           Divider(height: 8, color: Colors.black),
           Padding(
-            padding: const EdgeInsets.fromLTRB(0,10,0,0),
+            padding: const EdgeInsets.fromLTRB(0,0,0,0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ElevatedButton(
-                  onPressed: () => _showRemoveStudentDialog(context),
-                  child: Text("Remove Student"),
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: Colors.black,
-                    minimumSize: Size(150, 50),
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () => _showAddStudentDialog(context),
-                  child: Text("Add Student"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.white,
-                    minimumSize: Size(150, 50),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Divider(height: 8, color: Colors.black),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0,10,20,0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () => _showRemoveMaterialDialog(context),
-                      child: Text('Remove Material'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        foregroundColor: Colors.white,
-                        minimumSize: Size(150, 50),
+                if(courseDTO.courseStudentDTOList!.isNotEmpty!)
+                  MaterialButton(
+                    onPressed: () => _showRemoveStudentDialog(context),
+                    color: Constants.mainRedColor,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    padding: EdgeInsets.all(16),
+
+                    child: Text(
+                      "Remove Student",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        fontStyle: FontStyle.normal,
                       ),
                     ),
-                  ],
-                ),
-                Padding(
-                    padding: const EdgeInsets.fromLTRB(20,10,0,10),
-                  child:ElevatedButton(
-                    onPressed: () => _showAddMaterialDialog(context),
-                    child: Text("Add Material"),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      foregroundColor: Colors.white,
-                      minimumSize: Size(150, 50),
+                    minWidth: (MediaQuery.of(context).size.width/2)-10,
+                    textColor: Color(0xffffffff),
+                  ),
+                MaterialButton(
+                  onPressed: () => _showAddStudentDialog(context),
+                  color: Constants.mainRedColor,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  padding: EdgeInsets.all(16),
+
+                  child: Text(
+                    "Add Student",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      fontStyle: FontStyle.normal,
                     ),
                   ),
+                  textColor: Color(0xffffffff),
+                  minWidth: courseDTO.courseStudentDTOList!.isNotEmpty? ((MediaQuery.of(context).size.width/2)-10):MediaQuery.of(context).size.width-5,
+
                 ),
               ],
             ),
           ),
           Divider(height: 8, color: Colors.black),
-          Row(
-            children: [
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: ElevatedButton(
-                    onPressed: () => _deleteCourse(context),
-                    child: Text("Delete Course"),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                      minimumSize: Size(411, 50),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: ElevatedButton(
-                    onPressed: () => _finishTerm(context),
-                    child: Text("Finish Term"),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                      minimumSize: Size(411, 50),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
           Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Align(
-              alignment: Alignment.bottomRight,
-              child: IconButton(
-                icon: Icon(Icons.edit),
-                onPressed: () => Navigator.pushNamed(context, '/editCoursePage'),
-              ),
+            padding: const EdgeInsets.fromLTRB(0,0,0,0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                if(courseDTO.courseMaterialDTOList!.isNotEmpty)
+                  MaterialButton(
+                    onPressed: () => _showRemoveMaterialDialog(context),
+                    color: Constants.mainRedColor,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    padding: EdgeInsets.all(16),
+
+                    child: Text(
+                      "Remove Material",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        fontStyle: FontStyle.normal,
+                      ),
+                    ),
+                    minWidth: (MediaQuery.of(context).size.width/2)-10,
+
+                    textColor: Color(0xffffffff),
+                  ),
+                MaterialButton(
+                  onPressed: () => _showAddMaterialDialog(context),
+                  color: Constants.mainRedColor,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  padding: EdgeInsets.all(16),
+
+                  child: Text(
+                    "Add Material",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      fontStyle: FontStyle.normal,
+                    ),
+                  ),
+                  minWidth: courseDTO.courseMaterialDTOList!.isNotEmpty? ((MediaQuery.of(context).size.width/2)-10):MediaQuery.of(context).size.width-5,
+
+                  textColor: Color(0xffffffff),
+                ),
+
+
+              ],
             ),
           ),
+          Divider(height: 8, color: Colors.black),
+
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0,0,0,0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                MaterialButton(
+                  onPressed: () => _finishTerm(context),
+                  color: Constants.mainRedColor,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  padding: EdgeInsets.all(16),
+
+                  child: Text(
+                    "Finish Course",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      fontStyle: FontStyle.normal,
+                    ),
+                  ),
+                  minWidth: MediaQuery.of(context).size.width-5,
+
+                  textColor: Color(0xfffffffff),
+                ),
+
+
+              ],
+            ),
+          ),
+
+          Divider(height: 8, color: Colors.black),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0,0,0,0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                MaterialButton(
+                  onPressed: () => _deleteCourse(context),
+                  color: Constants.mainRedColor,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  padding: EdgeInsets.all(16),
+
+                  child: Text(
+                    "Delete Course",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      fontStyle: FontStyle.normal,
+                    ),
+                  ),
+                  minWidth: MediaQuery.of(context).size.width-5,
+
+                  textColor: Color(0xffffffff),
+                ),
+
+
+              ],
+            ),
+          ),
+
+          Divider(height: 8, color: Colors.black),
+
+
+
+
+
         ],
       ),
     );

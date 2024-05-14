@@ -22,6 +22,7 @@ import 'package:mlmui/pages/Onboarding/LoginScreen.dart';
 import 'package:mlmui/pages/SplashScreen.dart';
 import 'package:mlmui/pages/UserScreens/BookListForUserScreen.dart';
 import 'package:mlmui/pages/UserScreens/CopyCard.dart';
+import 'package:mlmui/pages/UserScreens/GetCoursesScreen.dart';
 import 'package:mlmui/pages/UserScreens/Queue.dart';
 import 'package:mlmui/pages/UserScreens/RoomListScreen.dart';
 import 'package:mlmui/pages/UserScreens/UserHome.dart';
@@ -90,8 +91,9 @@ class MyApp extends StatelessWidget {
               '/RoomDetailPage':(context) => RoomDetailPage(roomDTO: ModalRoute.of(context)?.settings.arguments as RoomDTO),
               '/FavoriteListScreen':(context) => const FavoriteListScreen(),
               '/AddCourseScreen':(context) => AddCourseScreen(),
+              '/getCoursesScreen':(context) => GetCoursesScreen(),
               '/createCourse':(context) => CreateCourse(),
-              '/coursedetailpage':(context) => CourseDetailPage(courseDTO: ModalRoute.of(context)?.settings.arguments as CourseDTO),
+              '/coursedetailpage':(context) => CourseDetailPage(courseId: ModalRoute.of(context)?.settings.arguments as int),
             },
           );
         },

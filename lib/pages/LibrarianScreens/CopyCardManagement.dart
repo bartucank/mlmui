@@ -41,7 +41,7 @@ class _CopyCardManagementState extends State<CopyCardManagement> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   int page = -1;
-  int size =kIsWeb?10:10;
+  int size =kIsWeb?15:15;
   int totalSize = 0;
   int totalPage = 1000;
   late Future<ReceiptHistoryDTOListResponse> receiptHistoryDTOListResponseFuture;
@@ -89,7 +89,7 @@ class _CopyCardManagementState extends State<CopyCardManagement> {
       receiptHistoryDTOList.clear();
     });
     page = -1;
-    size = 6;
+    size = 15;
     fetchFirstReceipts();
   }
 

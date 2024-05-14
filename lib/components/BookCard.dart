@@ -60,7 +60,7 @@ class BookCard extends StatelessWidget {
                   children: [
                     Icon(Icons.star,color: Constants.yellowColor,),
                     SizedBox(width: 4),
-                    Text(book.averagePoint != null?book.averagePoint.toString():"--"'/10'),
+                    Text(book.averagePoint != null?book.averagePoint!.toStringAsFixed(2).toString():"--"'/10'),
                   ],
                 ),
                 subtitle: Text(book.category!),

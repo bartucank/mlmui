@@ -6,6 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:mlmui/models/BookReviewDTO.dart';
+import 'package:mlmui/models/CourseDTO.dart';
 import 'package:mlmui/models/DepartmentDTOListResponse.dart';
 import 'package:mlmui/models/CourseMaterialDTO.dart';
 import 'package:mlmui/models/ReceiptHistoryDTOListResponse.dart';
@@ -1096,7 +1097,28 @@ class ApiService {
       },
     );
 
-    print('Response status: ${response.statusCode}');
+
+    if (response.statusCode == 401) {
+      throw CustomException("NEED_LOGIN");
+    }
+    if (response.statusCode == 200) {
+      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      return CourseDTOListResponse.fromJson(jsonResponse['data']);
+    } else {
+      throw CustomException("Error fetching courses: Status code ${response.statusCode}");
+    }
+  }
+
+  Future<CourseDTOListResponse> getCourseForUser() async {
+    final jwtToken = await getJwtToken();
+    final response = await http.get(
+      Uri.parse(
+          '${Constants.apiBaseUrl}/api/user/course/getCoursesForUser'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+    );
 
 
     if (response.statusCode == 401) {
@@ -1104,7 +1126,6 @@ class ApiService {
     }
     if (response.statusCode == 200) {
       Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-      print("Data to be parsed: ${jsonResponse['data']}");
       return CourseDTOListResponse.fromJson(jsonResponse['data']);
     } else {
       throw CustomException("Error fetching courses: Status code ${response.statusCode}");
@@ -1276,6 +1297,7 @@ class ApiService {
 
   Future<String> deleteCourseMaterial(int materialId) async {
     final jwtToken = await getJwtToken();
+    print(materialId);
     final response = await http.delete(
       Uri.parse('${Constants.apiBaseUrl}/api/lecturer/course/deleteCourseMaterial?materialId=$materialId'),
       headers: {
@@ -1285,6 +1307,7 @@ class ApiService {
       },
     );
 
+    print(response.body);
     if(response.statusCode == 401){
       throw CustomException("NEED_LOGIN");
     }
@@ -1296,7 +1319,8 @@ class ApiService {
   Future<String> finishCourseTerm(int courseId) async {
     final jwtToken = await getJwtToken();
     final response = await http.put(
-      Uri.parse('${Constants.apiBaseUrl}/api/lecturer/course/finishCourseTerm?courseId=$courseId'),
+      Uri.parse('${Constants
+          .apiBaseUrl}/api/lecturer/course/finishCourseTerm?courseId=$courseId'),
       headers: {
         'Authorization': 'Bearer $jwtToken',
         'Content-Type': 'application/json',
@@ -1305,12 +1329,32 @@ class ApiService {
     );
     print('Response status: ${response.statusCode}');
     print('Response body: ${response.body}');
-    if(response.statusCode == 401){
+    if (response.statusCode == 401) {
       throw CustomException("NEED_LOGIN");
     }
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
 
     return jsonResponse['data']['statusCode'];
+  }
+  Future<CourseDTO> getCourseByIdForLecturer(int courseId) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.get(
+      Uri.parse('${Constants.apiBaseUrl}/api/lecturer/course/getCourseByIdForLecturer?id=$courseId'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+
+      },
+    );
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+    print("aaaaaa:" +response.body);
+
+    print('Response status: ${response.statusCode}');
+
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+    return CourseDTO.fromJson(jsonResponse['data']);
   }
   /*print('Response status: ${response.statusCode}');
   print('Response body: ${response.body}');*/

@@ -220,7 +220,6 @@ class _CourseDetailPage extends State<CourseDetailPage> {
     );
   }
 
-
   void saveStudent() async{
     setState(() {
       isLoading = true;
@@ -289,7 +288,7 @@ class _CourseDetailPage extends State<CourseDetailPage> {
                 onPressed: () async {
                   pickedFile = await FilePicker.platform.pickFiles(
                     type: FileType.custom,
-                    allowedExtensions: ['epub'],
+                    allowedExtensions: ['epub','EPUB'],
                   );
                   if (pickedFile != null) {
                     print("File selected: ${pickedFile?.files.single.name}");
@@ -348,7 +347,7 @@ class _CourseDetailPage extends State<CourseDetailPage> {
 
       try {
         String uploadResult = await apiService.uploadCourseMaterial(
-            name!,
+            _materialNameController.text,
             courseDTO.id!,
             filePath
         );
@@ -357,7 +356,7 @@ class _CourseDetailPage extends State<CourseDetailPage> {
           isLoading = false;
         });
 
-        if (uploadResult == "S") {
+        if (uploadResult != "-1") {
           showTopSnackBar(
             Overlay.of(context),
             const CustomSnackBar.success(
@@ -365,8 +364,8 @@ class _CourseDetailPage extends State<CourseDetailPage> {
               textAlign: TextAlign.left,
             ),
           );
-          Navigator.pop(context, "s");
         } else {
+
           showTopSnackBar(
             Overlay.of(context),
             const CustomSnackBar.error(
@@ -376,6 +375,7 @@ class _CourseDetailPage extends State<CourseDetailPage> {
           );
         }
       } catch (e) {
+        print(e.toString());
         setState(() {
           isLoading = false;
         });
@@ -403,7 +403,6 @@ class _CourseDetailPage extends State<CourseDetailPage> {
     fetchCourse();
     return 1;
   }
-
 
   void _showRemoveMaterialDialog(BuildContext context) {
     showDialog(
@@ -463,8 +462,6 @@ class _CourseDetailPage extends State<CourseDetailPage> {
       },
     );
   }
-
-
 
   void _finishTerm(BuildContext context) {
 
@@ -699,7 +696,7 @@ class _CourseDetailPage extends State<CourseDetailPage> {
           Divider(height: 8, color: Colors.black),
 
           Padding(
-            padding: const EdgeInsets.fromLTRB(0,10,0,0),
+            padding: const EdgeInsets.fromLTRB(0,0,0,0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -729,8 +726,10 @@ class _CourseDetailPage extends State<CourseDetailPage> {
               ],
             ),
           ),
+
+          Divider(height: 8, color: Colors.black),
           Padding(
-            padding: const EdgeInsets.fromLTRB(0,10,0,0),
+            padding: const EdgeInsets.fromLTRB(0,0,0,0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -760,6 +759,8 @@ class _CourseDetailPage extends State<CourseDetailPage> {
               ],
             ),
           ),
+
+          Divider(height: 8, color: Colors.black),
 
 
 

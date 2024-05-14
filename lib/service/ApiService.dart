@@ -1265,7 +1265,8 @@ class ApiService {
       print(jsonResponse);
 
       if (response.statusCode == 200) {
-        return jsonResponse['data']['msg'];
+        print(response.statusCode);
+        return jsonResponse['data']['statusCode'];
       } else {
         print("Failed to upload material. Status code: ${response.statusCode}. Response: $responseString");
         return "-1";
@@ -1349,9 +1350,6 @@ class ApiService {
     if(response.statusCode == 401){
       throw CustomException("NEED_LOGIN");
     }
-    print("aaaaaa:" +response.body);
-
-    print('Response status: ${response.statusCode}');
 
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
     return CourseDTO.fromJson(jsonResponse['data']);

@@ -39,6 +39,7 @@ import 'package:mlmui/pages/UserScreens/FavoriteListScreen.dart';
 import 'package:mlmui/pages/LecturerScreens/AddCourseScreen.dart';
 import 'package:mlmui/pages/LecturerScreens/CreateCourse.dart';
 import 'package:mlmui/pages/LecturerScreens/CourseDetailPage.dart';
+import 'package:mlmui/pages/LibrarianScreens/ShelfManagementScreen.dart';
 
 
 Future<void> main() async {
@@ -92,6 +93,7 @@ class MyApp extends StatelessWidget {
               '/AddCourseScreen':(context) => AddCourseScreen(),
               '/createCourse':(context) => CreateCourse(),
               '/coursedetailpage':(context) => CourseDetailPage(courseDTO: ModalRoute.of(context)?.settings.arguments as CourseDTO),
+              '/shelfmanagementscreen':(context) => ShelfManagementScreen(),
             },
           );
         },

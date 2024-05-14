@@ -1,26 +1,26 @@
+import 'dart:ui';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mlmui/models/BookDTO.dart';
-import 'package:mlmui/models/RoomDTO.dart';
 import 'package:multi_image_picker_view/multi_image_picker_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../components/MenuDrawerLibrarian.dart';
-import '../../models/OpenLibraryBookDetails.dart';
+import '../../models/CourseMaterialDTO.dart';
+import '../../models/CourseStudentDTO.dart';
 import '../../service/ApiService.dart';
-import 'package:mlmui/components/BookCard.dart';
 import 'dart:convert';
 import 'package:mlmui/service/constants.dart';
 import '../../models/CourseDTO.dart';
-
 import 'package:http/http.dart' as http;
+import 'package:file_picker/file_picker.dart';
+
+
+
 class CourseDetailPage extends StatefulWidget {
-  //final CourseDTO courseDTO;
-  const CourseDetailPage({Key? key, /*required this.courseDTO*/}) : super(key: key);
+  final CourseDTO courseDTO;
+  const CourseDetailPage({Key? key, required this.courseDTO}) : super(key: key);
 
   @override
   State<CourseDetailPage> createState() => _CourseDetailPage();
@@ -41,117 +41,20 @@ class _CourseDetailPage extends State<CourseDetailPage> {
 
   late String _base64Image;
 
-
-  TextEditingController nameController = TextEditingController();
-  TextEditingController nfcController = TextEditingController();
-
+  TextEditingController _studentIdController = TextEditingController();
+  TextEditingController _materialNameController = TextEditingController();
+  FilePickerResult? pickedFile;
+  int? currentSelectedMaterialId;
+  int? selectedStudentId;
   int defaultImg = 1;
   int lastIdForQr = 1;
-
-  /*Future<void> _fetchImage(RoomDTO currentRoom) async {
-    try {
-      String base64Image = await getImageBase64(currentRoom.imageId);
-
-      if (base64Image != "1") {
-        setState(() {
-          _base64Image = base64Image;
-        });
-      } else {
-        print("Image not found");
-      }
-    } catch (error) {
-      print("Error fetching image: $error");
-    }
-  }*/
-  static Future<String> getImageBase64(int? imageId) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? base64Image = prefs.getString(imageId.toString());
-
-    if (base64Image != null) {
-      return base64Image;
-    } else {
-      print(imageId);
-      final response = await http.get(Uri.parse('${Constants.apiBaseUrl}/api/user/getImageBase64ById?id=$imageId'));
-
-      if (response.statusCode == 200) {
-        String base64 = base64Encode(response.bodyBytes);
-        prefs.setString(imageId.toString(), base64);
-        return base64;
-      } else {
-        return"1";
-      }
-    }
-  }
-  /*void setImagePicker(BookDTO currentbook) async{
-    Uint8List? imageData = await fetchImageData(currentbook.imageId!);
-    print(imageData);
-    if (imageData != null) {
-      Stream<List<int>> streamData = Stream.fromIterable([imageData.toList()]);
-
-      final ImageFile imageFile = ImageFile(
-          UniqueKey().toString(),
-          name: 'image',
-          extension: 'png',
-          bytes: imageData,
-          readStream: streamData,
-          path: null
-      );
-      print(imageFile.toString());
-      setState(() {
-        // controller.addImage(imageFile);
-      });
-    }
-  }*/
-
-  @override
-  void initState() {
-    super.initState();
-
-    //fetchInfos();
-    setState(() {});
-  }
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    //fetchInfos();
-  }
-
-  /*void fetchInfos(){
-    nameController.text=widget.courseDTO.name!;
-    if(widget.courseDTO.nfc_no != null){
-
-      nfcController.text=widget.roomDTO.nfc_no!;
-    }else{
-      nfcController.text="PLEASE SCAN NFC CARDdddd";
-
-    }
-    setState(() {
-      defaultImg = widget.roomDTO.imageId!;
-      lastIdForQr = widget.roomDTO.qrImage!;
-    });
-    _fetchImage(widget.roomDTO);
-  }*/
-
-  /*Future<String> fetchImageBase64(int imageId) async {
-    return BookCard.getImageBase64(imageId);
-  }
-
-  Future<Uint8List?> fetchImageData(int imageId) async {
-    String base64String = await fetchImageBase64(imageId);
-    return base64Decode(base64String);
-  }
+  bool isLoading = false;
+  String? name;
 
 
-  Future<String> downloadQr() async {
-    try {
-      final Uri _url = Uri.parse("${Constants.apiBaseUrl}/api/admin/downloadImg?id=$lastIdForQr");
-      if (!await launchUrl(_url)) {
-        throw Exception('Could not launch $_url');
-      }
-    } catch (e) {
-    }
-    return "1";
-  }*/
+
+
+
 
   void _showRemoveStudentDialog(BuildContext context) {
     showDialog(
@@ -159,18 +62,56 @@ class _CourseDetailPage extends State<CourseDetailPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text("Remove Student"),
-          content: Text("Are you sure you want to remove this student?"),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                DropdownButton<int?>(
+                  value: selectedStudentId,
+                  hint: Text("Select a student"),
+                  onChanged: (int? newValue) {
+                    setState(() {
+                      selectedStudentId = newValue;
+                      var selectedStudent = widget.courseDTO.courseStudentDTOList?.firstWhere(
+                              (s) => s.id == newValue
+                      );
+                      if (selectedStudent != null) {
+                        _studentIdController.text = selectedStudent.studentNumber ?? "";
+                      } else {
+                        _studentIdController.text = "";
+                      }
+                    });
+                  },
+                  items: widget.courseDTO.courseStudentDTOList?.map((student) {
+                    return DropdownMenuItem<int>(
+                      value: student.id,
+                      child: Text("${student.studentName} (${student.studentNumber})"),
+                    );
+                  }).toList(),
+                ),
+                TextFormField(
+                  controller: _studentIdController,
+                  decoration: InputDecoration(
+                    labelText: "Or enter Student ID",
+                    hintText: "Enter the student ID here",
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+              ],
+            ),
+          ),
           actions: [
             TextButton(
-                onPressed: () {
-                  // Add your logic here for removing a student
-                  Navigator.of(context).pop(); // Close the dialog
+                onPressed: () async {
+                  await removeStudent(selectedStudentId);
+                  _studentIdController.clear();
+                  Navigator.of(context).pop();
                 },
                 child: Text("Yes")
             ),
             TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop(); // Close the dialog
+                  _studentIdController.clear();
+                  Navigator.of(context).pop();
                 },
                 child: Text("No")
             ),
@@ -180,24 +121,94 @@ class _CourseDetailPage extends State<CourseDetailPage> {
     );
   }
 
+  Future<void> removeStudent(int? studentId) async {
+    if (studentId == null) {
+      showTopSnackBar(
+        Overlay.of(context),
+        const CustomSnackBar.error(
+          message: "No valid student ID provided.",
+          textAlign: TextAlign.left,
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      String result = await apiService.removeStudentFromCourse(widget.courseDTO.id!, studentId);
+      setState(() {
+        isLoading = false;
+      });
+
+      if (result == "S") {
+        showTopSnackBar(
+          Overlay.of(context),
+          const CustomSnackBar.success(
+            message: "Student removed successfully!",
+            textAlign: TextAlign.left,
+          ),
+        );
+      } else {
+        showTopSnackBar(
+          Overlay.of(context),
+          const CustomSnackBar.error(
+            message: "Unexpected error.",
+            textAlign: TextAlign.left,
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      showTopSnackBar(
+        Overlay.of(context),
+        const CustomSnackBar.error(
+          message: "Unexpected error please contact with the system administrator",
+          textAlign: TextAlign.left,
+        ),
+      );
+    }
+  }
+
+
+
   void _showAddStudentDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text("Add Student"),
-          content: Text("Enter details for the new student."),
+          contentPadding: EdgeInsets.all(0),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextFormField(
+                  controller: _studentIdController,
+                  decoration: InputDecoration(
+                    labelText: "Student ID",
+                    hintText: "Enter the student ID here",
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+              ],
+            ),
+          ),
           actions: [
             TextButton(
                 onPressed: () {
-                  // Logic to add a student goes here
-                  Navigator.of(context).pop(); // Close the dialog
+                  saveStudent();
+                  _studentIdController.clear();
+                  Navigator.of(context).pop();
                 },
                 child: Text("Add")
             ),
             TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop(); // Close the dialog
+                  Navigator.of(context).pop();
                 },
                 child: Text("Cancel")
             ),
@@ -205,6 +216,55 @@ class _CourseDetailPage extends State<CourseDetailPage> {
         );
       },
     );
+  }
+
+
+  void saveStudent() async{
+    setState(() {
+      isLoading = true;
+    });
+    Map<String, dynamic> request = {
+      "courseId": widget.courseDTO.id,
+      "studentNumber": _studentIdController.text,
+    };
+    try{
+      String result = await apiService.inviteStudent(request);
+      setState(() {
+        isLoading = false;
+      });
+      if(result == "S"){
+        showTopSnackBar(
+          Overlay.of(context),
+          const CustomSnackBar.success(
+            message:
+            "Success!",
+            textAlign: TextAlign.left,
+          ),
+        );
+        Navigator.pop(context,"s");
+      }else{
+        showTopSnackBar(
+          Overlay.of(context),
+          const CustomSnackBar.success(
+            message:
+            "Unexpected error.",
+            textAlign: TextAlign.left,
+          ),
+        );
+      }
+    }catch(e){
+      setState(() {
+        isLoading = false;
+      });
+      showTopSnackBar(
+        Overlay.of(context),
+        const CustomSnackBar.error(
+          message:
+          "Unexpected error. Please contact system administrator.",
+          textAlign: TextAlign.left,
+        ),
+      );
+    }
   }
 
   void _showAddMaterialDialog(BuildContext context) {
@@ -212,18 +272,41 @@ class _CourseDetailPage extends State<CourseDetailPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Add Material"),
-          content: Text("Provide details for the new material."),
+          title: Text("Add File"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              TextField(
+                controller: _materialNameController,
+                decoration: InputDecoration(hintText: "Enter file name"),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  pickedFile = await FilePicker.platform.pickFiles(
+                    type: FileType.custom,
+                    allowedExtensions: ['pdf', 'epub'],
+                  );
+                  if (pickedFile != null) {
+                    print("File selected: ${pickedFile?.files.single.name}");
+                  }
+                },
+                child: Text("Select PDF/EPUB"),
+              ),
+            ],
+          ),
           actions: <Widget>[
             TextButton(
                 onPressed: () {
-                  // Add your logic here for adding material
+                  saveMaterial();
+                  _materialNameController.clear();
                   Navigator.of(context).pop();
                 },
                 child: Text("Add")
             ),
             TextButton(
                 onPressed: () {
+                  _materialNameController.clear();
                   Navigator.of(context).pop();
                 },
                 child: Text("Cancel")
@@ -233,47 +316,143 @@ class _CourseDetailPage extends State<CourseDetailPage> {
       },
     );
   }
+
+  void saveMaterial() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    if (pickedFile != null) {
+      String filePath = pickedFile!.files.single.path!;
+
+      try {
+        String uploadResult = await apiService.uploadCourseMaterial(
+            name!,
+            widget.courseDTO.id!,
+            filePath
+        );
+
+        setState(() {
+          isLoading = false;
+        });
+
+        if (uploadResult == "S") {
+          showTopSnackBar(
+            Overlay.of(context),
+            const CustomSnackBar.success(
+              message: "Success!",
+              textAlign: TextAlign.left,
+            ),
+          );
+          Navigator.pop(context, "s");
+        } else {
+          showTopSnackBar(
+            Overlay.of(context),
+            const CustomSnackBar.error(
+              message: "Unexpected error.",
+              textAlign: TextAlign.left,
+            ),
+          );
+        }
+      } catch (e) {
+        setState(() {
+          isLoading = false;
+        });
+        showTopSnackBar(
+          Overlay.of(context),
+          const CustomSnackBar.error(
+            message: "Unexpected error. Please contact system administrator.",
+            textAlign: TextAlign.left,
+          ),
+        );
+      }
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      showTopSnackBar(
+        Overlay.of(context),
+        const CustomSnackBar.error(
+          message: "No file selected.",
+          textAlign: TextAlign.left,
+        ),
+      );
+    }
+  }
+
 
   void _showRemoveMaterialDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Remove Material"),
-          content: Text("Are you sure you want to remove this material?"),
-          actions: <Widget>[
-            TextButton(
-                onPressed: () {
-                  // Add your logic here for removing material
-                  Navigator.of(context).pop();
-                },
-                child: Text("Remove")
-            ),
-            TextButton(
-                onPressed: () {
-                  Navigator.of(context). pop();
-                },
-                child: Text("Cancel")
-            ),
-          ],
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text("Remove Material"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text("Select a material to remove:"),
+                  DropdownButton<int>(
+                    value: currentSelectedMaterialId,
+                    onChanged: (int? newValue) {
+                      setState(() {
+                        currentSelectedMaterialId = newValue;
+                      });
+                    },
+                    items: widget.courseDTO.courseMaterialDTOList!.map((material) {
+                      return DropdownMenuItem<int>(
+                        value: material.id,
+                        child: Text(material.name!),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () async{
+                    if (currentSelectedMaterialId != null) {
+                      String result = await apiService.deleteCourseMaterial(currentSelectedMaterialId!);
+                      Navigator.of(context).pop();
+                      if (result == "S") {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Material deleted successfully")));
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Failed to delete material")));
+                      }
+                    }
+                  },
+                  child: Text("Remove"),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("Cancel"),
+                ),
+              ],
+            );
+          },
         );
       },
     );
   }
 
+
+
   void _finishTerm(BuildContext context) {
-    // Logic to finish the term
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text("Confirm"),
-          content: Text("Are you sure you want to finish the term?"),
+          content: Text("Are you sure you want to finish the term? All students will be removed."),
           actions: [
             TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // Close dialog
-                  // Additional logic to finish term
+                onPressed: () async{
+                  await apiService.finishCourseTerm(widget.courseDTO.id!);
+                  Navigator.of(context).pop();
                 },
                 child: Text("Yes")
             ),
@@ -288,7 +467,7 @@ class _CourseDetailPage extends State<CourseDetailPage> {
   }
 
   void _deleteCourse(BuildContext context) {
-    // Logic to delete the course
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -298,8 +477,7 @@ class _CourseDetailPage extends State<CourseDetailPage> {
           actions: [
             TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop(); // Close dialog
-                  // Additional logic to delete course
+                  Navigator.of(context).pop();
                 },
                 child: Text("Yes")
             ),
@@ -313,11 +491,24 @@ class _CourseDetailPage extends State<CourseDetailPage> {
     );
   }
 
-  int currentStep = 0;
+  @override
+  void initState() {
+    super.initState();
+
+    setState(() {});
+  }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
-
+    int numberOfStudents = widget.courseDTO.courseStudentDTOList?.length ?? 0;
+    int numberOfMaterials = widget.courseDTO.courseMaterialDTOList?.length ?? 0;
     return Scaffold(
         key: _scaffoldKey,
         drawer: const MenuDrawerLibrarian(),
@@ -332,34 +523,42 @@ class _CourseDetailPage extends State<CourseDetailPage> {
             },
           ),
         ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: ListView(
         children: <Widget>[
-          Expanded(
-            child: Container(
-              color: Colors.white,
-              child: Column(
-                children: [
-                  Container(
-                    color: Colors.white,  // Color for the entire section if needed
-                    padding: EdgeInsets.fromLTRB(150, 0, 0, 0),  // Padding around the content
-                    child: Text("CNG 352", style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold)),
+          SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Text(
+                      widget.courseDTO.name ?? 'N/A',
+                      style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0,10,100,0),
-                    child: Text("Total User: 35", style: TextStyle(color: Colors.black, fontSize: 18)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                  child: Text(
+                    "Total Students: $numberOfStudents",
+                    style: TextStyle(color: Colors.black, fontSize: 18),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0,10,80,0),
-                    child: Text("Total Material: 2", style: TextStyle(color: Colors.black, fontSize: 18)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                  child: Text(
+                    "Total Material: $numberOfMaterials",
+                    style: TextStyle(color: Colors.black, fontSize: 18),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-          Divider(height: 3, color: Colors.black),  // Divider between sections
+          SizedBox(width: 100,height: 100),
+          Divider(height: 8, color: Colors.black),
           Padding(
-            padding: const EdgeInsets.fromLTRB(0,0,0,0),
+            padding: const EdgeInsets.fromLTRB(0,10,0,0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -368,80 +567,102 @@ class _CourseDetailPage extends State<CourseDetailPage> {
                   child: Text("Remove Student"),
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
-                    backgroundColor: Colors.black, // Text color
+                    backgroundColor: Colors.black,
+                    minimumSize: Size(150, 50),
                   ),
                 ),
                 ElevatedButton(
                   onPressed: () => _showAddStudentDialog(context),
                   child: Text("Add Student"),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black, // Button color
-                    foregroundColor: Colors.white, // Text color
+                    backgroundColor: Colors.black,
+                    foregroundColor: Colors.white,
+                    minimumSize: Size(150, 50),
                   ),
                 ),
               ],
             ),
           ),
-          Divider(height: 3, color: Colors.black),  // Divider between sections
+          Divider(height: 8, color: Colors.black),
           Padding(
-            padding: const EdgeInsets.fromLTRB(0,0,0,0),
+            padding: const EdgeInsets.fromLTRB(0,10,20,0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ElevatedButton(
-                  onPressed: () => _showAddMaterialDialog(context),
-                  child: Text("Remove Material"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black, // Button color
-                    foregroundColor: Colors.white, // Text color
-                  ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => _showRemoveMaterialDialog(context),
+                      child: Text('Remove Material'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        foregroundColor: Colors.white,
+                        minimumSize: Size(150, 50),
+                      ),
+                    ),
+                  ],
                 ),
-                ElevatedButton(
-                  onPressed: () => _showRemoveMaterialDialog(context),
-                  child: Text("Add Material"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black, // Button color
-                    foregroundColor: Colors.white, // Text color
+                Padding(
+                    padding: const EdgeInsets.fromLTRB(20,10,0,10),
+                  child:ElevatedButton(
+                    onPressed: () => _showAddMaterialDialog(context),
+                    child: Text("Add Material"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      foregroundColor: Colors.white,
+                      minimumSize: Size(150, 50),
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-          Divider(height: 3, color: Colors.black),  // Divider between sections
+          Divider(height: 8, color: Colors.black),
           Row(
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(50,0,30,200),
-                child: ElevatedButton(
-                  onPressed: () => _finishTerm(context),
-                  child: Text("Delete Course"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black, // Button color
-                    foregroundColor: Colors.white, // Text color
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: ElevatedButton(
+                    onPressed: () => _deleteCourse(context),
+                    child: Text("Delete Course"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      minimumSize: Size(411, 50),
+                    ),
                   ),
                 ),
               ),
-              SizedBox(height: 8), // Space between buttons
-              Padding(
-                padding: const EdgeInsets.fromLTRB(30,0,0,200),
-                child: ElevatedButton(
-                  onPressed: () => _deleteCourse(context),
-                  child: Text("Finish Term"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black, // Button color
-                    foregroundColor: Colors.white, // Text color
+            ],
+          ),
+          Row(
+            children: [
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: ElevatedButton(
+                    onPressed: () => _finishTerm(context),
+                    child: Text("Finish Term"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      minimumSize: Size(411, 50),
+                    ),
                   ),
                 ),
               ),
             ],
           ),
           Padding(
-            padding: const EdgeInsets.all(20.0), // Adjust padding as needed
+            padding: const EdgeInsets.all(20.0),
             child: Align(
               alignment: Alignment.bottomRight,
               child: IconButton(
                 icon: Icon(Icons.edit),
-                onPressed: () => Navigator.pushNamed(context, '/editCoursePage'), // Adjust the route as necessary
+                onPressed: () => Navigator.pushNamed(context, '/editCoursePage'),
               ),
             ),
           ),

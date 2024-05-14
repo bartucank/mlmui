@@ -6,10 +6,9 @@ import 'package:mlmui/components/MenuDrawerLibrarian.dart';
 import 'package:multi_image_picker_view/multi_image_picker_view.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
-import 'package:mlmui/models/CourseDTO.dart';
 import '../../service/ApiService.dart';
 import '../../service/constants.dart';
-import 'package:http/http.dart' as http;
+
 
 class CreateCourse extends StatefulWidget{
   const CreateCourse({Key? key}) : super(key: key);
@@ -37,6 +36,7 @@ class _CreateCourse extends State<CreateCourse>{
   final ApiService apiService = ApiService();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool isLoading = false;
+  late bool _choice;
 
   void saveCourse() async{
     setState(() {
@@ -49,6 +49,8 @@ class _CreateCourse extends State<CreateCourse>{
     }else{
       value = await apiService.uploadImage(controller.images.first);
     }
+    print(value);
+    print("BURADA");
     if(value == -1){
       setState(() {
         isLoading = false;
@@ -62,8 +64,8 @@ class _CreateCourse extends State<CreateCourse>{
       );
     }else{
       Map<String, dynamic> request = {
-        "imageId":value,
-        "isPublic": _selectedChoice,
+        "imageId": value,
+        "isPublic": _choice,
         "name": _nameController.text,
       };
       try{
@@ -111,6 +113,11 @@ class _CreateCourse extends State<CreateCourse>{
   void initState(){
     super.initState();
     _selectedChoice = _dropdownitems.first;
+    if(_selectedChoice == "Yes"){
+      _choice = true;
+    }else{
+      _choice = false;
+    }
     setState(() {
 
     });
@@ -120,8 +127,6 @@ class _CreateCourse extends State<CreateCourse>{
     super.dispose();
   }
 
-  final double _panelMinSize = 70.0;
-  final double _panelMaxSize = 200;
   int currentStep = 0;
 
   @override
@@ -242,7 +247,7 @@ class _CreateCourse extends State<CreateCourse>{
       },
     );
 
-    // set up the AlertDialog
+
     AlertDialog alert = AlertDialog(
       content: Text(
           "You will lose the information you entered on the screen. Do you want to exit the book creation process?"),
@@ -252,7 +257,7 @@ class _CreateCourse extends State<CreateCourse>{
       ],
     );
 
-    // show the dialog
+
     showDialog(
       context: context,
       builder: (BuildContext context) {

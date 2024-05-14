@@ -40,6 +40,7 @@ import 'package:mlmui/pages/LecturerScreens/AddCourseScreen.dart';
 import 'package:mlmui/pages/LecturerScreens/CreateCourse.dart';
 import 'package:mlmui/pages/LecturerScreens/CourseDetailPage.dart';
 
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
@@ -90,7 +91,7 @@ class MyApp extends StatelessWidget {
               '/FavoriteListScreen':(context) => const FavoriteListScreen(),
               '/AddCourseScreen':(context) => AddCourseScreen(),
               '/createCourse':(context) => CreateCourse(),
-              '/coursedetailpage':(context) => CourseDetailPage(/*courseDTO: ModalRoute.of(context)?.settings.arguments as CourseDTO*/),
+              '/coursedetailpage':(context) => CourseDetailPage(courseDTO: ModalRoute.of(context)?.settings.arguments as CourseDTO),
             },
           );
         },

@@ -93,7 +93,7 @@ class MenuDrawer extends StatelessWidget {
                   leading: const Icon(Icons.meeting_room_rounded),
                   title: const Text("Course Management"),
                   onTap: () {
-                    Navigator.pushNamed(context, '/roomlistuser');
+                    Navigator.pushNamed(context, '/AddCourseScreen');
                   },
                 );
               } else {

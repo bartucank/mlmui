@@ -4,8 +4,10 @@ import 'dart:typed_data';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:mlmui/models/BookReviewDTO.dart';
 import 'package:mlmui/models/DepartmentDTOListResponse.dart';
+import 'package:mlmui/models/CourseMaterialDTO.dart';
 import 'package:mlmui/models/ReceiptHistoryDTOListResponse.dart';
 import 'package:mlmui/models/RoomDTOListResponse.dart';
 import 'package:mlmui/models/CourseDTOListResponse.dart';
@@ -15,6 +17,7 @@ import 'package:mlmui/models/UserDTO.dart';
 import 'package:mlmui/models/UserDTOListResponse.dart';
 import 'package:mlmui/models/UserNamesDTOListResponse.dart';
 import 'package:mlmui/models/StatisticsDTO.dart';
+import 'package:path/path.dart';
 import '../models/BookCategoryEnumDTOListResponse.dart';
 import '../models/BookDTO.dart';
 import '../models/BookDTOListResponse.dart';
@@ -192,18 +195,6 @@ class ApiService {
     return BookCategoryEnumDTOListResponse.fromJson(jsonResponse['data']);
   }
 
-  Future<DepartmentDTOListResponse>  getDepartmentDTOList() async {
-    final response = await http.get(
-      Uri.parse('${Constants.apiBaseUrl}/api/auth/getDeps'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    );
-    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-
-    return DepartmentDTOListResponse.fromJson(jsonResponse['data']);
-  }
-
   Future<UserNamesDTOListResponse> getUserNamesDTOListResponse() async {
     final jwtToken = await getJwtToken();
     final response = await http.get(
@@ -293,64 +284,6 @@ class ApiService {
         var jsonResponse = json.decode(responseString);
         var msgValue = int.parse(jsonResponse['data']['msg']);
         return msgValue;
-      }
-      return -1;
-    } catch (e) {
-      return -1;
-    }
-  }
-  Future<String> deleteEbook(int bookid) async{
-    final jwtToken = await getJwtToken();
-    print(bookid);
-    final response = await http.delete(
-      Uri.parse('${Constants.apiBaseUrl}/api/admin/ebook/deleteEbook?bookId=$bookid'),
-      headers: {
-        'Authorization': 'Bearer $jwtToken',
-        'Content-Type': 'application/json',
-      },
-
-    );
-    if(response.statusCode == 401){
-      throw CustomException("NEED_LOGIN");
-    }
-    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-    print(jsonResponse);
-    return jsonResponse['data']['statusCode'];
-  }
-  Future<int> uploadEbook(ImageFile imageFile, int bookid) async {
-    try {
-      final jwtToken = await getJwtToken();
-      var request = http.MultipartRequest(
-        'POST',
-        Uri.parse('${Constants.apiBaseUrl}/api/admin/ebook/addEbook?bookId=$bookid'),
-      );
-      Map<String, String> headers = {
-        "Authorization": "Bearer $jwtToken",
-        "Content-type": "multipart/form-data"
-      };
-      if (imageFile.bytes != null) {
-        request.files.add(
-          http.MultipartFile.fromBytes(
-            'file',
-            imageFile.bytes!, // Image bytes
-            filename: '${imageFile.name}.${imageFile.extension}',
-          ),
-        );
-      } else if (imageFile.path != null) {
-        File file = File(imageFile.path!);
-        List<int> imageBytes = await file.readAsBytes();
-        request.files.add(
-          http.MultipartFile.fromBytes(
-            'file',
-            imageBytes, // Image bytes
-            filename: '${imageFile.name}.${imageFile.extension}',
-          ),
-        );
-      }
-      request.headers.addAll(headers);
-      var res = await request.send();
-      if (res.statusCode == 200) {
-        return 1;
       }
       return -1;
     } catch (e) {
@@ -911,7 +844,6 @@ class ApiService {
 
   Future<String> addToFavorite(int bookid) async{
     final jwtToken = await getJwtToken();
-    print(bookid);
     final response = await http.post(
       Uri.parse('${Constants.apiBaseUrl}/api/user/favorite/addToFavorite?bookId=$bookid'),
       headers: {
@@ -925,7 +857,7 @@ class ApiService {
       throw CustomException("NEED_LOGIN");
     }
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-    print(jsonResponse);
+
     return jsonResponse['data']['statusCode'];
   }
 
@@ -1023,13 +955,12 @@ class ApiService {
       },
 
     );
-    print(jsonDecode(response.body));
+
     if(response.statusCode == 401){
       throw CustomException("NEED_LOGIN");
     }
     else if (response.statusCode == 200) {
       Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-      print(jsonResponse);
       bool isFavorited = jsonResponse['data'];
       return isFavorited;
     } else {
@@ -1053,7 +984,6 @@ class ApiService {
     else if (response.statusCode == 200) {
       Map<String, dynamic> jsonResponse = jsonDecode(response.body);
       bool isFavorited = jsonResponse['data'];
-      print("AAAAA:"+jsonResponse['data']);
       return isFavorited;
     } else {
       return false;
@@ -1092,82 +1022,228 @@ class ApiService {
         'Content-Type': 'application/json',
       },
     );
+
+    print('Response status: ${response.statusCode}');
+
+
     if (response.statusCode == 401) {
       throw CustomException("NEED_LOGIN");
     }
-    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-
-    return CourseDTOListResponse.fromJson(jsonResponse['data']);
+    if (response.statusCode == 200) {
+      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      print("Data to be parsed: ${jsonResponse['data']}");
+      return CourseDTOListResponse.fromJson(jsonResponse['data']);
+    } else {
+      throw CustomException("Error fetching courses: Status code ${response.statusCode}");
+    }
   }
 
+  Future<String> bulkAddStudentToCourse(int courseId) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.post(
+      Uri.parse('${Constants.apiBaseUrl}/api/lecturer/course/bulkAddStudentToCourse?courseId=$courseId'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+
+      },
+    );
+
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+    return jsonResponse['data']['statusCode'];
+  }
+
+  Future<String> bulkRemoveStudentFromCourse(int courseId) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.post(
+      Uri.parse('${Constants.apiBaseUrl}/api/lecturer/course/bulkRemoveStudentFromCourse?courseId=$courseId'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+
+      },
+    );
+
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+    return jsonResponse['data']['statusCode'];
+  }
+
+  Future<String> inviteStudent(dynamic body) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.put(
+      Uri.parse('${Constants.apiBaseUrl}/api/lecturer/course/invite'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+
+      },
+      body: jsonEncode(body),
+    );
+
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+    return jsonResponse['data']['statusCode'];
+  }
+
+  Future<String> removeStudentFromCourse(int courseId, int courseStudentId) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.delete(
+      Uri.parse('${Constants.apiBaseUrl}/api/lecturer/course/removeStudentFromCourse?courseId=$courseId&courseStudentId=$courseStudentId'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+
+      },
+    );
+
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+    return jsonResponse['data']['statusCode'];
+  }
+
+  String getMimeType(String extension) {
+    switch (extension.toLowerCase()) {
+      case 'pdf':
+        return 'application/pdf';
+      case 'epub':
+        return 'application/epub+zip';
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'png':
+        return 'image/png';
+      case 'html':
+        return 'text/html';
+      case 'txt':
+        return 'text/plain';
+      default:
+        return 'application/octet-stream';
+    }
+  }
+
+  Future<String> uploadCourseMaterial(String name, int courseId, String filePath) async {
+    try {
+      final jwtToken = await getJwtToken();
+      var uri = Uri.parse('${Constants.apiBaseUrl}/api/lecturer/course/uploadCourseMaterial');
+      var request = http.MultipartRequest('POST', uri);
 
 
-/*Future<List<changeDTO>> getCourseById(int id) async {
+      print("Name before request: '$name'");
+      request.fields['name'] = name;
+      request.fields['courseId'] = courseId.toString();
+
+      File file = File(filePath);
+      request.files.add(
+          http.MultipartFile(
+              'file',
+              file.readAsBytes().asStream(),
+              file.lengthSync(),
+              filename: basename(file.path),
+              contentType: MediaType.parse(getMimeType(basename(file.path).split('.').last))
+          )
+      );
+
+      Map<String, String> headers = {
+        "Authorization": "Bearer $jwtToken",
+        "Content-type": "multipart/form-data"
+      };
+
+      request.headers.addAll(headers);
+      var response = await request.send();
+      var responseString = await response.stream.bytesToString();
+      var jsonResponse = json.decode(responseString);
+      print(jsonResponse);
+
+      if (response.statusCode == 200) {
+        return jsonResponse['data']['msg'];
+      } else {
+        print("Failed to upload material. Status code: ${response.statusCode}. Response: $responseString");
+        return "-1";
+      }
+    } catch (e) {
+      print("Error uploading material: $e");
+      return "-1";
+    }
+  }
+
+  Future<List<CourseMaterialDTO>> getCourseMaterialById(int courseId) async {
     final jwtToken = await getJwtToken();
     final response = await http.get(
-      Uri.parse('${Constants.apiBaseUrl}/api/user/course/getCourseById?id=$id'),
+      Uri.parse('${Constants.apiBaseUrl}/api/user/course/getCourseMaterialById?id=$courseId'),
       headers: {
         'Authorization': 'Bearer $jwtToken',
         'Content-Type': 'application/json',
+
       },
     );
 
-    if (response.statusCode == 401) {
-      throw CustomException("NEED_LOGIN");
-    } else if (response.statusCode == 500) {
-      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-      throw CustomException(jsonResponse['message']);
-    } else if (response.statusCode == 200) {
-      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-      if (jsonResponse.containsKey('data') && jsonResponse['data'].containsKey('bookDTOList')) {
-        List<dynamic> books = jsonResponse['data']['bookDTOList'];
-        return books.map<BookDTO>((json) => BookDTO.fromJson(json)).toList();
-      } else {
-        throw Exception('Invalid data structure');
-      }
-    } else {
-      throw Exception('Failed to load favorite books with status code: ${response.statusCode}');
-    }
-  }*/
-
-/*
-  * Future<String> getMaterialById(int id) async{
-    final jwtToken = await getJwtToken();
-    final response = await http.post(
-      Uri.parse('${Constants.apiBaseUrl}/api/user/course/getCourseMaterialById?=$id'),
-      headers: {
-        'Authorization': 'Bearer $jwtToken',
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(body)
-    );
-    print("Yolladik gibi");
     if(response.statusCode == 401){
       throw CustomException("NEED_LOGIN");
     }
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
 
     return jsonResponse['data']['statusCode'];
-  }*/
+  }
 
-/*Future<String> getCoursesForUser(dynamic body) async{//probably needs to change
+  Future<String> deleteCourseMaterial(int materialId) async {
     final jwtToken = await getJwtToken();
-    final response = await http.post(
-      Uri.parse('${Constants.apiBaseUrl}/api/user/course/getCoursesForUser'),
+    final response = await http.delete(
+      Uri.parse('${Constants.apiBaseUrl}/api/lecturer/course/deleteCourseMaterial?materialId=$materialId'),
       headers: {
         'Authorization': 'Bearer $jwtToken',
         'Content-Type': 'application/json',
+
       },
-      body: jsonEncode(body)
     );
-    print("Yolladik gibi");
+
     if(response.statusCode == 401){
       throw CustomException("NEED_LOGIN");
     }
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
 
     return jsonResponse['data']['statusCode'];
-  }*/
+  }
+
+  Future<String> finishCourseTerm(int courseId) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.put(
+      Uri.parse('${Constants.apiBaseUrl}/api/lecturer/course/finishCourseTerm?courseId=$courseId'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+
+      },
+    );
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+    return jsonResponse['data']['statusCode'];
+  }
+  /*print('Response status: ${response.statusCode}');
+  print('Response body: ${response.body}');*/
+
+
+
 
 }
 

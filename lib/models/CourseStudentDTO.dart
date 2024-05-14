@@ -5,15 +5,15 @@ part 'CourseStudentDTO.g.dart';
 class CourseStudentDTO {
   int? id;
   String? studentNumber;
-  String? studentId;
-  String? studentNmae;
+  int? studentId;
+  String? studentName;
 
 
   CourseStudentDTO(
       this.id,
       this.studentNumber,
       this.studentId,
-      this.studentNmae,
+      this.studentName,
       );
 
 

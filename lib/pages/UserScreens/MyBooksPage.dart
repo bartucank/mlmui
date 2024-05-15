@@ -112,7 +112,7 @@ class _MyBooksPage extends State<MyBooksPage> {
               Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text(
-                  "Books", // Replace with the text you want to display
+                  "Borrowed Books",
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,

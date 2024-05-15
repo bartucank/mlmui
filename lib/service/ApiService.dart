@@ -326,6 +326,39 @@ class ApiService {
       return "-1";
     }
   }
+  Future<String> uploadExcelForStudent(File file) async {
+    try {
+      final jwtToken = await getJwtToken();
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse('${Constants.apiBaseUrl}/api/admin/uploadExcel'),
+      );
+      Map<String, String> headers = {
+        "Authorization": "Bearer $jwtToken",
+        "Content-type": "multipart/form-data"
+      };
+
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'file',
+          file.readAsBytesSync(),
+          filename: 'excel.xlsx',
+        ),
+      );
+      request.headers.addAll(headers);
+      var res = await request.send();
+      var responseString = await res.stream.bytesToString();
+      var jsonResponse = json.decode(responseString);
+      print(jsonResponse);
+      if (res.statusCode == 200) {
+        print("will be return:"+jsonResponse['data']['msg']);
+        return jsonResponse['data']['msg'];
+      }
+      return "-1";
+    } catch (e) {
+      return "-1";
+    }
+  }
 
   Future<String> uploadExcelForBookForWeb(Uint8List file) async {
     try {
@@ -897,6 +930,23 @@ class ApiService {
 
     return EbookDTO.fromJson(jsonResponse['data']);
   }
+  Future<CourseMaterialDTO> getCourseMaterialById(int id) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.get(
+      Uri.parse(
+          '${Constants.apiBaseUrl}/api/user/course/getCourseMaterialById?id=$id'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+    );
+    if (response.statusCode == 401) {
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+    return CourseMaterialDTO.fromJson(jsonResponse['data']);
+  }
 
 
   Future<List<BookDTO>> getFavoriteBooks() async {
@@ -1064,6 +1114,29 @@ class ApiService {
     }
   }
 
+  Future<bool> approveReservation(String key) async{
+    final jwtToken = await getJwtToken();
+    final response = await http.get(
+      Uri.parse('${Constants.apiBaseUrl}/api/user/approveReservation?key=$key'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+
+    );
+
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+    else if (response.statusCode == 200) {
+      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      bool res = jsonResponse['data'];
+      return res;
+    } else {
+      return false;
+    }
+  }
+
   Future<String> createCourse(dynamic body) async {
     final jwtToken = await getJwtToken();
     final response = await http.post(
@@ -1185,8 +1258,11 @@ class ApiService {
     if(response.statusCode == 401){
       throw CustomException("NEED_LOGIN");
     }
+    print(response.body);
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-
+    if(response.statusCode == 500 && jsonResponse['message'] != null){
+      return jsonResponse['message'];
+    }
     return jsonResponse['data']['statusCode'];
   }
 
@@ -1276,11 +1352,52 @@ class ApiService {
       return "-1";
     }
   }
+  Future<String> uploadCourseStudentExcel( int courseId, String filePath) async {
+    try {
+      final jwtToken = await getJwtToken();
+      var uri = Uri.parse('${Constants.apiBaseUrl}/api/lecturer/course/bulkAddStudentToCourse');
+      var request = http.MultipartRequest('POST', uri);
+      request.fields['courseId'] = courseId.toString();
+      File file = File(filePath);
+      request.files.add(
+          http.MultipartFile(
+              'file',
+              file.readAsBytes().asStream(),
+              file.lengthSync(),
+              filename: basename(file.path),
+              contentType: MediaType.parse(getMimeType(basename(file.path).split('.').last))
+          )
+      );
 
-  Future<List<CourseMaterialDTO>> getCourseMaterialById(int courseId) async {
+      Map<String, String> headers = {
+        "Authorization": "Bearer $jwtToken",
+        "Content-type": "multipart/form-data"
+      };
+
+      request.headers.addAll(headers);
+      var response = await request.send();
+      var responseString = await response.stream.bytesToString();
+      var jsonResponse = json.decode(responseString);
+      print(jsonResponse);
+
+      if (response.statusCode == 200) {
+        print(response.statusCode);
+        return jsonResponse['data']['statusCode'];
+      } else {
+        return "-1";
+      }
+    } catch (e) {
+      return "-1";
+    }
+  }
+
+
+
+  Future<String> deleteCourseMaterial(int materialId) async {
     final jwtToken = await getJwtToken();
-    final response = await http.get(
-      Uri.parse('${Constants.apiBaseUrl}/api/user/course/getCourseMaterialById?id=$courseId'),
+    print(materialId);
+    final response = await http.delete(
+      Uri.parse('${Constants.apiBaseUrl}/api/lecturer/course/deleteCourseMaterial?materialId=$materialId'),
       headers: {
         'Authorization': 'Bearer $jwtToken',
         'Content-Type': 'application/json',
@@ -1288,6 +1405,7 @@ class ApiService {
       },
     );
 
+    print(response.body);
     if(response.statusCode == 401){
       throw CustomException("NEED_LOGIN");
     }
@@ -1296,11 +1414,10 @@ class ApiService {
     return jsonResponse['data']['statusCode'];
   }
 
-  Future<String> deleteCourseMaterial(int materialId) async {
+  Future<String> deleteCourse(int courseId) async {
     final jwtToken = await getJwtToken();
-    print(materialId);
     final response = await http.delete(
-      Uri.parse('${Constants.apiBaseUrl}/api/lecturer/course/deleteCourseMaterial?materialId=$materialId'),
+      Uri.parse('${Constants.apiBaseUrl}/api/lecturer/course/deleteCourse?courseId=$courseId'),
       headers: {
         'Authorization': 'Bearer $jwtToken',
         'Content-Type': 'application/json',
@@ -1351,6 +1468,7 @@ class ApiService {
       throw CustomException("NEED_LOGIN");
     }
 
+    print(response.body);
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
     return CourseDTO.fromJson(jsonResponse['data']);
   }

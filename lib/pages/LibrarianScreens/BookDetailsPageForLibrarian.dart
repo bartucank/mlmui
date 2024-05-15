@@ -433,7 +433,7 @@ class _BookDetailsPageForLibrarian extends State<BookDetailsPageForLibrarian> {
                              MaterialPageRoute(
                                builder: (context) =>
                                    EbookDetailsPageForLibrarian(
-                                     ebook: result_ebook,),
+                                     ebookData: result_ebook.data!,),
                              ),
                            );
                          },

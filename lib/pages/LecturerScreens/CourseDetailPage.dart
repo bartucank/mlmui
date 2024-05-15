@@ -6,6 +6,7 @@ import 'package:multi_image_picker_view/multi_image_picker_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../components/MenuDrawerLibrarian.dart';
 import '../../models/CourseMaterialDTO.dart';
 import '../../models/CourseStudentDTO.dart';
@@ -84,7 +85,7 @@ class _CourseDetailPage extends State<CourseDetailPage> {
                   items: courseDTO.courseStudentDTOList?.map((student) {
                     return DropdownMenuItem<int>(
                       value: student.id,
-                      child: Text("${student.studentName} (${student.studentNumber})"),
+                      child: Text("${student.studentName==null?"Unregistered St.":student.studentName} (${student.studentNumber})"),
                     );
                   }).toList(),
                 ),
@@ -243,6 +244,15 @@ class _CourseDetailPage extends State<CourseDetailPage> {
           ),
         );
         Navigator.pop(context,"s");
+      }else if(result.contains("Invalid student number.")){
+        showTopSnackBar(
+          Overlay.of(context),
+          const CustomSnackBar.info(
+            message:
+            "Invalid student number.",
+            textAlign: TextAlign.left,
+          ),
+        );
       }else{
         showTopSnackBar(
           Overlay.of(context),
@@ -325,6 +335,78 @@ class _CourseDetailPage extends State<CourseDetailPage> {
       },
     );
   }
+  Future<String> downloadExcel() async {
+    try {
+      final Uri _url = Uri.parse("${Constants.apiBaseUrl}/api/admin/getCourseStudentExcelTemplate");
+      if (!await launchUrl(_url)) {
+        throw Exception('Could not launch $_url');
+      }
+    } catch (e) {
+      return "-1";
+    }
+    return "1";
+  }
+
+  void _showAddStudentBulkDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Bulk Add Student"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ElevatedButton(
+                onPressed: () async {
+                  Object a = await downloadExcel();
+                  if(a == "-1"){
+
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: Text("Download Template"),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  pickedFile = await FilePicker.platform.pickFiles(
+                    type: FileType.custom,
+                    allowedExtensions: ['xlsx','Xlsx','XLSX','xls'],
+                  );
+                  if (pickedFile != null) {
+                    print("File selected: ${pickedFile?.files.single.name}");
+                  }
+                },
+                child: Text("Upload Filled Excel"),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+                onPressed: () {
+                  Object a = saveCourseStudentExcel();
+                  if(a != -1){
+
+                    fetchCourse();
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: Text("Save")
+            ),
+            TextButton(
+                onPressed: () {
+                  _materialNameController.clear();
+                  Navigator.of(context).pop();
+
+                  fetchCourse();
+                },
+                child: Text("Cancel")
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   Future<int> saveMaterial() async {
     if(_materialNameController.text.isEmpty){
@@ -348,6 +430,71 @@ class _CourseDetailPage extends State<CourseDetailPage> {
       try {
         String uploadResult = await apiService.uploadCourseMaterial(
             _materialNameController.text,
+            courseDTO.id!,
+            filePath
+        );
+
+        setState(() {
+          isLoading = false;
+        });
+
+        if (uploadResult != "-1") {
+          showTopSnackBar(
+            Overlay.of(context),
+            const CustomSnackBar.success(
+              message: "Success!",
+              textAlign: TextAlign.left,
+            ),
+          );
+        } else {
+
+          showTopSnackBar(
+            Overlay.of(context),
+            const CustomSnackBar.error(
+              message: "Unexpected error.",
+              textAlign: TextAlign.left,
+            ),
+          );
+        }
+      } catch (e) {
+        print(e.toString());
+        setState(() {
+          isLoading = false;
+        });
+        showTopSnackBar(
+          Overlay.of(context),
+          const CustomSnackBar.error(
+            message: "Unexpected error. Please contact system administrator.",
+            textAlign: TextAlign.left,
+          ),
+        );
+      }
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      showTopSnackBar(
+        Overlay.of(context),
+        const CustomSnackBar.error(
+          message: "No file selected.",
+          textAlign: TextAlign.left,
+        ),
+      );
+    }
+
+    fetchCourse();
+    return 1;
+  }
+  Future<int> saveCourseStudentExcel() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    if (pickedFile != null) {
+      String filePath = pickedFile!.files.single.path!;
+
+      try {
+        String uploadResult = await apiService.uploadCourseStudentExcel(
             courseDTO.id!,
             filePath
         );
@@ -500,9 +647,13 @@ class _CourseDetailPage extends State<CourseDetailPage> {
           content: Text("Are you sure you want to delete this course?"),
           actions: [
             TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  fetchCourse();
+                onPressed: () async {
+                  Object a = await apiService.deleteCourse(courseDTO.id!);
+                  if(a=='S' ||a == 's'){
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop("reload");
+
+                  }
                 },
                 child: Text("Yes")
             ),
@@ -639,6 +790,34 @@ class _CourseDetailPage extends State<CourseDetailPage> {
               ],
             ),
           ),
+          Divider(height: 8, color: Colors.black),
+          Padding(padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              MaterialButton(
+                onPressed: () => _showAddStudentBulkDialog(context),
+                color: Constants.mainRedColor,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                padding: EdgeInsets.all(16),
+
+                child: Text(
+                  "Bulk Add Student",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    fontStyle: FontStyle.normal,
+                  ),
+                ),
+                textColor: Color(0xffffffff),
+                minWidth: MediaQuery.of(context).size.width-5,
+
+              ),
+            ],
+          ),),
           Divider(height: 8, color: Colors.black),
           Padding(
             padding: const EdgeInsets.fromLTRB(0,0,0,0),

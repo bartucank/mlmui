@@ -2,10 +2,14 @@
 import 'package:ai_barcode_scanner/ai_barcode_scanner.dart';
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
+import 'package:mlmui/models/CourseDTO.dart';
+import 'package:mlmui/pages/LecturerScreens/AddCourseScreen.dart';
+import 'package:mlmui/pages/UserScreens/GetCoursesScreen.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:mlmui/models/BookDTO.dart';
 import '../../components/MenuDrawer.dart';
+import '../../models/CourseDTOListResponse.dart';
 import '../../models/UserDTO.dart';
 import '../../service/ApiService.dart';
 import '../../components/OutlinedButtons.dart';
@@ -15,7 +19,9 @@ import 'package:mlmui/components/BookCard.dart';
 import 'dart:ui' as ui;
 
 import '../../service/constants.dart';
+import '../LecturerScreens/CourseDetailPage.dart';
 import 'BookDetailsPage.dart';
+import 'CourseDetailPageUser.dart';
 
 
 
@@ -33,26 +39,25 @@ class _UserHomeState extends State<UserHome> {
   final ApiService apiService = ApiService();
   late Future<UserDTO> userFuture;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final List<String> imgList = [
-    'assets/images/bg.jpg',
-    'assets/images/default.png',
-    'assets/images/logo.png',
-    'assets/images/mail.png',
-  ];//Dummy code just to show licenced softwares
+
   late Future<bool> reservationFlag;
   int size = 10;
   late Future<BookDTOListResponse> bookDTOListResponseFuture;
   List<BookDTO> bookDTOList = [];
+  List<CourseDTO> courseDTOList = [];
   String? code;
+  bool courseCanFetch = false;
+  String userRole = "USER";
 
 
   @override
   void initState() {
     super.initState();
-    fetchBooks();
     userFuture = apiService.getUserDetails();
+    fetchBooks();
     reservationFlag = apiService.checkReservationIsExists();
   }
+
 
   Future<void> refresh()  async {
       fetchBooks();
@@ -60,6 +65,7 @@ class _UserHomeState extends State<UserHome> {
     setState(() {
       reservationFlag = apiService.checkReservationIsExists();
     });
+      fetchCourses(userRole);
   }
 
   void fetchBooks() async{
@@ -75,6 +81,34 @@ class _UserHomeState extends State<UserHome> {
     } catch (e) {
       print("Error! $e");
     }
+  }
+
+  void fetchCourses(String role) async{
+
+
+    print("buradayim4"+role);
+    if(role == "LEC"){
+      print("buradayim5"+role);
+      try {
+        CourseDTOListResponse response = await apiService.getCourseForLecturer();
+        setState(() {
+          courseDTOList.clear();
+          courseDTOList.addAll(response.courseDTOList);
+        });
+      } catch (e, stacktrace) {
+      }
+    }else{
+      try {
+      print("buradayim6"+role);
+        CourseDTOListResponse response = await apiService.getCourseForUser();
+        setState(() {
+          courseDTOList.clear();
+          courseDTOList.addAll(response.courseDTOList);
+        });
+      } catch (e, stacktrace) {
+      }
+    }
+
   }
 
 
@@ -153,6 +187,13 @@ class _UserHomeState extends State<UserHome> {
                       }
                     } else {
                       final user = snapshot.data;
+                      if(!courseCanFetch){
+                        fetchCourses(user!.role);
+                        setState(() {
+                          userRole = user!.role;
+                          courseCanFetch = true;
+                        });
+                      }
                       return Row(
                         children: [
                           Text(
@@ -162,9 +203,9 @@ class _UserHomeState extends State<UserHome> {
                                 fontWeight: FontWeight.bold,
                               ),
                           ),
-          
-          
-          
+
+
+
                         ],
                       );
                     }
@@ -231,7 +272,7 @@ class _UserHomeState extends State<UserHome> {
                     }
                   },
                 ),
-          
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
@@ -240,7 +281,7 @@ class _UserHomeState extends State<UserHome> {
                       buttonIcon: Icons.credit_card,
                       onPressed: () async {
                        Object? status = await Navigator.pushNamed(context, '/copycard');
-          
+
                       },
                       color: Constants.mainDarkColor,
                     ),
@@ -248,14 +289,14 @@ class _UserHomeState extends State<UserHome> {
                         buttonLabel: 'My Books',
                         buttonIcon: Icons.library_books,
                         onPressed: () {
-          
+
                           Navigator.pushNamed(context, '/mybookspage');
                         },
                       color: Constants.mainDarkColor,
                     )
                   ],
                 ),
-          
+
                 FutureBuilder<bool>(
                   future: reservationFlag,
                   builder: (context2, snapshot) {
@@ -276,7 +317,7 @@ class _UserHomeState extends State<UserHome> {
                             );
                             Navigator.pushReplacementNamed(context2, '/login');
                           });
-          
+
                           return Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
@@ -290,8 +331,8 @@ class _UserHomeState extends State<UserHome> {
                               ),
                             ],
                           );
-          
-          
+
+
                         } else {
                           return Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -344,7 +385,7 @@ class _UserHomeState extends State<UserHome> {
                               await Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (context) => AiBarcodeScanner(
-          
+
                                     canPop: false,
                                     onScan: (String value) {
                                       debugPrint(value);
@@ -352,8 +393,27 @@ class _UserHomeState extends State<UserHome> {
                                         code = value;
                                       });
                                     },
-                                    onDetect: (p0) {
+                                    onDetect: (p0) async {
                                       Navigator.pop(context);
+                                      Object a = await apiService.approveReservation(code!);
+                                      if(a != null && a == true){
+                                        showTopSnackBar(
+                                          Overlay.of(context),
+                                          const CustomSnackBar.success(
+                                            message: "Reservation Approved!",
+                                            textAlign: TextAlign.left,
+                                          ),
+                                        );
+                                      }else{
+                                        showTopSnackBar(
+                                          Overlay.of(context),
+                                          const CustomSnackBar.error(
+                                            message: "Reservation could not approved :(",
+                                            textAlign: TextAlign.left,
+                                          ),
+                                        );
+                                      }
+                                      refresh();
                                     },
                                     onDispose: () {
                                       debugPrint("Barcode scanner disposed!");
@@ -365,15 +425,15 @@ class _UserHomeState extends State<UserHome> {
                                 ),
                               );
                               print('Room Con. pressed');
-          
+
                             },
                             color: Colors.green,
                           )
                         ],
                       );
-          
-          
-          
+
+
+
                     }else{
                       print(snapshot.data);
                       return Row(
@@ -387,12 +447,12 @@ class _UserHomeState extends State<UserHome> {
                             },
                             color: Constants.mainDarkColor,
                           ),
-          
+
                         ],
                       );
                     }
                   }),
-          
+
                 Padding(
                   padding: const EdgeInsets.fromLTRB(8.0, 8.0, 0, 0),
                   child: Row(
@@ -512,95 +572,315 @@ class _UserHomeState extends State<UserHome> {
                   ),
                 ),//List of books
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(3.0, 3.0, 0, 0),
+                  padding: const EdgeInsets.fromLTRB(8.0, 25.0, 0, 0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       const Text(
-                        'Licenced Softwares',
+                        'Recommended Books',
                         style: TextStyle(
                           fontSize: 20.0,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const Spacer(),
-                      TextButton(
-                        style: TextButton.styleFrom(
-                          textStyle: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        onPressed: () {
-                          print('More Button Pressed for Licenced Softwares');
-                        },
-                        child: const Text(
-                          'MORE',
-                          style: TextStyle(
-                            color: Colors.red,
-                          ),
-                        ),
-                      ),
+
                     ],
                   ),
-                ),
+                ),//Books
                 Padding(
                   padding: const EdgeInsets.fromLTRB(3.0, 3.0, 0, 0),
                   child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 4),
-                      height: 140,
-                      child: ListView.builder(
-                        // This makes the ListView scrollable horizontally.
+                    margin: const EdgeInsets.symmetric(vertical: 2),
+                    height: 140,
+                    child: ListView.builder(
                         scrollDirection: Axis.horizontal,
-                        itemCount: imgList.length, // The number of items in the list
-                        itemBuilder: (context, index) {
-                          return Container(
-                            width: 180,
-                            margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                            child: Card(
-                              clipBehavior: Clip.antiAlias, // Ensures the image corners are also clipped
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10), // Rounded corners for the card
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch, // Stretches children across the card's width
-                                children: <Widget>[
-                                  Expanded(
-                                    child: Image.asset(
-                                      imgList[index], // Replace with your image URL or asset
-                                      height: MediaQuery.of(context).size.height,
-                                      width: MediaQuery.of(context).size.width,
-                                      fit: BoxFit.cover, // Covers the space, maintaining aspect ratio
-                                    ),
-                                  ),
-                                  const Padding(
-                                    padding: EdgeInsets.all(10), // Padding for the text inside the card
-                                    child: Text(
-                                      'Digital Library', // Replace with your title text
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
+                        itemCount: bookDTOList.length,
+                        itemBuilder: (context, index){
+                          if(index < bookDTOList.length){
+                            BookDTO currentbook = bookDTOList[index];
+                            return FutureBuilder<String>(
+                                future: BookCard.getImageBase64(currentbook.imageId!),
+                                builder: (context, snapshot){
+                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                    return const CircularProgressIndicator();
+                                  } else if (snapshot.hasError) {
+                                    return const Text('');
+                                  } else {
+                                    String base64Image = snapshot.data!;
+                                    return GestureDetector(
+                                      onTap: (){
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => BookDetailsPage(
+                                                book: currentbook),
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
+                                        height: 140,
+                                        width: 110,
+                                        margin: const EdgeInsets.symmetric(horizontal: 2.0),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(10),
+                                          child: SizedBox.fromSize(
+                                            size: const Size.fromRadius(10), // Image radius
+                                            child: Stack(
+                                              alignment: Alignment.bottomCenter,
+                                              children: <Widget>[
+                                                Image.memory(
+                                                  base64Decode(base64Image),
+                                                  fit: BoxFit.cover,
+                                                  width: double.infinity,
+                                                  height: double.infinity,// Cover the card's upper part with the image
+                                                ),
+                                                BackdropFilter(
+                                                  filter: ui.ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0),
+                                                  child: Container(
+                                                    color: Constants.mainDarkColor.withOpacity(0.4),
+                                                  ),
+                                                ),
+                                                Align(
+                                                    alignment: Alignment.bottomLeft,
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.fromLTRB(5, 0, 0, 5),
+                                                      child: Stack(
+                                                        children: <Widget>[
+                                                          Text(
+                                                            currentbook.name!.length<10?currentbook.name!:"${currentbook.name!.substring(0,10)}...",
+                                                            style: const TextStyle(
+                                                                fontSize: 16,
+                                                                color:Colors.white
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                  const Padding(
-                                    padding: EdgeInsets.only(left: 10, right: 10, bottom: 10), // Padding for the subtitle text
-                                    child: Text(
-                                      'ACM', // Replace with your subtitle text
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      )
+                                    );
+                                  }
+                                }
+                            );
+                          }
+                          return null;
+                        }
+                    ),
                   ),
                 ),
+                FutureBuilder<UserDTO>(
+                  future: userFuture,
+                  builder: (context2, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      if (snapshot.error is CustomException) {
+                        CustomException customException = snapshot.error as CustomException;
+                        if (customException.message == 'NEED_LOGIN') {
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            showTopSnackBar(
+                              Overlay.of(context),
+                              const CustomSnackBar.error(
+                                message: "Session experied.",
+                                textAlign: TextAlign.center,
+                              ),
+                            );
+                            Navigator.pushReplacementNamed(context2, '/login');
+                          });
+                          return const Text('');
+                        } else {
+                          return const Text('');
+                        }
+                      } else {
+                        return const Text('');
+                      }
+                    } else {
+                      if(courseDTOList.isNotEmpty)
+                        return Padding(
+                          padding: const EdgeInsets.fromLTRB(8.0, 16.0, 0, 0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              const Text(
+                                'Courses',
+                                style: TextStyle(
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const Spacer(),
+                              TextButton(
+                                style: TextButton.styleFrom(
+                                  textStyle: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                onPressed: () {
+                                  if(userRole == "USER"){
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => GetCoursesScreen(),
+                                      ),
+                                    );
+                                  }else if(userRole == "LEC"){
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => AddCourseScreen(),
+                                      ),
+                                    );
+                                  }
+                                },
+                                child: const Text(
+                                  'MORE',
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              ),
+
+                            ],
+                          ),
+                        );
+                      return Text('');
+                    }
+                  },
+                ),
+                FutureBuilder<UserDTO>(
+                  future: userFuture,
+                  builder: (context2, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      if (snapshot.error is CustomException) {
+                        CustomException customException = snapshot.error as CustomException;
+                        if (customException.message == 'NEED_LOGIN') {
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            showTopSnackBar(
+                              Overlay.of(context),
+                              const CustomSnackBar.error(
+                                message: "Session experied.",
+                                textAlign: TextAlign.center,
+                              ),
+                            );
+                            Navigator.pushReplacementNamed(context2, '/login');
+                          });
+                          return const Text('');
+                        } else {
+                          return const Text('');
+                        }
+                      } else {
+                        return const Text('');
+                      }
+                    } else {
+                      if(courseDTOList.isNotEmpty) {
+                        return  Padding(
+                          padding: const EdgeInsets.fromLTRB(3.0, 3.0, 0, 0),
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(vertical: 2),
+                            height: 140,
+                            child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: courseDTOList.length,
+                                itemBuilder: (context, index){
+                                  if(index < courseDTOList.length){
+                                    CourseDTO current = courseDTOList[index];
+                                    return FutureBuilder<String>(
+                                        future: BookCard.getImageBase64(current.imageId!),
+                                        builder: (context, snapshot){
+                                          if (snapshot.connectionState == ConnectionState.waiting) {
+                                            return const CircularProgressIndicator();
+                                          } else if (snapshot.hasError) {
+                                            return const Text('');
+                                          } else {
+                                            String base64Image = snapshot.data!;
+                                            return GestureDetector(
+                                              onTap: (){
+                                                if(userRole == "USER"){
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) => CourseDetailPageUser(courseDTO: courseDTOList[index],),
+                                                    ),
+                                                  );
+                                                }else if(userRole == "LEC"){
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) => CourseDetailPage(courseId: courseDTOList[index].id!,),
+                                                    ),
+                                                  );
+                                                }
+
+                                              },
+                                              child: Container(
+                                                height: 140,
+                                                width: 110,
+                                                margin: const EdgeInsets.symmetric(horizontal: 2.0),
+                                                child: ClipRRect(
+                                                  borderRadius: BorderRadius.circular(10),
+                                                  child: SizedBox.fromSize(
+                                                    size: const Size.fromRadius(10), // Image radius
+                                                    child: Stack(
+                                                      alignment: Alignment.bottomCenter,
+                                                      children: <Widget>[
+                                                        Image.memory(
+                                                          base64Decode(base64Image),
+                                                          fit: BoxFit.cover,
+                                                          width: double.infinity,
+                                                          height: double.infinity,// Cover the card's upper part with the image
+                                                        ),
+                                                        BackdropFilter(
+                                                          filter: ui.ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0),
+                                                          child: Container(
+                                                            color: Constants.mainDarkColor.withOpacity(0.4),
+                                                          ),
+                                                        ),
+                                                        Align(
+                                                            alignment: Alignment.bottomLeft,
+                                                            child: Padding(
+                                                              padding: const EdgeInsets.fromLTRB(5, 0, 0, 5),
+                                                              child: Stack(
+                                                                children: <Widget>[
+                                                                  Text(
+                                                                    current.name!.length<10?current.name!:"${current.name!.substring(0,10)}...",
+                                                                    style: const TextStyle(
+                                                                        fontSize: 16,
+                                                                        color:Colors.white
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            )
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        }
+                                    );
+                                  }
+                                  return null;
+                                }
+                            ),
+                          ),
+                        );
+                      }
+                      return Text('');
+                    }
+                  },
+                ),
+
               ],
             ),
           ),

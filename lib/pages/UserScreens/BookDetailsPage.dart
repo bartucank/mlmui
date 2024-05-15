@@ -472,7 +472,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                               MaterialPageRoute(
                                 builder: (context) =>
                                     EbookDetailsPage(
-                                      ebook: result_ebook,),
+                                      ebookData: result_ebook.data!,),
                               ),
                             );
                           },

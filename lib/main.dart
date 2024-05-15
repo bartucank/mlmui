@@ -22,6 +22,7 @@ import 'package:mlmui/pages/Onboarding/LoginScreen.dart';
 import 'package:mlmui/pages/SplashScreen.dart';
 import 'package:mlmui/pages/UserScreens/BookListForUserScreen.dart';
 import 'package:mlmui/pages/UserScreens/CopyCard.dart';
+import 'package:mlmui/pages/UserScreens/CourseDetailPageUser.dart';
 import 'package:mlmui/pages/UserScreens/GetCoursesScreen.dart';
 import 'package:mlmui/pages/UserScreens/Queue.dart';
 import 'package:mlmui/pages/UserScreens/RoomListScreen.dart';
@@ -78,8 +79,8 @@ class MyApp extends StatelessWidget {
               '/bookdetails': (context) => BookDetailsPage(book: ModalRoute.of(context)?.settings.arguments as BookDTO),
               '/bookdetailsForLibrarian': (context) => BookDetailsPageForLibrarian(book: ModalRoute.of(context)?.settings.arguments as BookDTO),
               '/updatebookpage' : (context) => UpdateBookPage(),
-              '/ebookdetails': (context) => EbookDetailsPage(ebook: ModalRoute.of(context)?.settings.arguments as EbookDTO),
-              '/ebookdetailsForLibrarian': (context) => EbookDetailsPageForLibrarian(ebook: ModalRoute.of(context)?.settings.arguments as EbookDTO),
+              '/ebookdetails': (context) => EbookDetailsPage(ebookData: ModalRoute.of(context)?.settings.arguments as String),
+              '/ebookdetailsForLibrarian': (context) => EbookDetailsPageForLibrarian(ebookData: ModalRoute.of(context)?.settings.arguments as String),
               '/copycard':(context) => CopyCard(),
               '/copycardmanagement':(context) => CopyCardManagement(),
               '/queueuser':(context) => QueueUser(book: ModalRoute.of(context)?.settings.arguments as BookDTO),
@@ -92,6 +93,7 @@ class MyApp extends StatelessWidget {
               '/FavoriteListScreen':(context) => const FavoriteListScreen(),
               '/AddCourseScreen':(context) => AddCourseScreen(),
               '/getCoursesScreen':(context) => GetCoursesScreen(),
+              '/courseDetailPageForUser':(context) => CourseDetailPageUser(courseDTO: ModalRoute.of(context)?.settings.arguments as CourseDTO,),
               '/createCourse':(context) => CreateCourse(),
               '/coursedetailpage':(context) => CourseDetailPage(courseId: ModalRoute.of(context)?.settings.arguments as int),
             },

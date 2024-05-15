@@ -86,7 +86,6 @@ class _AddCourseScreen extends State<AddCourseScreen> {
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         key: _scaffoldKey,
         backgroundColor: Constants.mainBackgroundColor,
-        drawer: const MenuDrawerLibrarian(),
         appBar: AppBar(
           backgroundColor: Constants.mainRedColor,
           title: const Text('Course Management',

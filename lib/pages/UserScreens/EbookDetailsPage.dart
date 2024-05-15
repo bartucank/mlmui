@@ -8,9 +8,9 @@ import 'package:mlmui/models/EbookDTO.dart';
 import '../../service/constants.dart';
 
 class EbookDetailsPage extends StatefulWidget {
-  final EbookDTO ebook;
+  final String ebookData;
 
-  const EbookDetailsPage({Key? key, required this.ebook}) : super(key: key);
+  const EbookDetailsPage({Key? key, required this.ebookData}) : super(key: key);
 
   @override
   State<EbookDetailsPage> createState() => _EbookDetailsPageState();
@@ -23,7 +23,7 @@ class _EbookDetailsPageState extends State<EbookDetailsPage> {
   @override
   void initState() {
     super.initState();
-    Uint8List uint8List_ebook = base64Decode(widget.ebook.data!);
+    Uint8List uint8List_ebook = base64Decode(widget.ebookData);
     _epubController = EpubController(
       // Load document
       document: EpubReader.readBook(uint8List_ebook),

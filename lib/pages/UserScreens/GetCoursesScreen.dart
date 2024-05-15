@@ -10,6 +10,7 @@ import '../../components/CourseItem.dart';
 import 'package:mlmui/models/CourseDTOListResponse.dart';
 import '../../service/ApiService.dart';
 import '../../service/constants.dart';
+import 'CourseDetailPageUser.dart';
 
 class GetCoursesScreen extends StatefulWidget {
   const GetCoursesScreen({Key? key}) : super(key: key);
@@ -78,7 +79,7 @@ class _GetCoursesScreen extends State<GetCoursesScreen> {
         drawer: const MenuDrawerLibrarian(),
         appBar: AppBar(
           backgroundColor: Constants.mainRedColor,
-          title: const Text('Course Management',
+          title: const Text('Course List',
             style: TextStyle(
               color: Constants.whiteColor
             ),
@@ -117,15 +118,12 @@ class _GetCoursesScreen extends State<GetCoursesScreen> {
                     } else {
                       return GestureDetector(
                           onTap: () async {
-                            // Object a = await Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) => CourseDetailPage(courseId: courseDTOList[index].id!,),
-                            //   ),
-                            // );
-                            // if(a == 'reload'){
-                            //   fetchCourse();
-                            // }
+                            Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CourseDetailPageUser(courseDTO: courseDTOList[index],),
+                                  ),
+                                );
                           },
                           child: CourseItem(base64Image: snapshot.data!, courseDTO: courseDTOList[index],));
                     }

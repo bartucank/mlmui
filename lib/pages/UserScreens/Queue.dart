@@ -196,10 +196,6 @@ class _QueueUserState extends State<QueueUser>
                             width: _isContainerVisible?res_width * 0.9:0,
                             child: SlideAction(
                               text: "Enter Queue",
-                              textStyle: Theme.of(context).textTheme.headline6!.merge(
-                                  const TextStyle(
-                                      color: Constants.mainRedColor,
-                                      fontWeight: FontWeight.bold)),
                               key: _key,
                               onSubmit: () async {
                                 Map<String, dynamic> result = await apiService.enqueue(widget.book.id!);

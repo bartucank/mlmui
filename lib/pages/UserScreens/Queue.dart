@@ -98,13 +98,7 @@ class _QueueUserState extends State<QueueUser>
                 alignment: Alignment.center,
                 child: FadeInLeft(
                   delay: Duration(seconds: 1),
-                  child: Text("Queue Status",
-                      style: Theme.of(context)
-                          .textTheme
-                          .headline2!
-                          .merge(const TextStyle(
-                            color: Colors.white,
-                          ))),
+                  child: Text("Queue Status",),
                 ),
               ),
               const SizedBox(

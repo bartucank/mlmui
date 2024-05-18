@@ -161,8 +161,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           alignment: Alignment.topLeft,
           children: [
             Image(
-              image: AssetImage('assets/images/students.png'),
-              height: MediaQuery.of(context).size.height * 0.3,
+              image: AssetImage('assets/images/st3.jpg'),
+              height: MediaQuery.of(context).size.height * 0.25,
               width: MediaQuery.of(context).size.width,
               fit: BoxFit.cover,
             ),

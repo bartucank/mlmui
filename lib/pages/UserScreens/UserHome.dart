@@ -44,6 +44,7 @@ class _UserHomeState extends State<UserHome> {
   int size = 10;
   late Future<BookDTOListResponse> bookDTOListResponseFuture;
   List<BookDTO> bookDTOList = [];
+  List<BookDTO> recommendedBookDTOList = [];
   List<CourseDTO> courseDTOList = [];
   String? code;
   bool courseCanFetch = false;
@@ -76,19 +77,30 @@ class _UserHomeState extends State<UserHome> {
       BookDTOListResponse response =
       await apiService.getBooksBySpecification(request);
       setState(() {
+        bookDTOList.clear();
         bookDTOList.addAll(response.bookDTOList);
       });
     } catch (e) {
-      print("Error! $e");
+    }
+    request = {
+      "size": size,
+      "page":0,
+    };
+    try {
+      BookDTOListResponse response =
+      await apiService.getBookRecommendationBasedOnUser(request);
+      setState(() {
+        recommendedBookDTOList.clear();
+        recommendedBookDTOList.addAll(response.bookDTOList);
+      });
+    } catch (e) {
     }
   }
 
   void fetchCourses(String role) async{
 
 
-    print("buradayim4"+role);
     if(role == "LEC"){
-      print("buradayim5"+role);
       try {
         CourseDTOListResponse response = await apiService.getCourseForLecturer();
         setState(() {
@@ -99,7 +111,6 @@ class _UserHomeState extends State<UserHome> {
       }
     }else{
       try {
-      print("buradayim6"+role);
         CourseDTOListResponse response = await apiService.getCourseForUser();
         setState(() {
           courseDTOList.clear();
@@ -303,7 +314,6 @@ class _UserHomeState extends State<UserHome> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Text('');
                     } else if (snapshot.hasError) {
-                      print("error mu"+snapshot.hasError.toString());
                       if (snapshot.error is CustomException) {
                         CustomException customException = snapshot.error as CustomException;
                         if (customException.message == 'NEED_LOGIN') {
@@ -388,7 +398,7 @@ class _UserHomeState extends State<UserHome> {
 
                                     canPop: false,
                                     onScan: (String value) {
-                                      debugPrint(value);
+
                                       setState(() {
                                         code = value;
                                       });
@@ -416,7 +426,7 @@ class _UserHomeState extends State<UserHome> {
                                       refresh();
                                     },
                                     onDispose: () {
-                                      debugPrint("Barcode scanner disposed!");
+
                                     },
                                     controller: MobileScannerController(
                                       detectionSpeed: DetectionSpeed.noDuplicates,
@@ -424,7 +434,6 @@ class _UserHomeState extends State<UserHome> {
                                   ),
                                 ),
                               );
-                              print('Room Con. pressed');
 
                             },
                             color: Colors.green,
@@ -435,7 +444,6 @@ class _UserHomeState extends State<UserHome> {
 
 
                     }else{
-                      print(snapshot.data);
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
@@ -571,108 +579,110 @@ class _UserHomeState extends State<UserHome> {
                     ),
                   ),
                 ),//List of books
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(8.0, 25.0, 0, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      const Text(
-                        'Recommended Books',
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
+                if(recommendedBookDTOList.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(8.0, 25.0, 0, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        const Text(
+                          'Recommended Books',
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      const Spacer(),
+                        const Spacer(),
 
-                    ],
-                  ),
-                ),//Books
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(3.0, 3.0, 0, 0),
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 2),
-                    height: 140,
-                    child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: bookDTOList.length,
-                        itemBuilder: (context, index){
-                          if(index < bookDTOList.length){
-                            BookDTO currentbook = bookDTOList[index];
-                            return FutureBuilder<String>(
-                                future: BookCard.getImageBase64(currentbook.imageId!),
-                                builder: (context, snapshot){
-                                  if (snapshot.connectionState == ConnectionState.waiting) {
-                                    return const CircularProgressIndicator();
-                                  } else if (snapshot.hasError) {
-                                    return const Text('');
-                                  } else {
-                                    String base64Image = snapshot.data!;
-                                    return GestureDetector(
-                                      onTap: (){
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => BookDetailsPage(
-                                                book: currentbook),
-                                          ),
-                                        );
-                                      },
-                                      child: Container(
-                                        height: 140,
-                                        width: 110,
-                                        margin: const EdgeInsets.symmetric(horizontal: 2.0),
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(10),
-                                          child: SizedBox.fromSize(
-                                            size: const Size.fromRadius(10), // Image radius
-                                            child: Stack(
-                                              alignment: Alignment.bottomCenter,
-                                              children: <Widget>[
-                                                Image.memory(
-                                                  base64Decode(base64Image),
-                                                  fit: BoxFit.cover,
-                                                  width: double.infinity,
-                                                  height: double.infinity,// Cover the card's upper part with the image
-                                                ),
-                                                BackdropFilter(
-                                                  filter: ui.ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0),
-                                                  child: Container(
-                                                    color: Constants.mainDarkColor.withOpacity(0.4),
+                      ],
+                    ),
+                  ),//Books
+                if(recommendedBookDTOList.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(3.0, 3.0, 0, 0),
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 2),
+                      height: 140,
+                      child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: recommendedBookDTOList.length,
+                          itemBuilder: (context, index){
+                            if(index < recommendedBookDTOList.length){
+                              BookDTO currentbook = recommendedBookDTOList[index];
+                              return FutureBuilder<String>(
+                                  future: BookCard.getImageBase64(currentbook.imageId!),
+                                  builder: (context, snapshot){
+                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                      return const CircularProgressIndicator();
+                                    } else if (snapshot.hasError) {
+                                      return const Text('');
+                                    } else {
+                                      String base64Image = snapshot.data!;
+                                      return GestureDetector(
+                                        onTap: (){
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => BookDetailsPage(
+                                                  book: currentbook),
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                          height: 140,
+                                          width: 110,
+                                          margin: const EdgeInsets.symmetric(horizontal: 2.0),
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(10),
+                                            child: SizedBox.fromSize(
+                                              size: const Size.fromRadius(10), // Image radius
+                                              child: Stack(
+                                                alignment: Alignment.bottomCenter,
+                                                children: <Widget>[
+                                                  Image.memory(
+                                                    base64Decode(base64Image),
+                                                    fit: BoxFit.cover,
+                                                    width: double.infinity,
+                                                    height: double.infinity,// Cover the card's upper part with the image
                                                   ),
-                                                ),
-                                                Align(
-                                                    alignment: Alignment.bottomLeft,
-                                                    child: Padding(
-                                                      padding: const EdgeInsets.fromLTRB(5, 0, 0, 5),
-                                                      child: Stack(
-                                                        children: <Widget>[
-                                                          Text(
-                                                            currentbook.name!.length<10?currentbook.name!:"${currentbook.name!.substring(0,10)}...",
-                                                            style: const TextStyle(
-                                                                fontSize: 16,
-                                                                color:Colors.white
+                                                  BackdropFilter(
+                                                    filter: ui.ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0),
+                                                    child: Container(
+                                                      color: Constants.mainDarkColor.withOpacity(0.4),
+                                                    ),
+                                                  ),
+                                                  Align(
+                                                      alignment: Alignment.bottomLeft,
+                                                      child: Padding(
+                                                        padding: const EdgeInsets.fromLTRB(5, 0, 0, 5),
+                                                        child: Stack(
+                                                          children: <Widget>[
+                                                            Text(
+                                                              currentbook.name!.length<10?currentbook.name!:"${currentbook.name!.substring(0,10)}...",
+                                                              style: const TextStyle(
+                                                                  fontSize: 16,
+                                                                  color:Colors.white
+                                                              ),
                                                             ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    )
-                                                ),
-                                              ],
+                                                          ],
+                                                        ),
+                                                      )
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    );
+                                      );
+                                    }
                                   }
-                                }
-                            );
+                              );
+                            }
+                            return null;
                           }
-                          return null;
-                        }
+                      ),
                     ),
                   ),
-                ),
                 FutureBuilder<UserDTO>(
                   future: userFuture,
                   builder: (context2, snapshot) {

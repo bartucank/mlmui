@@ -142,6 +142,45 @@ class ApiService {
     return BookDTOListResponse.fromJson(jsonResponse['data']);
   }
 
+  Future<BookDTOListResponse> getBookRecommendationBasedOnUser(dynamic body) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.post(
+      Uri.parse(
+          '${Constants.apiBaseUrl}/api/user/book/getBookRecommendation'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+      body: "{}",
+    );
+    print(response.statusCode);
+    if (response.statusCode == 401) {
+      throw CustomException("NEED_LOGIN");
+    }
+    print(response.body);
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+    return BookDTOListResponse.fromJson(jsonResponse['data']);
+  }
+
+  Future<BookDTOListResponse> getBookRecommendationBasedOnBook(int bookId) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.post(
+      Uri.parse(
+          '${Constants.apiBaseUrl}/api/user/book/getBookRecommendation?bookId=$bookId'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+      },
+      body: "{}",
+    );
+    if (response.statusCode == 401) {
+      throw CustomException("NEED_LOGIN");
+    }
+    print(response.body);
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+    return BookDTOListResponse.fromJson(jsonResponse['data']);
+  }
+
   Future<OpenLibraryBookDetails> getOpenLibraryBookDetails(String isbn) async {
     final jwtToken = await getJwtToken();
     final response = await http.get(

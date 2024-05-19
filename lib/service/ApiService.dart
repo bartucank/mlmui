@@ -1512,7 +1512,8 @@ class ApiService {
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
     return CourseDTO.fromJson(jsonResponse['data']);
   }
-
+  /*print('Response status: ${response.statusCode}');
+  print('Response body: ${response.body}');*/
   Future<String> deleteShelf(int oldShelfId) async {
     final jwtToken = await getJwtToken();
     final response = await http.delete(
@@ -1623,9 +1624,83 @@ class ApiService {
     return jsonResponse['data']['statusCode'];
   }
 
-  /*print('Response status: ${response.statusCode}');
-  print('Response body: ${response.body}');*/
 
+  Future<String> startForgotPasswordProcess(Map<String, dynamic> body) async {
+    try {
+      final jwtToken = await getJwtToken();
+      final response = await http.post(
+        Uri.parse('${Constants.apiBaseUrl}/api/auth/startForgotPasswordProcess'),
+        headers: {
+          'Authorization': 'Bearer $jwtToken',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(body),
+      );
+
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+      if (response.statusCode == 401) {
+        throw CustomException("USER_NOT_FOUND_OR_INVALID_REQUEST");
+      }
+      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+      return jsonResponse['data']['statusCode'];
+    } catch (e) {
+      print('Error: $e');
+      return "-1";
+    }
+  }
+
+  Future<bool> checkCodeForResetPassword(String code) async {
+    try {
+      final response = await http.post(
+        Uri.parse('${Constants.apiBaseUrl}/api/auth/checkCodeForResetPassword?code=$code'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode("{}"),
+      );
+
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return jsonResponse['data'];
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print('Error: $e');
+      return false;
+    }
+  }
+
+  Future<Map<String, dynamic>> completeCodeForResetPassword(Map<String, dynamic> body) async {
+    try {
+      final jwtToken = await getJwtToken();
+      final response = await http.post(
+        Uri.parse('${Constants.apiBaseUrl}/api/auth/completeCodeForResetPassword'),
+        headers: {
+          'Authorization': 'Bearer $jwtToken',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(body),
+      );
+
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        return {'error': 'Unexpected error!'};
+      }
+    } catch (e) {
+      print('Error: $e');
+      return {'error': e.toString()};
+    }
+  }
 
 
 

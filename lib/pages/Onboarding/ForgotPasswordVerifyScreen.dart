@@ -82,6 +82,7 @@ class _ForgotPasswordVerifyScreenState
       });
       if (response['message'] == "Success") {
         _changePasswordSuccess();
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(

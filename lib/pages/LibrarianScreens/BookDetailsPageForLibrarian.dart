@@ -803,11 +803,7 @@ class _BookDetailsPageForLibrarian extends State<BookDetailsPageForLibrarian> {
                                         ),
                                         SizedBox(height: 4),
                                         Text(
-                                          '${data.content}',
-                                          style: Theme.of(context).textTheme.caption!.copyWith(
-                                            fontWeight: FontWeight.w300,
-                                            color: Colors.black,
-                                          ),
+                                          '${data.content}'
                                         ),
                                       ],
                                     ),

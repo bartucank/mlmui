@@ -1513,10 +1513,10 @@ class ApiService {
     return CourseDTO.fromJson(jsonResponse['data']);
   }
 
-  Future<String> deleteShelf(int oldShelfId) async {
+  Future<String> deleteShelf(int newShelfId, int oldShelfId) async {
     final jwtToken = await getJwtToken();
     final response = await http.delete(
-      Uri.parse('${Constants.apiBaseUrl}/api/admin/deleteShelf?courseStudentId=$oldShelfId'),
+      Uri.parse('${Constants.apiBaseUrl}/api/admin/deleteShelf?newShelfId=$newShelfId&oldShelfId=$oldShelfId'),
       headers: {
         'Authorization': 'Bearer $jwtToken',
         'Content-Type': 'application/json',
@@ -1589,6 +1589,7 @@ class ApiService {
         'Content-Type': 'application/json',
 
       },
+      body: jsonEncode(body),
     );
     print('Response status: ${response.statusCode}');
     print('Response body: ${response.body}');

@@ -68,7 +68,11 @@ class _UserHomeState extends State<UserHome> {
     });
       fetchCourses(userRole);
   }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
+  }
   void fetchBooks() async{
     Map<String, dynamic> request = {
       "size": size,
@@ -405,25 +409,7 @@ class _UserHomeState extends State<UserHome> {
                                     },
                                     onDetect: (p0) async {
                                       Navigator.pop(context);
-                                      Object a = await apiService.approveReservation(code!);
-                                      if(a != null && a == true){
-                                        showTopSnackBar(
-                                          Overlay.of(context),
-                                          const CustomSnackBar.success(
-                                            message: "Reservation Approved!",
-                                            textAlign: TextAlign.left,
-                                          ),
-                                        );
-                                      }else{
-                                        showTopSnackBar(
-                                          Overlay.of(context),
-                                          const CustomSnackBar.error(
-                                            message: "Reservation could not approved :(",
-                                            textAlign: TextAlign.left,
-                                          ),
-                                        );
-                                      }
-                                      refresh();
+
                                     },
                                     onDispose: () {
 
@@ -434,6 +420,29 @@ class _UserHomeState extends State<UserHome> {
                                   ),
                                 ),
                               );
+
+                              Object a = await apiService.approveReservation(code!);
+                              if(a == true){
+                                print("aaaabbbb:"+a.toString());
+                                showTopSnackBar(
+                                  Overlay.of(context),
+                                  const CustomSnackBar.success(
+                                    message: "Reservation Approved!",
+                                    textAlign: TextAlign.left,
+                                  ),
+                                );
+                                refresh();
+                              }else{
+                                print("aaaaccc:"+a.toString());
+                                showTopSnackBar(
+                                  Overlay.of(context),
+                                  const CustomSnackBar.error(
+                                    message: "Reservation could not approved :(",
+                                    textAlign: TextAlign.left,
+                                  ),
+                                );
+                              }
+                              refresh();
 
                             },
                             color: Colors.green,

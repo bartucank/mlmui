@@ -1155,15 +1155,17 @@ class ApiService {
 
   Future<bool> approveReservation(String key) async{
     final jwtToken = await getJwtToken();
-    final response = await http.get(
+    final response = await http.post(
       Uri.parse('${Constants.apiBaseUrl}/api/user/approveReservation?key=$key'),
       headers: {
         'Authorization': 'Bearer $jwtToken',
         'Content-Type': 'application/json',
       },
+      body: "{}"
 
     );
 
+    print("resp body:"+response.statusCode.toString());
     if(response.statusCode == 401){
       throw CustomException("NEED_LOGIN");
     }

@@ -175,14 +175,6 @@ class _ShelfManagementScreen extends State<ShelfManagementScreen> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 TextField(
-                  controller: _idController,
-                  decoration: InputDecoration(
-                    labelText: "ID",
-                    hintText: "Enter the ID",
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
-                TextField(
                   controller: _floorController,
                   decoration: InputDecoration(
                     labelText: "Floor",

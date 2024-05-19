@@ -798,36 +798,16 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                                       children: [
                                         Text(
                                           "Given Star: ${review.star}",
-                                          style: Theme.of(context).textTheme.caption!.copyWith(
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.black,
-                                          ),
+
                                         ),
                                         SizedBox(height: 4),
                                         Text(
                                           '${data.content}',
-                                          style: Theme.of(context).textTheme.caption!.copyWith(
-                                            fontWeight: FontWeight.w300,
-                                            color: Colors.black,
-                                          ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                  DefaultTextStyle(
-                                    style: Theme.of(context).textTheme.caption!.copyWith(
-                                      color: Colors.grey[700],
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    child: Padding(
-                                      padding: EdgeInsets.only(top: 4),
-                                      child: Row(
-                                        children: [
-                                          // Ekstra öğeler buraya eklenebilir
-                                        ],
-                                      ),
-                                    ),
-                                  ),
+
                                 ],
                               );
                             },

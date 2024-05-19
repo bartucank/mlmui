@@ -808,20 +808,7 @@ class _BookDetailsPageForLibrarian extends State<BookDetailsPageForLibrarian> {
                                       ],
                                     ),
                                   ),
-                                  DefaultTextStyle(
-                                    style: Theme.of(context).textTheme.caption!.copyWith(
-                                      color: Colors.grey[700],
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    child: Padding(
-                                      padding: EdgeInsets.only(top: 4),
-                                      child: Row(
-                                        children: [
-                                          // Ekstra öğeler buraya eklenebilir
-                                        ],
-                                      ),
-                                    ),
-                                  ),
+
                                 ],
                               );
                             },

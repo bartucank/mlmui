@@ -147,7 +147,6 @@ class _CreateCourse extends State<CreateCourse>{
   Widget build(BuildContext context){
     return Scaffold(
       key: _scaffoldKey,
-      drawer: const MenuDrawerLibrarian(),
       appBar: AppBar(
         backgroundColor: Constants.mainRedColor,
         title: Text('Create a course',style: TextStyle(color: Constants.whiteColor),),
@@ -155,6 +154,8 @@ class _CreateCourse extends State<CreateCourse>{
         leading: IconButton(
           icon: Icon(Icons.arrow_back,color: Constants.whiteColor,),
           onPressed: () {
+
+            FocusManager.instance.primaryFocus?.unfocus();
             Navigator.pop(context);
           },
         ),

@@ -460,6 +460,7 @@ class _ShelfManagementScreen extends State<ShelfManagementScreen> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back,color: Constants.whiteColor,),
             onPressed: () {
+              FocusManager.instance.primaryFocus?.unfocus();
               Navigator.pop(context);
             },
           ),

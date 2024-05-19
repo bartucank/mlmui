@@ -190,8 +190,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         Padding(
                           padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
                           child: TextField(
+                            obscureText: true,
+                            enableSuggestions: false,
+                            autocorrect: false,
                             controller: _passwordController,
-                            obscureText: false,
                             textAlign: TextAlign.start,
                             maxLines: 1,
                             style: TextStyle(

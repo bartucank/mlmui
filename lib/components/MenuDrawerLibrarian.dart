@@ -126,6 +126,14 @@ class MenuDrawerLibrarian extends StatelessWidget {
             },
           ),
 
+          ListTile(
+            leading: const Icon(Icons.library_books_outlined),
+            title: const Text("Shelf Management"),
+            onTap: () {
+              Navigator.pushNamed(context, '/shelfmanagementscreen');
+            },
+          ),
+
           const Divider(color: Constants.mainDarkColor),
           ListTile(
             leading: const Icon(Icons.logout_outlined),

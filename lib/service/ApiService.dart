@@ -1337,6 +1337,7 @@ class ApiService {
 
     return jsonResponse['data']['statusCode'];
   }
+
   Future<CourseDTO> getCourseByIdForLecturer(int courseId) async {
     final jwtToken = await getJwtToken();
     final response = await http.get(
@@ -1354,6 +1355,94 @@ class ApiService {
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
     return CourseDTO.fromJson(jsonResponse['data']);
   }
+
+  Future<String> deleteShelf(int oldShelfId) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.delete(
+      Uri.parse('${Constants.apiBaseUrl}/api/admin/deleteShelf?courseStudentId=$oldShelfId'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+
+      },
+    );
+
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+    return jsonResponse['data']['statusCode'];
+  }
+
+
+  Future<String> moveShelf(int newShelfId, int oldShelfId) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.put(
+      Uri.parse('${Constants
+          .apiBaseUrl}/api/admin/moveShelf?newShelfId=$newShelfId&oldShelfId=$oldShelfId'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+
+      },
+    );
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+    if (response.statusCode == 401) {
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+    return jsonResponse['data']['statusCode'];
+  }
+
+
+  Future<String> createShelf(dynamic body) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.post(
+      Uri.parse('${Constants
+          .apiBaseUrl}/api/admin/shelf/create'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+
+      },
+      body: jsonEncode(body),
+    );
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+    if (response.statusCode == 401) {
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+    return jsonResponse['data']['statusCode'];
+  }
+
+  Future<String> updateShelf(dynamic body) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.put(
+      Uri.parse('${Constants
+          .apiBaseUrl}/api/admin/shelf/update'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+
+      },
+    );
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+    if (response.statusCode == 401) {
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+    return jsonResponse['data']['statusCode'];
+  }
+
   /*print('Response status: ${response.statusCode}');
   print('Response body: ${response.body}');*/
 

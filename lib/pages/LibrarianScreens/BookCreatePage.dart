@@ -47,7 +47,7 @@ class _BookCreatePageState extends State<BookCreatePage> {
   bool isLoading = false;
 
 
-  ShelfDTO _selectedValue = new ShelfDTO(-1, "-1");
+  ShelfDTO _selectedValue = new ShelfDTO(-1, "-1",1);
   BookCategoryEnumDTO _selectedValue2 = new BookCategoryEnumDTO("-1", "-1");
   void saveBook() async {
     setState(() {

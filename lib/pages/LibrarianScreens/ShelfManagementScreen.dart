@@ -1,10 +1,10 @@
 import 'dart:async';
-
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:mlmui/components/ShelfCard.dart';
 import 'package:mlmui/models/BookDTO.dart';
 import 'package:mlmui/models/UserNamesDTO.dart';
 import 'package:mlmui/models/UserNamesDTOListResponse.dart';
@@ -40,11 +40,13 @@ class _ShelfManagementScreen extends State<ShelfManagementScreen> {
   int size =kIsWeb?10:10;
   int totalSize = 0;
   int totalPage = 1000;
-  List<ShelfDTO> shelfDTO = [];
+  List<ShelfDTO> shelfDTOList = [];
   GlobalKey<ArtDialogState> _artDialogKey = GlobalKey<ArtDialogState>();
   bool isLoading = false;
-
+  TextEditingController _floorController = TextEditingController();
+  TextEditingController _idController = TextEditingController();
   bool _switchValue = false;
+  late int newId;
 
 
 
@@ -53,25 +55,315 @@ class _ShelfManagementScreen extends State<ShelfManagementScreen> {
       ShelfDTOListResponse response =
       await apiService.getShelfDTOListResponse();
       setState(() {
-        shelfDTO.addAll(response.shelfDTOList);
+        shelfDTOList.addAll(response.shelfDTOList);
       });
     }catch(e){
       print("Error! $e");
     }
   }
 
+  void removeShelf(ShelfDTO shelf) async {
+    try {
+      String response = await apiService.deleteShelf(shelf.id);
+      print("Shelf deleted: $response");
+      fetchShelfs();
+    } catch (e) {
+      print("Error deleting shelf: $e");
+    }
+  }
+
+  void showDeleteDialog(BuildContext context, ShelfDTO shelf) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Delete Shelf"),
+            actions: <Widget>[
+              TextButton(
+                child: Text("Next"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  showDeleteConfirmation(context, shelf);
+                },
+              ),
+              TextButton(
+                child: Text("Cancel"),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          );
+        }
+    );
+  }
+
+  void showDeleteConfirmation(BuildContext context, ShelfDTO shelf) {
+    ArtSweetAlert.show(
+        context: context,
+        artDialogArgs: ArtDialogArgs(
+            type: ArtSweetAlertType.warning,
+            title: "Are you sure?",
+            text: "This will delete the shelf",
+            confirmButtonText: "Delete",
+            cancelButtonText: "Cancel",
+            showCancelBtn: true,
+            onConfirm: () {
+              removeShelf(shelf);
+              Navigator.pop(context);
+            }
+        )
+    );
+  }
+
+  void moveShelf(ShelfDTO shelf,int newId) async {
+    if (newId == null) {
+      print("Invalid ID entered");
+      return;
+    }
+
+    try {
+      String response = await apiService.moveShelf(newId,shelf.id);
+      print("Shelf deleted: $response");
+      fetchShelfs();
+    } catch (e) {
+      print("Error deleting shelf: $e");
+    }
+  }
+
+  void showMoveDialog(BuildContext context, ShelfDTO shelf) {
+    final TextEditingController newIdController = TextEditingController();
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Enter New ID"),
+            content: TextField(
+              controller: newIdController,
+              decoration: InputDecoration(
+                labelText: "New ID",
+                hintText: "Enter the new ID for deletion",
+              ),
+              keyboardType: TextInputType.number,
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text("Next"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  int? newId = int.tryParse(newIdController.text);
+                  if (newId != null) {
+                    showDeleteConfirmation(context, shelf);
+                  } else {
+                    showError(context, "Invalid ID Entered");
+                  }
+                },
+              ),
+              TextButton(
+                child: Text("Cancel"),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          );
+        }
+    );
+  }
+
+
+  void showError(BuildContext context, String message) {
+    ArtSweetAlert.show(
+        context: context,
+        artDialogArgs: ArtDialogArgs(
+            type: ArtSweetAlertType.danger,
+            title: message
+        )
+    );
+  }
+
+  void showMoveConfirmation(BuildContext context, ShelfDTO shelf) {
+    ArtSweetAlert.show(
+        context: context,
+        artDialogArgs: ArtDialogArgs(
+            type: ArtSweetAlertType.warning,
+            title: "Are you sure?",
+            text: "This will move the shelf with new ID: $newId",
+            confirmButtonText: "Delete",
+            cancelButtonText: "Cancel",
+            showCancelBtn: true,
+            onConfirm: () {
+              moveShelf(shelf,newId);
+              Navigator.pop(context);
+            }
+        )
+    );
+  }
+
+  void saveShelf() async {
+    if (_floorController.text.isEmpty) {
+      ArtSweetAlert.show(
+        context: context,
+        artDialogArgs: ArtDialogArgs(
+          type: ArtSweetAlertType.danger,
+          title: "Shelf Floor cannot be empty.",
+        ),
+      );
+      return;
+    }
+    setState(() {
+      isLoading = true;
+    });
+    Map<String, dynamic> request = {
+      "floor": _floorController.text,
+      "id": _idController.text,
+    };
+    try {
+      String result = await apiService.createShelf(request);
+      setState(() {
+        isLoading = false;
+      });
+      if (result == "S") {
+        ArtSweetAlert.show(
+          context: context,
+          artDialogArgs: ArtDialogArgs(
+            type: ArtSweetAlertType.success,
+            title: "Success!",
+          ),
+        );
+        Navigator.pop(context, "s");
+      } else {
+        ArtSweetAlert.show(
+          context: context,
+          artDialogArgs: ArtDialogArgs(
+            type: ArtSweetAlertType.warning,
+            title: "Unexpected error.",
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      ArtSweetAlert.show(
+        context: context,
+        artDialogArgs: ArtDialogArgs(
+          type: ArtSweetAlertType.danger,
+          title: "Unexpected error. Please contact system administrator.",
+        ),
+      );
+    }
+  }
+
+  void createShelf(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Create New Shelf"),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                TextField(
+                  controller: _idController,
+                  decoration: InputDecoration(
+                    labelText: "ID",
+                    hintText: "Enter the ID",
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                TextField(
+                  controller: _floorController,
+                  decoration: InputDecoration(
+                    labelText: "Floor",
+                    hintText: "Enter the Floor",
+                  ),
+                  keyboardType: TextInputType.text,
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Cancel", style: TextStyle(color: Colors.black)),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text("Create", style: TextStyle(color: Colors.black)),
+              onPressed: () {
+                saveShelf();
+                fetchShelfs();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void updateShelf() async {
+    if (_floorController.text.isEmpty) {
+      ArtSweetAlert.show(
+        context: context,
+        artDialogArgs: ArtDialogArgs(
+          type: ArtSweetAlertType.danger,
+          title: "Shelf Floor cannot be empty.",
+        ),
+      );
+      return;
+    }
+    setState(() {
+      isLoading = true;
+    });
+    Map<String, dynamic> request = {
+      "floor": _floorController.text,
+      "id": _idController.text,
+    };
+    try {
+      String result = await apiService.updateShelf(request);
+      setState(() {
+        isLoading = false;
+      });
+      if (result == "S") {
+        ArtSweetAlert.show(
+          context: context,
+          artDialogArgs: ArtDialogArgs(
+            type: ArtSweetAlertType.success,
+            title: "Success!",
+          ),
+        );
+        Navigator.pop(context, "s");
+      } else {
+        ArtSweetAlert.show(
+          context: context,
+          artDialogArgs: ArtDialogArgs(
+            type: ArtSweetAlertType.warning,
+            title: "Unexpected error.",
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      ArtSweetAlert.show(
+        context: context,
+        artDialogArgs: ArtDialogArgs(
+          type: ArtSweetAlertType.danger,
+          title: "Unexpected error. Please contact system administrator.",
+        ),
+      );
+    }
+  }
+
+
+
+
 
   @override
   void initState() {
     super.initState();
-    //fetchFirstBooks();
-    listcontroller.addListener(() {
-      if (listcontroller.position.maxScrollExtent == listcontroller.offset) {
-        //fetchMoreBook();
-      }
-    });
-    //_dropdownItemsForUsers.insert(0, UserNamesDTO("Select a user", -1));
-
+    fetchShelfs();
   }
 
   @override
@@ -85,11 +377,8 @@ class _ShelfManagementScreen extends State<ShelfManagementScreen> {
       return;
     }
     setState(() {
-      //bookDTOList.clear();
+      fetchShelfs();
     });
-    page = -1;
-    size = 10;
-    //fetchFirstBooks();
   }
 
 
@@ -114,6 +403,14 @@ class _ShelfManagementScreen extends State<ShelfManagementScreen> {
               Navigator.pop(context);
             },
           ),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.add, color: Constants.whiteColor),
+              onPressed: () {
+                createShelf(context);  // Call the function that handles shelf creation
+              },
+            )
+          ],
         ),
       body:WeSlide(
         controller: weSlideController,
@@ -140,37 +437,51 @@ class _ShelfManagementScreen extends State<ShelfManagementScreen> {
         ),
         body: Padding(
           padding:const EdgeInsets.fromLTRB(0, 0, 0, 80),
-          child: shelfDTO.isEmpty ? const Text("")
+          child: shelfDTOList.isEmpty ? const Text("")
               : RefreshIndicator(
               onRefresh: refresh,
             child: ListView.builder(
               controller: listcontroller,
-              itemCount: shelfDTO.length + 1,
+              itemCount: shelfDTOList.length + 1,
               itemBuilder: (context2, index) {
-                if (index < shelfDTO.length) {
-                  ShelfDTO currentShelf = shelfDTO[index];
+                if (index < shelfDTOList.length) {
+                  ShelfDTO currentShelf = shelfDTOList[index];
                   return Slidable(
                     endActionPane: ActionPane(
                       motion: const StretchMotion(),
                       children: [
-                        SlidableAction(
-                            backgroundColor: Colors.blue,
-                            icon: Icons.edit,
-                            label: 'Delete',
-                            onPressed: (context) {
-                              //removeFavorite(currentbook);
-                            }
-                        ),
+                        if (currentShelf.bookCount == 0 || currentShelf.bookCount == null)
+                          SlidableAction(
+                              backgroundColor: Colors.red,
+                              icon: Icons.delete,
+                              label: 'Delete',
+                              onPressed: (context) {
+                                showDeleteDialog(context, currentShelf);
+                              }
+                          ),
+                        if ((currentShelf.bookCount ?? 0) > 0)
+                          SlidableAction(
+                              backgroundColor: Colors.blue,
+                              icon: Icons.move_up,
+                              label: 'Move',
+                              onPressed: (context) {
+                                showMoveDialog(context, currentShelf);
+                              }
+                          ),
                         SlidableAction(
                           backgroundColor: Colors.green,
                           icon: Icons.format_list_bulleted,
                           label: 'Update',
-                          onPressed: (BuildContext context) {  },
+                          onPressed: (context) {
+                            _idController = TextEditingController(text: currentShelf.id.toString());
+                            _floorController = TextEditingController(text: currentShelf.floor);
+                            createShelf(context);
+                          },
                         )
                       ],
                     ),
                     child: ListTile(
-                      
+                      title: ShelfCard(shelf: currentShelf),
                     ),
                   );
                 }

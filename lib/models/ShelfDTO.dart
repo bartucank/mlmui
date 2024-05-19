@@ -4,11 +4,13 @@ part 'ShelfDTO.g.dart';
 class ShelfDTO {
   int id;
   String floor;
+  int? bookCount;
 
   ShelfDTO(
       this.id,
-
-      this.floor);
+      this.floor,
+      this.bookCount
+      );
 
 
   factory ShelfDTO.fromJson(Map<String,dynamic> data) => _$ShelfDTOFromJson(data);

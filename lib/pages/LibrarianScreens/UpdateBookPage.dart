@@ -58,7 +58,7 @@ class _UpdateBookPage extends State<UpdateBookPage> {
   List<ShelfDTO> _dropdownItems = [];
   List<BookCategoryEnumDTO> _dropdownItems2 = [];
 
-  ShelfDTO _selectedValue = new ShelfDTO(-1, "-1");
+  ShelfDTO _selectedValue = new ShelfDTO(-1, "-1", 1);
   BookCategoryEnumDTO _selectedValue2 = new BookCategoryEnumDTO("-1", "-1");
   late String _base64Image;
   int defaultImg = 1;

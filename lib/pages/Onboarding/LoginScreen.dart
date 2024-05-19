@@ -6,6 +6,7 @@ import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import '../../models/UserDTO.dart';
 import '../../service/ApiService.dart';
 import '../../service/CacheManager.dart';
+import 'ForgotPasswordScreen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -236,7 +237,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
                           child: GestureDetector(
                             onTap: (){
-                              print("clicked");
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => ForgotPasswordScreen()),
+                              );
                             },
                             child: Align(
                               alignment: Alignment.bottomRight,

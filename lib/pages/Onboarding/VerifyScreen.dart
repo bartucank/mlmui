@@ -115,7 +115,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
             Padding(
               padding: EdgeInsets.all(30),
               child: Text(
-                "To verify your account, please enter code that send your metu mail account.",
+                "To verify your account, please enter the code that is sent your metu mail account.",
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.clip,
                 style: TextStyle(

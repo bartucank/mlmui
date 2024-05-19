@@ -1513,7 +1513,29 @@ class ApiService {
     return CourseDTO.fromJson(jsonResponse['data']);
   }
 
-  Future<String> deleteShelf(int newShelfId, int oldShelfId) async {
+  Future<String> deleteShelf(int oldShelfId) async {
+    final jwtToken = await getJwtToken();
+    final response = await http.delete(
+      Uri.parse('${Constants.apiBaseUrl}/api/admin/deleteShelf?oldShelfId=$oldShelfId'),
+      headers: {
+        'Authorization': 'Bearer $jwtToken',
+        'Content-Type': 'application/json',
+
+      },
+    );
+
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+    if(response.statusCode == 401){
+      throw CustomException("NEED_LOGIN");
+    }
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+    return jsonResponse['data']['statusCode'];
+  }
+
+
+  Future<String> moveAndDeleteShelf(int newShelfId, int oldShelfId) async {
     final jwtToken = await getJwtToken();
     final response = await http.delete(
       Uri.parse('${Constants.apiBaseUrl}/api/admin/deleteShelf?newShelfId=$newShelfId&oldShelfId=$oldShelfId'),

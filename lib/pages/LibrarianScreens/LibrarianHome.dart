@@ -167,157 +167,164 @@ class _LibrarianHomeState extends State<LibrarianHome> {
           },
         ),
       ),
-      body: Center(
-        child: FutureBuilder<UserDTO>(
-          future: userFuture,
-          builder: (context2, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
-            } else if (snapshot.hasError) {
-              if (snapshot.error is CustomException) {
-                CustomException customException = snapshot.error as CustomException;
-                if (customException.message == 'NEED_LOGIN') {
-                  WidgetsBinding.instance!.addPostFrameCallback((_) {
-                    showTopSnackBar(
-                      Overlay.of(context),
-                      CustomSnackBar.error(
-                        message: "Session experied.",
-                        textAlign: TextAlign.center,
-                      ),
-                    );
-                    Navigator.pushReplacementNamed(context2, '/login');
-                  });
-                  return Text('');
-                } else {
-                  return Text('');
-                }
-              } else {
-                return Text('');
-              }
-            } else {
-              //final user = snapshot.data;
-              //return Text('User lıb: ${user?.username}');
-              // Return the Information Cards for the Librarian
-              // Titles, Values, and the TopColor can be changed
-              // ,and the data of them can be taken from somewhere else
-              return Padding(padding: EdgeInsets.all(16),
-                  child: FutureBuilder<StatisticsDTO>(
-                    future: statisticsFuture,
-                    builder: (BuildContext context, AsyncSnapshot<StatisticsDTO> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return CircularProgressIndicator();
-                      } else if (snapshot.hasError) {
-                        print(snapshot.error);
-                        if (snapshot.error is CustomException) {
-                          CustomException customException = snapshot.error as CustomException;
-                          if (customException.message == 'NEED_LOGIN') {
-                            WidgetsBinding.instance!.addPostFrameCallback((_) {
-                              showTopSnackBar(
-                                Overlay.of(context),
-                                CustomSnackBar.error(
-                                  message: "Session experied.",
-                                  textAlign: TextAlign.center,
-                                ),
-                              );
-                              Navigator.pushReplacementNamed(context2, '/login');
-                            });
-                            return Text('Statistics are not available for now.4');
-                          } else {
-                            return Text('Statistics are not available for now.5');
-                          }
-                        } else {
-                          return Text('Statistics are not available for now.');
-                        }
-                      } else{
-                        final statistics = snapshot.data;
-                        return RefreshIndicator(
-                          onRefresh: refresh,
-                          child: SingleChildScrollView(
-                            child: Padding(padding: const EdgeInsets.all(16),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: <Widget>[
-                                      InfoCard(
-                                        title: "Total Users:",
-                                        value: statistics!.totalUserCount ?? 0,
-                                        onTap: () {
-                                          // showReceiptHistoryPopup(context);
-                                        },
-                                        topColor: Colors.orange,
-                                      ),
-                                      const SizedBox( width: 10,), // Space b/w Cards
-                                      InfoCard(
-                                        title: "Total Books:",
-                                        value: statistics.totalBookCount ?? 0,
-                                        topColor: Colors.lightGreen,
-                                        onTap: () {},
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: <Widget>[
-                                      InfoCard(
-                                        title: "Total Books at the Library:",
-                                        value: statistics.availableBookCount ?? 0,
-                                        //value: statistics['data']['availableBookCount'],
-                                        topColor: Colors.redAccent,
-                                        onTap: () {},
-                                      ),
-                                      const SizedBox( width: 10,), // Space b/w Cards
-                                      InfoCard(
-                                        title: "Total Books out of Library:",
-                                        value: statistics.unavailableBookCount ?? 0,
-                                        //value: statistics['data']['unavailableBookCount'],
-                                        onTap: () {},
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: <Widget>[
-                                      InfoCard(
-                                        title: "Total CopyCard Balance:",
-                                        value: statistics.sumOfBalance ?? 0,
-                                        onTap: () {},
-                                        topColor: Colors.yellow,
-                                      ),
-                                      const SizedBox( width: 10,), // Space b/w Cards
-                                      InfoCard(
-                                        title: "Total Debt:",
-                                        value: statistics.sumOfDebt ?? 0,
-                                        topColor: Colors.blue,
-                                        onTap: () {},
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: <Widget>[
-                                      InfoCard(
-                                        title: "Total Queue:",
-                                        value: statistics.queueCount ?? 0,
-                                        onTap: () {},
-                                        topColor: Colors.greenAccent,
-                                      ),
-                                      const SizedBox( width: 0,), // Space b/w Cards
-                                      // InfoCard(
-                                      //   title: "Total Books:",
-                                      //   value: statistics.totalBookCount,
-                                      //   topColor: Colors.lightGreen,
-                                      //   onTap: () {},
-                                      // ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
+      body: RefreshIndicator(
+    onRefresh: refresh,
+
+        child: SingleChildScrollView(
+          physics: ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+          child: Center(
+            child: FutureBuilder<UserDTO>(
+              future: userFuture,
+              builder: (context2, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  if (snapshot.error is CustomException) {
+                    CustomException customException = snapshot.error as CustomException;
+                    if (customException.message == 'NEED_LOGIN') {
+                      WidgetsBinding.instance!.addPostFrameCallback((_) {
+                        showTopSnackBar(
+                          Overlay.of(context),
+                          CustomSnackBar.error(
+                            message: "Session experied.",
+                            textAlign: TextAlign.center,
                           ),
                         );
-                      }
-                    },
-                  )
-              );
-            }
-          },
+                        Navigator.pushReplacementNamed(context2, '/login');
+                      });
+                      return Text('');
+                    } else {
+                      return Text('');
+                    }
+                  } else {
+                    return Text('');
+                  }
+                } else {
+                  //final user = snapshot.data;
+                  //return Text('User lıb: ${user?.username}');
+                  // Return the Information Cards for the Librarian
+                  // Titles, Values, and the TopColor can be changed
+                  // ,and the data of them can be taken from somewhere else
+                  return Padding(padding: EdgeInsets.all(16),
+                      child: FutureBuilder<StatisticsDTO>(
+                        future: statisticsFuture,
+                        builder: (BuildContext context, AsyncSnapshot<StatisticsDTO> snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            print(snapshot.error);
+                            if (snapshot.error is CustomException) {
+                              CustomException customException = snapshot.error as CustomException;
+                              if (customException.message == 'NEED_LOGIN') {
+                                WidgetsBinding.instance!.addPostFrameCallback((_) {
+                                  showTopSnackBar(
+                                    Overlay.of(context),
+                                    CustomSnackBar.error(
+                                      message: "Session experied.",
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  );
+                                  Navigator.pushReplacementNamed(context2, '/login');
+                                });
+                                return Text('Statistics are not available for now.4');
+                              } else {
+                                return Text('Statistics are not available for now.5');
+                              }
+                            } else {
+                              return Text('Statistics are not available for now.');
+                            }
+                          } else{
+                            final statistics = snapshot.data;
+                            return RefreshIndicator(
+                              onRefresh: refresh,
+                              child: SingleChildScrollView(
+                                child: Padding(padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: <Widget>[
+                                          InfoCard(
+                                            title: "Total Users:",
+                                            value: statistics!.totalUserCount ?? 0,
+                                            onTap: () {
+                                              // showReceiptHistoryPopup(context);
+                                            },
+                                            topColor: Colors.orange,
+                                          ),
+                                          const SizedBox( width: 10,), // Space b/w Cards
+                                          InfoCard(
+                                            title: "Total Books:",
+                                            value: statistics.totalBookCount ?? 0,
+                                            topColor: Colors.lightGreen,
+                                            onTap: () {},
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: <Widget>[
+                                          InfoCard(
+                                            title: "Total Books at the Library:",
+                                            value: statistics.availableBookCount ?? 0,
+                                            //value: statistics['data']['availableBookCount'],
+                                            topColor: Colors.redAccent,
+                                            onTap: () {},
+                                          ),
+                                          const SizedBox( width: 10,), // Space b/w Cards
+                                          InfoCard(
+                                            title: "Total Books out of Library:",
+                                            value: statistics.unavailableBookCount ?? 0,
+                                            //value: statistics['data']['unavailableBookCount'],
+                                            onTap: () {},
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: <Widget>[
+                                          InfoCard(
+                                            title: "Total CopyCard Balance:",
+                                            value: statistics.sumOfBalance ?? 0,
+                                            onTap: () {},
+                                            topColor: Colors.yellow,
+                                          ),
+                                          const SizedBox( width: 10,), // Space b/w Cards
+                                          InfoCard(
+                                            title: "Total Debt:",
+                                            value: statistics.sumOfDebt ?? 0,
+                                            topColor: Colors.blue,
+                                            onTap: () {},
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: <Widget>[
+                                          InfoCard(
+                                            title: "Total Queue:",
+                                            value: statistics.queueCount ?? 0,
+                                            onTap: () {},
+                                            topColor: Colors.greenAccent,
+                                          ),
+                                          const SizedBox( width: 0,), // Space b/w Cards
+                                          // InfoCard(
+                                          //   title: "Total Books:",
+                                          //   value: statistics.totalBookCount,
+                                          //   topColor: Colors.lightGreen,
+                                          //   onTap: () {},
+                                          // ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                      )
+                  );
+                }
+              },
+            ),
+          ),
         ),
       ),
     );

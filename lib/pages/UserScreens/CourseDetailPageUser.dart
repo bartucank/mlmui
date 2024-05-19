@@ -54,7 +54,7 @@ class _CourseDetailPageUserState extends State<CourseDetailPageUser> {
         body: Padding(
           padding: EdgeInsets.fromLTRB(0, 0, 0, 80),
           child: widget.courseDTO.courseMaterialDTOList!.isEmpty
-              ? const Text("There is no material :(")
+              ? Center(child: Container(child: const Text("There is no material :(")))
               : ListView.builder(
             itemCount: widget.courseDTO.courseMaterialDTOList!.length ,
             itemBuilder: (context2, index) {

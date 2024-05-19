@@ -57,6 +57,7 @@ class _ShelfManagementScreen extends State<ShelfManagementScreen> {
       ShelfDTOListResponse response =
       await apiService.getShelfDTOListResponse();
       setState(() {
+        shelfDTOList.clear();
         shelfDTOList.addAll(response.shelfDTOList);
       });
     }catch(e){
@@ -64,136 +65,6 @@ class _ShelfManagementScreen extends State<ShelfManagementScreen> {
     }
   }
 
-  void removeShelf(ShelfDTO shelf) async {
-    try {
-      String response = await apiService.deleteShelf(0,shelf.id);
-      print("Shelf deleted: $response");
-    } catch (e) {
-      print("Error deleting shelf: $e");
-    }
-  }
-
-  void showDeleteDialog(BuildContext context, ShelfDTO shelf) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Delete Shelf"),
-            actions: <Widget>[
-              TextButton(
-                child: Text("Next"),
-                onPressed: () {
-                  showDeleteConfirmation(context, shelf);
-                  Navigator.of(context).pop();
-                },
-              ),
-              TextButton(
-                child: Text("Cancel"),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ],
-          );
-        }
-    );
-  }
-
-  void showDeleteConfirmation(BuildContext context, ShelfDTO shelf) {
-    ArtSweetAlert.show(
-        context: context,
-        artDialogArgs: ArtDialogArgs(
-            type: ArtSweetAlertType.warning,
-            title: "Are you sure?",
-            text: "This will delete the shelf",
-            confirmButtonText: "Delete",
-            cancelButtonText: "Cancel",
-            showCancelBtn: true,
-            onConfirm: () {
-              removeShelf(shelf);
-              Navigator.pop(context);
-            }
-        )
-    );
-  }
-
-  void moveShelf(ShelfDTO shelf,int newId) async {
-    if (newId == null) {
-      print("Invalid ID entered");
-      return;
-    }
-
-    try {
-      String response = await apiService.moveShelf(newId,shelf.id);
-      print("Shelf moved: $response");
-    } catch (e) {
-      print("Error moving shelf: $e");
-    }
-  }
-
-  void showMoveDialog(BuildContext context, ShelfDTO shelf) {
-    final TextEditingController newIdController = TextEditingController();
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Enter New ID"),
-            content: TextField(
-              controller: newIdController,
-              decoration: InputDecoration(
-                labelText: "New ID",
-                hintText: "Enter the new ID for move",
-              ),
-              keyboardType: TextInputType.number,
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: Text("Next"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  newId = int.tryParse(newIdController.text)!;
-                  if (newId != null) {
-                    showMoveConfirmation(context, shelf);
-                  } else {
-                    showError(context, "Invalid ID Entered");
-                  }
-                },
-              ),
-              TextButton(
-                child: Text("Cancel"),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ],
-          );
-        }
-    );
-  }
-
-  void showError(BuildContext context, String message) {
-    ArtSweetAlert.show(
-        context: context,
-        artDialogArgs: ArtDialogArgs(
-            type: ArtSweetAlertType.danger,
-            title: message
-        )
-    );
-  }
-
-  void showMoveConfirmation(BuildContext context, ShelfDTO shelf) {
-    ArtSweetAlert.show(
-        context: context,
-        artDialogArgs: ArtDialogArgs(
-            type: ArtSweetAlertType.warning,
-            title: "Are you sure?",
-            text: "This will move the shelf with new ID: $newId",
-            confirmButtonText: "Move",
-            cancelButtonText: "Cancel",
-            showCancelBtn: true,
-            onConfirm: () {
-              moveShelf(shelf,newId!);
-              Navigator.pop(context);
-            }
-        )
-    );
-  }
 
   void saveShelf() async {
     if (_floorController.text.isEmpty) {
@@ -219,6 +90,7 @@ class _ShelfManagementScreen extends State<ShelfManagementScreen> {
         isLoading = false;
       });
       if (result == "S") {
+        refresh();
         ArtSweetAlert.show(
           context: context,
           artDialogArgs: ArtDialogArgs(
@@ -228,6 +100,7 @@ class _ShelfManagementScreen extends State<ShelfManagementScreen> {
         );
         Navigator.pop(context, "s");
       } else {
+        refresh();
         ArtSweetAlert.show(
           context: context,
           artDialogArgs: ArtDialogArgs(
@@ -396,8 +269,150 @@ class _ShelfManagementScreen extends State<ShelfManagementScreen> {
   }
 
 
+  Future<void> justDelete(BuildContext context,int shelfId) async {
+    ArtDialogResponse response = await ArtSweetAlert.show(
+        barrierDismissible: false,
+        context: context,
+        artDialogArgs: ArtDialogArgs(
+            denyButtonText: "Cancel",
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            confirmButtonText: "Yes",
+            type: ArtSweetAlertType.warning
+        )
+    );
+
+    if(response==null) {
+      return;
+    }
+
+    if(response.isTapConfirmButton) {
+      String result =  await apiService.deleteShelf(shelfId);
+      print(result);
+      if (result == "S") {
+        ArtSweetAlert.show(
+            context: context,
+            artDialogArgs: ArtDialogArgs(
+                type: ArtSweetAlertType.success,
+                title: "Shelf Deleted!"
+            )
+        );
+        fetchShelfs();
+      } else {
+        ArtSweetAlert.show(
+            context: context,
+            artDialogArgs: ArtDialogArgs(
+                type: ArtSweetAlertType.danger,
+                title: "Shelf couldn't deleted :("
+            )
+        );
+      }
+
+      return;
+    }
+  }
 
 
+  Future<String> moveAndDelete(BuildContext context, int currentShelfId) async {
+    Completer<String> completer = Completer<String>();
+    List<ShelfDTO> newShelfs = [];
+    shelfDTOList.forEach((element) {
+      if(element.id != currentShelfId){
+        newShelfs.add(element);
+      }
+    });
+    int selectedShelf = newShelfs.first.id;
+    ArtDialogResponse response = await ArtSweetAlert.show(
+        artDialogKey: _artDialogKey,
+        context: context,
+        artDialogArgs: ArtDialogArgs(
+          barrierColor: Constants.mainBarrierColor,
+          title: "Move and Delete",
+          customColumns: [
+            Container(
+              child: Text(
+                  'This shelf has some books. Please select new shelf to move these books.'),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+              child: DropdownButtonFormField<ShelfDTO>(
+                value: newShelfs.first,
+                onChanged: (value) {
+                  setState(() {
+                    selectedShelf = value!.id;
+                  });
+                },
+                decoration: InputDecoration(
+                  labelText: "Select a shelf",
+                  labelStyle: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontStyle: FontStyle.normal,
+                    fontSize: 16,
+                    color: Constants.mainDarkColor,
+                  ),
+                  filled: true,
+                  fillColor: Color(0x00ffffff),
+                  isDense: false,
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 12,
+                  ),
+                  prefixIcon: Icon(Icons.person,
+                      color: Constants.mainDarkColor, size: 18),
+                  border: OutlineInputBorder(
+                    // Add this line to define a border
+                    borderRadius: BorderRadius.circular(4.0),
+                    borderSide:
+                    BorderSide(color: Constants.mainDarkColor, width: 1),
+                  ),
+                ),
+                items: shelfDTOList.map((elem) {
+                  return DropdownMenuItem<ShelfDTO>(
+                    value: elem,
+                    child: Row(
+                      children: [
+                        SizedBox(width: 8),
+                        Text("ID: ${elem.id} - Floor: ${elem.floor!}"),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
+            )
+          ],
+          confirmButtonText: "Move and Delete!!",
+          confirmButtonColor: Color(0xFFD2232A),
+          onConfirm: () async {
+            if (selectedShelf == null) {
+              completer.completeError('Please select a user.');
+            }
+
+            _artDialogKey.currentState?.showLoader();
+            String result = await apiService.moveAndDeleteShelf(
+                selectedShelf,currentShelfId);
+            _artDialogKey.currentState?.hideLoader();
+            try {
+              if (result.toUpperCase() == "S") {
+                _artDialogKey.currentState?.closeDialog();
+                completer.complete('success');
+              } else {
+
+                completer.completeError("Unexpected Error!");
+                _artDialogKey.currentState?.closeDialog();
+              }
+            } catch (e) {
+              completer.completeError("Unexpected Error!");
+              _artDialogKey.currentState?.closeDialog();
+            }
+          },
+          onDispose: () {
+            _artDialogKey = GlobalKey<ArtDialogState>();
+          },
+        ));
+
+
+    return completer.future;
+  }
 
   @override
   void initState() {
@@ -427,11 +442,18 @@ class _ShelfManagementScreen extends State<ShelfManagementScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        backgroundColor:Constants.mainRedColor,
+        onPressed: () async {
+          createShelf(context);
+        },
+        child: const Icon(Icons.add,color: Constants.whiteColor,),
+      ),
         key: _scaffoldKey,
         drawer: const MenuDrawerLibrarian(),
         appBar: AppBar(
           backgroundColor: Constants.mainRedColor,
-          title: Text('Shelf List', style: TextStyle(
+          title: Text('Shelf List Management', style: TextStyle(
               color: Constants.whiteColor
           ),),
           centerTitle: false,
@@ -441,14 +463,7 @@ class _ShelfManagementScreen extends State<ShelfManagementScreen> {
               Navigator.pop(context);
             },
           ),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.add, color: Constants.whiteColor),
-              onPressed: () {
-                createShelf(context);  // Call the function that handles shelf creation
-              },
-            )
-          ],
+
         ),
       body:WeSlide(
         controller: weSlideController,
@@ -488,22 +503,47 @@ class _ShelfManagementScreen extends State<ShelfManagementScreen> {
                     endActionPane: ActionPane(
                       motion: const StretchMotion(),
                       children: [
-                        if (currentShelf.bookCount == 0 || currentShelf.bookCount == null)
+                        if(shelfDTOList.length > 1)
                           SlidableAction(
                               backgroundColor: Colors.red,
                               icon: Icons.delete,
                               label: 'Delete',
                               onPressed: (context) {
-                                showDeleteDialog(context, currentShelf);
-                              }
-                          ),
-                        if ((currentShelf.bookCount ?? 0) > 0)
-                          SlidableAction(
-                              backgroundColor: Colors.blue,
-                              icon: Icons.move_up,
-                              label: 'Move',
-                              onPressed: (context) {
-                                showMoveDialog(context, currentShelf);
+                                if (currentShelf.bookCount == 0 || currentShelf.bookCount == null){
+                                  justDelete(context, currentShelf.id);
+                                }else{
+                                  moveAndDelete(context, currentShelf.id).then((s) {
+                                    if (s != null) {
+                                      if (s == 'success') {
+                                        showTopSnackBar(
+                                          Overlay.of(context2),
+                                          const CustomSnackBar.success(
+                                            message: "Success!",
+                                            textAlign: TextAlign.left,
+                                          ),
+                                        );
+
+                                        refresh();
+                                      } else {
+                                        showTopSnackBar(
+                                          Overlay.of(context2),
+                                          CustomSnackBar.error(
+                                            message: s,
+                                            textAlign: TextAlign.left,
+                                          ),
+                                        );
+                                      }
+                                    }
+                                  }).catchError((e) {
+                                    showTopSnackBar(
+                                      Overlay.of(context2),
+                                      CustomSnackBar.error(
+                                        message: e,
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    );
+                                  });
+                                }
                               }
                           ),
                         SlidableAction(

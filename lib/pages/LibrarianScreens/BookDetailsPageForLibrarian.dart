@@ -799,10 +799,7 @@ class _BookDetailsPageForLibrarian extends State<BookDetailsPageForLibrarian> {
                                       children: [
                                         Text(
                                           "Given Star: ${review.star}",
-                                          style: Theme.of(context).textTheme.caption!.copyWith(
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.black,
-                                          ),
+
                                         ),
                                         SizedBox(height: 4),
                                         Text(

@@ -47,6 +47,8 @@ class _ShelfManagementScreen extends State<ShelfManagementScreen> {
   TextEditingController _idController = TextEditingController();
   bool _switchValue = false;
   late int newId;
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 
 
 
@@ -64,9 +66,8 @@ class _ShelfManagementScreen extends State<ShelfManagementScreen> {
 
   void removeShelf(ShelfDTO shelf) async {
     try {
-      String response = await apiService.deleteShelf(shelf.id);
+      String response = await apiService.deleteShelf(0,shelf.id);
       print("Shelf deleted: $response");
-      fetchShelfs();
     } catch (e) {
       print("Error deleting shelf: $e");
     }
@@ -82,8 +83,8 @@ class _ShelfManagementScreen extends State<ShelfManagementScreen> {
               TextButton(
                 child: Text("Next"),
                 onPressed: () {
-                  Navigator.of(context).pop();
                   showDeleteConfirmation(context, shelf);
+                  Navigator.of(context).pop();
                 },
               ),
               TextButton(
@@ -122,10 +123,9 @@ class _ShelfManagementScreen extends State<ShelfManagementScreen> {
 
     try {
       String response = await apiService.moveShelf(newId,shelf.id);
-      print("Shelf deleted: $response");
-      fetchShelfs();
+      print("Shelf moved: $response");
     } catch (e) {
-      print("Error deleting shelf: $e");
+      print("Error moving shelf: $e");
     }
   }
 
@@ -140,7 +140,7 @@ class _ShelfManagementScreen extends State<ShelfManagementScreen> {
               controller: newIdController,
               decoration: InputDecoration(
                 labelText: "New ID",
-                hintText: "Enter the new ID for deletion",
+                hintText: "Enter the new ID for move",
               ),
               keyboardType: TextInputType.number,
             ),
@@ -149,9 +149,9 @@ class _ShelfManagementScreen extends State<ShelfManagementScreen> {
                 child: Text("Next"),
                 onPressed: () {
                   Navigator.of(context).pop();
-                  int? newId = int.tryParse(newIdController.text);
+                  newId = int.tryParse(newIdController.text)!;
                   if (newId != null) {
-                    showDeleteConfirmation(context, shelf);
+                    showMoveConfirmation(context, shelf);
                   } else {
                     showError(context, "Invalid ID Entered");
                   }
@@ -166,7 +166,6 @@ class _ShelfManagementScreen extends State<ShelfManagementScreen> {
         }
     );
   }
-
 
   void showError(BuildContext context, String message) {
     ArtSweetAlert.show(
@@ -185,11 +184,11 @@ class _ShelfManagementScreen extends State<ShelfManagementScreen> {
             type: ArtSweetAlertType.warning,
             title: "Are you sure?",
             text: "This will move the shelf with new ID: $newId",
-            confirmButtonText: "Delete",
+            confirmButtonText: "Move",
             cancelButtonText: "Cancel",
             showCancelBtn: true,
             onConfirm: () {
-              moveShelf(shelf,newId);
+              moveShelf(shelf,newId!);
               Navigator.pop(context);
             }
         )
@@ -262,6 +261,47 @@ class _ShelfManagementScreen extends State<ShelfManagementScreen> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 TextField(
+                  controller: _floorController,
+                  decoration: InputDecoration(
+                    labelText: "Floor",
+                    hintText: "Enter the Floor",
+                  ),
+                  keyboardType: TextInputType.text,
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Cancel", style: TextStyle(color: Colors.black)),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text("Create", style: TextStyle(color: Colors.black)),
+              onPressed: () {
+                saveShelf();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void updateShelfDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Update Shelf"),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                TextField(
                   controller: _idController,
                   decoration: InputDecoration(
                     labelText: "ID",
@@ -288,10 +328,9 @@ class _ShelfManagementScreen extends State<ShelfManagementScreen> {
               },
             ),
             TextButton(
-              child: Text("Create", style: TextStyle(color: Colors.black)),
+              child: Text("Update", style: TextStyle(color: Colors.black)),
               onPressed: () {
-                saveShelf();
-                fetchShelfs();
+                updateShelf();
                 Navigator.of(context).pop();
               },
             ),
@@ -368,7 +407,6 @@ class _ShelfManagementScreen extends State<ShelfManagementScreen> {
 
   @override
   void dispose() {
-    listcontroller.dispose();
     super.dispose();
   }
 
@@ -475,7 +513,7 @@ class _ShelfManagementScreen extends State<ShelfManagementScreen> {
                           onPressed: (context) {
                             _idController = TextEditingController(text: currentShelf.id.toString());
                             _floorController = TextEditingController(text: currentShelf.floor);
-                            createShelf(context);
+                            updateShelfDialog(context);
                           },
                         )
                       ],

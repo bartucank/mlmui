@@ -302,7 +302,11 @@ class _UpdateBookPage extends State<UpdateBookPage> {
     _selectedValue2.str = currentbook.categoryStr!;
     setState(() {
       ebookAvailable = currentbook.ebookId != null;
-      currentEbookId = currentbook.ebookId!;
+      print(ebookAvailable.toString());
+      if(ebookAvailable){
+        currentEbookId = currentbook.ebookId!;
+
+      }
     });
     //print(_selectedValue.id);
     //print(_selectedValue2.str);

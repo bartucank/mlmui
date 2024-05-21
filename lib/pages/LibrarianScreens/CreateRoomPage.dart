@@ -42,16 +42,16 @@ class _CreateRoomPage extends State<CreateRoomPage>{
       isLoading = true;
     });
     int value;
-    print(_base64Image);
+    // print(_base64Image);
     if(_base64Image != null && _base64Image != "-1"){
         value = await apiService.uploadImageByBase64(_base64Image);
-        print("geldi1");
-        print(_base64Image);
+        // print("geldi1");
+        // print(_base64Image);
     }else{
         value = await apiService.uploadImage(controller.images.first);
-        print("geldi2");
+        // print("geldi2");
     }
-    print("myvalue:"+value.toString());
+    // print("myvalue:"+value.toString());
     if(value == -1){
       setState(() {
         isLoading = false;

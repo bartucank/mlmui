@@ -60,7 +60,7 @@ class _RoomManagementScreenState extends State<RoomManagementScreen> {
   void fetchRooms() async {
     try {
       RoomDTOListResponse response = await apiService.getrooms();
-      print(response);
+      // print(response);
       setState(() {
         roomDTOList.clear();
         roomDTOList.addAll(response.roomDTOList);

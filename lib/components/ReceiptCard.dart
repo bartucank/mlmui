@@ -70,12 +70,6 @@ class ReceiptCard extends StatelessWidget {
                   child: Container(
                     color: Colors.white,
                     child: Icon(Icons.receipt, color: Constants.mainDarkColor,),
-                    /*Image(
-
-                      image: MemoryImage(
-                        base64Decode(base64Image),
-                      ),
-                    ),*/
                   ),
                 ),
               ),

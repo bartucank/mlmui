@@ -1,21 +1,15 @@
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
-import 'package:lazy_data_table_plus/lazy_data_table_plus.dart';
 import 'package:multi_image_picker_view/multi_image_picker_view.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
-import 'package:mlmui/models/BookDTO.dart';
 import '../../components/MenuDrawer.dart';
 import '../../components/OutlinedButtonsCopyCardPage.dart';
 import '../../models/ReceiptHistoryDTO.dart';
 import '../../models/ReceiptHistoryDTOListResponse.dart';
 import '../../models/UserDTO.dart';
 import '../../service/ApiService.dart';
-import '../../components/OutlinedButtons.dart';
-import '../../models/BookDTOListResponse.dart';
-import 'dart:convert';
-import 'package:mlmui/components/BookCard.dart';
 import 'dart:ui' as ui;
 
 import '../../service/constants.dart';
@@ -52,8 +46,8 @@ class _CopyCardState extends State<CopyCard> {
 
   void fetchHistory() async {
     ReceiptHistoryDTOListResponse response = await apiService.getReceiptsofUser();
-    print(response.receiptHistoryDTOList.length);
-    print(response.receiptHistoryDTOList);
+    // print(response.receiptHistoryDTOList.length);
+    // print(response.receiptHistoryDTOList);
 
     setState(() {
       history.addAll(response.receiptHistoryDTOList);

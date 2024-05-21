@@ -3,18 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mlmui/models/BookDTO.dart';
-import 'package:mlmui/models/BookCategoryEnumDTO.dart';
-import 'package:mlmui/models/BookCategoryEnumDTOListResponse.dart';
 import 'package:mlmui/models/RoomDTO.dart';
-import 'package:mlmui/models/ShelfDTO.dart';
-import 'package:mlmui/models/ShelfDTOListResponse.dart';
 import 'package:multi_image_picker_view/multi_image_picker_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../components/MenuDrawerLibrarian.dart';
-import '../../models/OpenLibraryBookDetails.dart';
 import '../../service/ApiService.dart';
 import 'package:mlmui/components/BookCard.dart';
 import 'dart:convert';
@@ -73,7 +68,7 @@ class _RoomDetailPage extends State<RoomDetailPage> {
     if (base64Image != null) {
       return base64Image;
     } else {
-      print(imageId);
+      // print(imageId);
       final response = await http.get(Uri.parse('${Constants.apiBaseUrl}/api/user/getImageBase64ById?id=$imageId'));
 
       if (response.statusCode == 200) {
@@ -87,7 +82,7 @@ class _RoomDetailPage extends State<RoomDetailPage> {
   }
   void setImagePicker(BookDTO currentbook) async{
     Uint8List? imageData = await fetchImageData(currentbook.imageId!);
-    print(imageData);
+    // print(imageData);
     if (imageData != null) {
       Stream<List<int>> streamData = Stream.fromIterable([imageData.toList()]);
 
@@ -99,7 +94,7 @@ class _RoomDetailPage extends State<RoomDetailPage> {
         readStream: streamData,
         path: null
       );
-      print(imageFile.toString());
+      // print(imageFile.toString());
       setState(() {
         // controller.addImage(imageFile);
       });
@@ -307,7 +302,7 @@ class _RoomDetailPage extends State<RoomDetailPage> {
               children: [
                 MaterialButton(
                   onPressed: () {
-                    print("id:"+widget.roomDTO.qrImage!.toString());
+                    // print("id:"+widget.roomDTO.qrImage!.toString());
                     downloadQr();
                   },
                   color: Constants.mainDarkColor,

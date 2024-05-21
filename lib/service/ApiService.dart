@@ -153,11 +153,11 @@ class ApiService {
       },
       body: "{}",
     );
-    print(response.statusCode);
+    // print(response.statusCode);
     if (response.statusCode == 401) {
       throw CustomException("NEED_LOGIN");
     }
-    print(response.body);
+    // print(response.body);
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
     return BookDTOListResponse.fromJson(jsonResponse['data']);
   }
@@ -176,7 +176,7 @@ class ApiService {
     if (response.statusCode == 401) {
       throw CustomException("NEED_LOGIN");
     }
-    print(response.body);
+    // print(response.body);
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
     return BookDTOListResponse.fromJson(jsonResponse['data']);
   }
@@ -355,9 +355,9 @@ class ApiService {
       var res = await request.send();
       var responseString = await res.stream.bytesToString();
       var jsonResponse = json.decode(responseString);
-      print(jsonResponse);
+      // print(jsonResponse);
       if (res.statusCode == 200) {
-        print("will be return:"+jsonResponse['data']['msg']);
+        // print("will be return:"+jsonResponse['data']['msg']);
         return jsonResponse['data']['msg'];
       }
       return "-1";
@@ -388,9 +388,9 @@ class ApiService {
       var res = await request.send();
       var responseString = await res.stream.bytesToString();
       var jsonResponse = json.decode(responseString);
-      print(jsonResponse);
+      // print(jsonResponse);
       if (res.statusCode == 200) {
-        print("will be return:"+jsonResponse['data']['msg']);
+        // print("will be return:"+jsonResponse['data']['msg']);
         return jsonResponse['data']['msg'];
       }
       return "-1";
@@ -422,9 +422,9 @@ class ApiService {
       var res = await request.send();
       var responseString = await res.stream.bytesToString();
       var jsonResponse = json.decode(responseString);
-      print(jsonResponse);
+      // print(jsonResponse);
       if (res.statusCode == 200) {
-        print("will be return:"+jsonResponse['data']['msg']);
+        // print("will be return:"+jsonResponse['data']['msg']);
         return jsonResponse['data']['msg'];
       }
       return "-1";
@@ -704,7 +704,7 @@ class ApiService {
 
 
   Future<Map<String, dynamic>> makeReservation(int id) async {
-    print(id);
+    // print(id);
     final jwtToken = await getJwtToken();
     final response = await http.post(
       Uri.parse('${Constants.apiBaseUrl}/api/user/makeReservation?roomSlotId=$id'),
@@ -756,7 +756,7 @@ class ApiService {
       return "-1";
     }
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-    print("json:"+jsonResponse.toString());
+    // print("json:"+jsonResponse.toString());
     if(response.statusCode == 200){
       await saveJwtToken(jsonResponse['data']['jwt']);
       return "ok";
@@ -881,7 +881,7 @@ class ApiService {
         },
         body: jsonEncode(body)
     );
-    print("Yolladik gibi");
+    // print("Yolladik gibi");
     if(response.statusCode == 401){
       throw CustomException("NEED_LOGIN");
     }
@@ -900,7 +900,7 @@ class ApiService {
         }
     );
 
-    print("Response Body: ${response.body}");
+    // print("Response Body: ${response.body}");
 
     if(response.statusCode == 401){
       throw CustomException("NEED_LOGIN");
@@ -925,7 +925,7 @@ class ApiService {
       },
 
     );
-    print("Yolladik gibi");
+    // print("Yolladik gibi");
     if(response.statusCode == 401){
       throw CustomException("NEED_LOGIN");
     }
@@ -1026,7 +1026,7 @@ class ApiService {
       },
 
     );
-    print("Yolladik gibi");
+    // print("Yolladik gibi");
     if(response.statusCode == 401){
       throw CustomException("NEED_LOGIN");
     }
@@ -1072,7 +1072,7 @@ class ApiService {
 
   Future<String> deleteEbook(int bookid) async{
     final jwtToken = await getJwtToken();
-    print(bookid);
+    // print(bookid);
     final response = await http.delete(
       Uri.parse('${Constants.apiBaseUrl}/api/admin/ebook/deleteEbook?bookId=$bookid'),
       headers: {
@@ -1085,7 +1085,7 @@ class ApiService {
       throw CustomException("NEED_LOGIN");
     }
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-    print(jsonResponse);
+    // print(jsonResponse);
     return jsonResponse['data']['statusCode'];
   }
   Future<int> uploadEbook(ImageFile imageFile, int bookid) async {
@@ -1165,7 +1165,7 @@ class ApiService {
 
     );
 
-    print("resp body:"+response.statusCode.toString());
+    // print("resp body:"+response.statusCode.toString());
     if(response.statusCode == 401){
       throw CustomException("NEED_LOGIN");
     }
@@ -1189,8 +1189,8 @@ class ApiService {
       },
       body: jsonEncode(body),
     );
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    // print('Response status: ${response.statusCode}');
+    // print('Response body: ${response.body}');
     if(response.statusCode == 401){
       throw CustomException("NEED_LOGIN");
     }
@@ -1299,7 +1299,7 @@ class ApiService {
     if(response.statusCode == 401){
       throw CustomException("NEED_LOGIN");
     }
-    print(response.body);
+    // print(response.body);
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
     if(response.statusCode == 500 && jsonResponse['message'] != null){
       return jsonResponse['message'];
@@ -1318,8 +1318,8 @@ class ApiService {
       },
     );
 
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    // print('Response status: ${response.statusCode}');
+    // print('Response body: ${response.body}');
     if(response.statusCode == 401){
       throw CustomException("NEED_LOGIN");
     }
@@ -1355,7 +1355,7 @@ class ApiService {
       var request = http.MultipartRequest('POST', uri);
 
 
-      print("Name before request: '$name'");
+      // print("Name before request: '$name'");
       request.fields['name'] = name;
       request.fields['courseId'] = courseId.toString();
 
@@ -1379,10 +1379,10 @@ class ApiService {
       var response = await request.send();
       var responseString = await response.stream.bytesToString();
       var jsonResponse = json.decode(responseString);
-      print(jsonResponse);
+      // print(jsonResponse);
 
       if (response.statusCode == 200) {
-        print(response.statusCode);
+        // print(response.statusCode);
         return jsonResponse['data']['statusCode'];
       } else {
         print("Failed to upload material. Status code: ${response.statusCode}. Response: $responseString");
@@ -1419,10 +1419,10 @@ class ApiService {
       var response = await request.send();
       var responseString = await response.stream.bytesToString();
       var jsonResponse = json.decode(responseString);
-      print(jsonResponse);
+      // print(jsonResponse);
 
       if (response.statusCode == 200) {
-        print(response.statusCode);
+        // print(response.statusCode);
         return jsonResponse['data']['statusCode'];
       } else {
         return "-1";
@@ -1436,7 +1436,7 @@ class ApiService {
 
   Future<String> deleteCourseMaterial(int materialId) async {
     final jwtToken = await getJwtToken();
-    print(materialId);
+    // print(materialId);
     final response = await http.delete(
       Uri.parse('${Constants.apiBaseUrl}/api/lecturer/course/deleteCourseMaterial?materialId=$materialId'),
       headers: {
@@ -1446,7 +1446,7 @@ class ApiService {
       },
     );
 
-    print(response.body);
+    // print(response.body);
     if(response.statusCode == 401){
       throw CustomException("NEED_LOGIN");
     }
@@ -1466,7 +1466,7 @@ class ApiService {
       },
     );
 
-    print(response.body);
+    // print(response.body);
     if(response.statusCode == 401){
       throw CustomException("NEED_LOGIN");
     }
@@ -1486,8 +1486,8 @@ class ApiService {
 
       },
     );
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    // print('Response status: ${response.statusCode}');
+    // print('Response body: ${response.body}');
     if (response.statusCode == 401) {
       throw CustomException("NEED_LOGIN");
     }
@@ -1510,7 +1510,7 @@ class ApiService {
       throw CustomException("NEED_LOGIN");
     }
 
-    print(response.body);
+    // print(response.body);
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
     return CourseDTO.fromJson(jsonResponse['data']);
   }
@@ -1527,8 +1527,8 @@ class ApiService {
       },
     );
 
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    // print('Response status: ${response.statusCode}');
+    // print('Response body: ${response.body}');
     if(response.statusCode == 401){
       throw CustomException("NEED_LOGIN");
     }
@@ -1549,8 +1549,8 @@ class ApiService {
       },
     );
 
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    // print('Response status: ${response.statusCode}');
+    // print('Response body: ${response.body}');
     if(response.statusCode == 401){
       throw CustomException("NEED_LOGIN");
     }
@@ -1571,8 +1571,8 @@ class ApiService {
 
       },
     );
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    // print('Response status: ${response.statusCode}');
+    // print('Response body: ${response.body}');
     if (response.statusCode == 401) {
       throw CustomException("NEED_LOGIN");
     }
@@ -1594,8 +1594,8 @@ class ApiService {
       },
       body: jsonEncode(body),
     );
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    // print('Response status: ${response.statusCode}');
+    // print('Response body: ${response.body}');
     if (response.statusCode == 401) {
       throw CustomException("NEED_LOGIN");
     }
@@ -1616,8 +1616,8 @@ class ApiService {
       },
       body: jsonEncode(body),
     );
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    // print('Response status: ${response.statusCode}');
+    // print('Response body: ${response.body}');
     if (response.statusCode == 401) {
       throw CustomException("NEED_LOGIN");
     }
@@ -1639,8 +1639,8 @@ class ApiService {
         body: jsonEncode(body),
       );
 
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      // print('Response status: ${response.statusCode}');
+      // print('Response body: ${response.body}');
       if (response.statusCode == 401) {
         throw CustomException("USER_NOT_FOUND_OR_INVALID_REQUEST");
       }
@@ -1663,8 +1663,8 @@ class ApiService {
         body: jsonEncode("{}"),
       );
 
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      // print('Response status: ${response.statusCode}');
+      // print('Response body: ${response.body}');
       Map<String, dynamic> jsonResponse = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
@@ -1690,8 +1690,8 @@ class ApiService {
         body: jsonEncode(body),
       );
 
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      // print('Response status: ${response.statusCode}');
+      // print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body);

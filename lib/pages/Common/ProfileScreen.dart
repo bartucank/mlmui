@@ -56,7 +56,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if(response.isTapConfirmButton) {
       String result = await apiService.changePass(request);
-      print(result);
+      // print(result);
       if (result == "ok") {
         ArtSweetAlert.show(
             context: context,
@@ -109,7 +109,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if(response.isTapConfirmButton) {
       String result = await apiService.updateRoleOfUser(widget.userDTO.id,newValue);
-      print(result);
+      // print(result);
       if (result == "S") {
         ArtSweetAlert.show(
             context: context,

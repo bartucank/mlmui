@@ -57,14 +57,13 @@ class _CreateCourse extends State<CreateCourse>{
       isLoading = true;
     });
     int value;
-    print(_base64Image);
+    // print(_base64Image);
     if(_base64Image != null && _base64Image != "-1"){
       value = await apiService.uploadImageByBase64(_base64Image);
     }else{
       value = await apiService.uploadImage(controller.images.first);
     }
-    print(value);
-    print("BURADA");
+    // print(value);
     if(value == -1){
       setState(() {
         isLoading = false;

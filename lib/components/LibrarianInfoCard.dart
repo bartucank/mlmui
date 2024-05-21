@@ -3,12 +3,6 @@ import 'package:flutter/material.dart';
 Color activeColor = const Color(0xFFD2232A);
 
 class InfoCard extends StatefulWidget {
-  /*InfoCard(
-  title: "Total Books:",
-  value: 1024,
-  topColor: Colors.lightGreen,
-  onTap: () {},
-  ),*/
   const InfoCard(
       {Key? key,
         required this.title,

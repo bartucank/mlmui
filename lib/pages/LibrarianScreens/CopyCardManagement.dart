@@ -4,22 +4,14 @@ import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:mlmui/models/ReceiptHistoryDTO.dart';
-import 'package:mlmui/models/UserDTO.dart';
-import 'package:mlmui/models/UserDTOListResponse.dart';
 import 'package:mlmui/models/UserNamesDTO.dart';
-import 'package:mlmui/models/UserNamesDTOListResponse.dart';
 import 'package:mlmui/pages/LibrarianScreens/ReceiptPopUp.dart';
 import 'package:mlmui/components/ReceiptCard.dart';
 import '../../components/MenuDrawerLibrarian.dart';
-import '../../components/UserCard.dart';
-import '../../models/BookCategoryEnumDTO.dart';
-import '../../models/BookCategoryEnumDTOListResponse.dart';
 import '../../models/ReceiptHistoryDTOListResponse.dart';
 import '../../service/ApiService.dart';
 import 'package:we_slide/we_slide.dart';
-import 'package:flutter/material.dart';
 
 import '../../service/constants.dart';
 
@@ -106,9 +98,7 @@ class _CopyCardManagementState extends State<CopyCardManagement> {
     try {
       lastList.clear();
       ReceiptHistoryDTOListResponse response =
-      ///await apiService.getReceipts();
       await apiService.getReceiptsByStatus(globalFilterRequest);
-      /// await apiService.getBooksBySpecification(globalFilterRequest);
       setState(() {
         receiptHistoryDTOList.addAll(response.receiptHistoryDTOList);
         lastList.addAll(response.receiptHistoryDTOList);
@@ -141,7 +131,6 @@ class _CopyCardManagementState extends State<CopyCardManagement> {
     try {
       lastList.clear();
       ReceiptHistoryDTOListResponse response =
-      ///await apiService.getReceipts();
       await apiService.getReceiptsByStatus(request);
       setState(() {
         receiptHistoryDTOList.addAll(response.receiptHistoryDTOList);
@@ -181,7 +170,6 @@ class _CopyCardManagementState extends State<CopyCardManagement> {
       globalFilterRequest = request;
     });
     ReceiptHistoryDTOListResponse response =
-    ///await apiService.getReceipts();
     await apiService.getReceiptsByStatus(request);
     setState(() {
       receiptHistoryDTOList.addAll(response.receiptHistoryDTOList);
@@ -209,11 +197,7 @@ class _CopyCardManagementState extends State<CopyCardManagement> {
     });
 
     Map<String, dynamic> request = {
-      /// isAprreoved burada filtrelenecek
-      ///'isApproved': false,
       'isApproved': approved,
-      /*'name': name,
-      'author': author,*/
       'page': page + 1,
       'size': size,
     };
@@ -225,10 +209,6 @@ class _CopyCardManagementState extends State<CopyCardManagement> {
     if (_selectedValue != null && (_selectedValue!.toString() == 'true' || _selectedValue!.toString() == 'false')) {
       request['isApproved'] = _selectedValue?.toString();
     }
-    /*if (_selectedValue != null && _selectedValue?.enumValue != "ANY") {
-      // Include category parameter only if a specific category is chosen
-      ///request['category'] = _selectedValue?.enumValue;
-    }*/
 
     try {
       ReceiptHistoryDTOListResponse response =

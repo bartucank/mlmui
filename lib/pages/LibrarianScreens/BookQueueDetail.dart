@@ -52,8 +52,6 @@ class _BookQueueDetailState extends State<BookQueueDetail> {
             textAlign: TextAlign.left,
           ),
         );
-
-
       print("Error! $e");
     }
   }
@@ -69,7 +67,7 @@ class _BookQueueDetailState extends State<BookQueueDetail> {
         });
       } else {
         return "";
-        print("Image not found");
+        // print("Image not found");
       }
     } catch (error) {
       print("Error fetching image: $error");
@@ -119,7 +117,7 @@ class _BookQueueDetailState extends State<BookQueueDetail> {
         completer2.complete('success');
       } else {
         String msg = result['message'].toString();
-        print(msg);
+        // print(msg);
         completer2.completeError(msg);
         _artDialogKey.currentState?.closeDialog();
       }
@@ -134,10 +132,6 @@ class _BookQueueDetailState extends State<BookQueueDetail> {
   }
 
   Future<String> borrowBook(BuildContext context, int bookId, int userId) async {
-
-
-
-
     Completer<String> completer2 = Completer<String>();
     _artDialogKey.currentState?.showLoader();
     Map<String, dynamic> result = await apiService.borrowBook(bookId,userId);
@@ -148,7 +142,7 @@ class _BookQueueDetailState extends State<BookQueueDetail> {
         completer2.complete('success');
       } else {
         String msg = result['message'].toString();
-        print(msg);
+        // print(msg);
         completer2.completeError(msg);
         _artDialogKey.currentState?.closeDialog();
       }

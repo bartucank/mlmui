@@ -205,7 +205,7 @@ class _BookCreateByExcelPageState extends State<BookCreateByExcelPage> {
                   }else{
                     if(kIsWeb){
                       Object flag = await apiService.uploadExcelForBookForWeb(result.files.first.bytes!);
-                      print(flag);
+                      // print(flag);
                       if(flag == "0"){
                         showTopSnackBar(
                           Overlay.of(context),
@@ -238,7 +238,7 @@ class _BookCreateByExcelPageState extends State<BookCreateByExcelPage> {
                     }else{
                       File file = File(result!.files.single.path!);
                       Object flag = await apiService.uploadExcelForBook(file);
-                      print(flag);
+                      // print(flag);
                       if(flag == "0"){
                         showTopSnackBar(
                           Overlay.of(context),

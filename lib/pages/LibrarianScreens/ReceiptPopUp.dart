@@ -153,7 +153,7 @@ class _ReceiptPopUpState extends State<ReceiptPopUp> {
                   // Accept button pressed
                   final double balance = double.parse(_balanceController.text);
                   String result =  await apiService.approveReceipt(balance, widget.receipt.id as int);
-                  print(result);
+                  // print(result);
                   if (result == "S") {
                     Navigator.pop(context); // Close the popup
                     ArtSweetAlert.show(
@@ -185,7 +185,7 @@ class _ReceiptPopUpState extends State<ReceiptPopUp> {
                 onPressed: () async {
                   // Reject button pressed
                   String result =  await apiService.rejectReceipt(widget.receipt.id as int);
-                  print(result);
+                  // print(result);
                   if (result == "S") {
                     Navigator.pop(context); // Close the popup
                     ArtSweetAlert.show(

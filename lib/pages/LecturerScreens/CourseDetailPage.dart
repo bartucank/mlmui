@@ -860,7 +860,6 @@ class _CourseDetailPage extends State<CourseDetailPage> {
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                   padding: EdgeInsets.all(16),
-
                   child: Text(
                     "Add Material",
                     style: TextStyle(
@@ -873,8 +872,6 @@ class _CourseDetailPage extends State<CourseDetailPage> {
 
                   textColor: Color(0xffffffff),
                 ),
-
-
               ],
             ),
           ),
@@ -903,11 +900,8 @@ class _CourseDetailPage extends State<CourseDetailPage> {
                     ),
                   ),
                   minWidth: MediaQuery.of(context).size.width-5,
-
                   textColor: Color(0xfffffffff),
                 ),
-
-
               ],
             ),
           ),
@@ -939,18 +933,11 @@ class _CourseDetailPage extends State<CourseDetailPage> {
 
                   textColor: Color(0xffffffff),
                 ),
-
-
               ],
             ),
           ),
 
           Divider(height: 8, color: Colors.black),
-
-
-
-
-
         ],
       ),
     );

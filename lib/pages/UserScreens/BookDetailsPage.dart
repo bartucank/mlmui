@@ -91,7 +91,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
         allReviews = review;
         visibleReviews = allReviews.take(displayCount).toList();
       });
-      print("REVIEW!!!! "+visibleReviews.length.toString());
+      // print("REVIEW!!!! "+visibleReviews.length.toString());
     } catch (e) {
       print("Error! $e");
     }
@@ -174,7 +174,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
   }
 
   void checkIfFavorite() async {
-    print("sdfasdf");
+    // print("sdfasdf");
     try {
       bool favStatus = await apiService.isFavorite(widget.book.id!);
       setState(() {
@@ -437,8 +437,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                                                             _currentRating =
                                                                 rating;
                                                           });
-                                                          print(
-                                                              'Rating: $_currentRating');
+                                                          // print('Rating: $_currentRating');
                                                         });
                                                       },
                                                       displayRatingValue: true,
@@ -466,8 +465,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                                                       maxLines: 3,
                                                       onSaved: (val) {
                                                         _comment = (val ?? '');
-                                                        print(
-                                                            'Comment: $_comment');
+                                                        // print('Comment: $_comment');
                                                       },
                                                     ),
                                                   ),

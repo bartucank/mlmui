@@ -47,7 +47,7 @@ class _BookDetailsPageForLibrarian extends State<BookDetailsPageForLibrarian> {
 
   @override
   void initState() {
-    print("ahaaaaaaa");
+    // print("ahaaaaaaa");
     super.initState();
     _fetchImage();
     fetchReviews();
@@ -92,7 +92,7 @@ class _BookDetailsPageForLibrarian extends State<BookDetailsPageForLibrarian> {
         allReviews = review;
         visibleReviews = allReviews.take(displayCount).toList();
       });
-      print("REVIEW!!!! "+visibleReviews.length.toString());
+      // print("REVIEW!!!! "+visibleReviews.length.toString());
     } catch (e) {
       print("Error! $e");
     }
@@ -175,7 +175,7 @@ class _BookDetailsPageForLibrarian extends State<BookDetailsPageForLibrarian> {
   }
 
   void checkIfFavorite() async {
-    print("sdfasdf");
+    // print("sdfasdf");
     try {
       bool favStatus = await apiService.isFavorite(widget.book.id!);
       setState(() {
@@ -438,8 +438,7 @@ class _BookDetailsPageForLibrarian extends State<BookDetailsPageForLibrarian> {
                                                                 _currentRating =
                                                                     rating;
                                                               });
-                                                              print(
-                                                                  'Rating: $_currentRating');
+                                                              // print('Rating: $_currentRating');
                                                             });
                                                       },
                                                       displayRatingValue: true,
@@ -467,8 +466,7 @@ class _BookDetailsPageForLibrarian extends State<BookDetailsPageForLibrarian> {
                                                       maxLines: 3,
                                                       onSaved: (val) {
                                                         _comment = (val ?? '');
-                                                        print(
-                                                            'Comment: $_comment');
+                                                        // print('Comment: $_comment');
                                                       },
                                                     ),
                                                   ),

@@ -41,11 +41,6 @@ class _EbookDetailsPageForLibrarianState extends State<EbookDetailsPageForLibrar
     _epubController = EpubController(
       // Load document
       document: EpubReader.readBook(uint8List_ebook),
-
-      /*document: EpubDocument.openAsset(
-        widget.ebook.data as String
-          ///'assets/book.epub'
-      ),*/
       // Set start point
       epubCfi: 'epubcfi(/6/6[chapter-2]!/4/2/1612)',
     );

@@ -240,7 +240,7 @@ class _UpdateBookPage extends State<UpdateBookPage> {
   }
   void setImagePicker(BookDTO currentbook) async{
     Uint8List? imageData = await fetchImageData(currentbook.imageId!);
-    print(imageData);
+    // print(imageData);
     if (imageData != null) {
       Stream<List<int>> streamData = Stream.fromIterable([imageData.toList()]);
 
@@ -252,7 +252,7 @@ class _UpdateBookPage extends State<UpdateBookPage> {
         readStream: streamData,
         path: null
       );
-      print(imageFile.toString());
+      // print(imageFile.toString());
       setState(() {
         // controller.addImage(imageFile);
       });
@@ -302,7 +302,7 @@ class _UpdateBookPage extends State<UpdateBookPage> {
     _selectedValue2.str = currentbook.categoryStr!;
     setState(() {
       ebookAvailable = currentbook.ebookId != null;
-      print(ebookAvailable.toString());
+      // print(ebookAvailable.toString());
       if(ebookAvailable){
         currentEbookId = currentbook.ebookId!;
 

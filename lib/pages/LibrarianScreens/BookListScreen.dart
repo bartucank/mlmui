@@ -5,38 +5,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:mlmui/models/BookDTO.dart';
-import 'package:mlmui/models/UserDTO.dart';
-import 'package:mlmui/models/UserDTOListResponse.dart';
 import 'package:mlmui/models/UserNamesDTO.dart';
 import 'package:mlmui/models/UserNamesDTOListResponse.dart';
 import 'package:mlmui/pages/LibrarianScreens/BookQueueDetail.dart';
-import 'package:mlmui/pages/LibrarianScreens/UpdateBookPage.dart';
-import 'package:multi_image_picker_view/multi_image_picker_view.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:mlmui/components/BookCard.dart';
 import '../../components/MenuDrawerLibrarian.dart';
-import '../../components/UserCard.dart';
 import '../../models/BookCategoryEnumDTO.dart';
 import '../../models/BookCategoryEnumDTOListResponse.dart';
 import '../../models/BookDTOListResponse.dart';
 import '../../service/ApiService.dart';
 import 'package:we_slide/we_slide.dart';
-import 'package:flutter/material.dart';
-import 'package:mlmui/models/UserDTO.dart';
-import 'package:mlmui/models/UserDTOListResponse.dart';
-import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-import 'package:top_snackbar_flutter/top_snack_bar.dart';
-
-import '../../components/MenuDrawerLibrarian.dart';
-import '../../components/UserCard.dart';
-import '../../service/ApiService.dart';
-import 'package:we_slide/we_slide.dart';
 
 import '../../service/constants.dart';
-import '../UserScreens/BookDetailsPage.dart';
 import 'BookDetailsPageForLibrarian.dart';
 
 class BookListScreen extends StatefulWidget {
@@ -523,7 +506,7 @@ class _BookListScreenState extends State<BookListScreen> {
       request['category'] = _selectedValue?.enumValue;
     }
 
-    print(_switchValue);
+    // print(_switchValue);
     if(_switchValue != null && _switchValue == true){
       request['ebookAvailable'] = true;
     }else{

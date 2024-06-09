@@ -5,22 +5,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:mlmui/components/ShelfCard.dart';
-import 'package:mlmui/models/BookDTO.dart';
-import 'package:mlmui/models/UserNamesDTO.dart';
-import 'package:mlmui/models/UserNamesDTOListResponse.dart';
-import 'package:mlmui/pages/LibrarianScreens/BookQueueDetail.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
-import 'package:mlmui/components/BookCard.dart';
 import '../../components/MenuDrawerLibrarian.dart';
-import '../../models/BookCategoryEnumDTO.dart';
-import '../../models/BookCategoryEnumDTOListResponse.dart';
-import '../../models/BookDTOListResponse.dart';
 import '../../models/ShelfDTO.dart';
 import '../../service/ApiService.dart';
 import 'package:we_slide/we_slide.dart';
 import '../../service/constants.dart';
-import 'BookDetailsPageForLibrarian.dart';
 import 'package:mlmui/models/ShelfDTOListResponse.dart';
 
 class ShelfManagementScreen extends StatefulWidget {
@@ -280,7 +271,7 @@ class _ShelfManagementScreen extends State<ShelfManagementScreen> {
 
     if(response.isTapConfirmButton) {
       String result =  await apiService.deleteShelf(shelfId);
-      print(result);
+      // print(result);
       if (result == "S") {
         ArtSweetAlert.show(
             context: context,

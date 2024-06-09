@@ -2,7 +2,7 @@
 name: mlmui
 description: MLM UI
 publish_to: none
-version: 1.0.24+24
+version: 1.0.25+25
 environment:
   sdk: ">=3.0.6 <4.0.0"
 dependencies:

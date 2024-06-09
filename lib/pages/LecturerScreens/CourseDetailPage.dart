@@ -203,6 +203,8 @@ class _CourseDetailPage extends State<CourseDetailPage> {
             TextButton(
                 onPressed: () {
                   saveStudent();
+
+                  FocusScope.of(context).unfocus();
                   _studentIdController.clear();
 
                   fetchCourse();
@@ -316,6 +318,8 @@ class _CourseDetailPage extends State<CourseDetailPage> {
                    _materialNameController.clear();
 
                    fetchCourse();
+
+                   FocusScope.of(context).unfocus();
                    Navigator.of(context).pop();
                  }
                 },
@@ -325,6 +329,8 @@ class _CourseDetailPage extends State<CourseDetailPage> {
                 onPressed: () {
                   _materialNameController.clear();
                   Navigator.of(context).pop();
+
+                  FocusScope.of(context).unfocus();
 
                   fetchCourse();
                 },

@@ -1335,6 +1335,7 @@ class ApiService {
       case 'epub':
         return 'application/epub+zip';
       case 'jpg':
+        return 'image/jpg';
       case 'jpeg':
         return 'image/jpeg';
       case 'png':

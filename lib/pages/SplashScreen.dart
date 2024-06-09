@@ -77,20 +77,17 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
             ),
             Align(
-              alignment: Alignment.bottomCenter,
+              alignment: Alignment.topCenter,
               child: Padding(
-                padding: EdgeInsets.all(16),
+                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0, 0, 0, 300),
-                      child: Image.asset(
-                        'assets/images/logo.png',
-                      ),
-                    ),
+                    Image.asset(
+                      'assets/images/logo.png',
+                    )
 
                   ],
                 ),

@@ -102,7 +102,7 @@ class MyApp extends StatelessWidget {
           );
         },
       maximumSize: Size(675.0,MediaQuery.of(context).size.height),
-      enabled: kIsWeb,
+      enabled: kIsWeb || defaultTargetPlatform == TargetPlatform.windows,
       backgroundColor: Colors.grey,
 
     );
